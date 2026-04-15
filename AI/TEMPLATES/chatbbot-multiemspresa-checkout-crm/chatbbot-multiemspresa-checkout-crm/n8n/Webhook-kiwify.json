@@ -1,0 +1,614 @@
+{
+  "name": "Webhook-kiwify",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b9a7e444-37d2-4274-b315-240171f9fe9c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -160
+      ],
+      "id": "cb343ab0-9859-4411-8dc5-d226020fffc2",
+      "name": "Webhook",
+      "webhookId": "b9a7e444-37d2-4274-b315-240171f9fe9c"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2192,
+        272
+      ],
+      "id": "32000b64-77cb-4475-8f11-5afc69de3f3e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "instanceName": "={{ $('FormatInstancia').item.json.instancia_formated }}",
+        "token": "=ieZmj:SDFHIL!T?rkT>5",
+        "options_Create_instance": {
+          "instanceSettings": {
+            "settings": {
+              "rejectCall": true,
+              "groupsIgnore": true,
+              "readMessages": true
+            }
+          },
+          "webhook": {
+            "webhookSettings": {
+              "webhookUrl": "={{ $('Config').item.json.url_webhook_n8n }}",
+              "webhookEvents": [
+                "MESSAGES_UPSERT"
+              ]
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        -160
+      ],
+      "id": "9d577923-8ce0-4339-8876-fb0deaef2afc",
+      "name": "Criar instancia",
+      "executeOnce": true,
+      "credentials": {
+        "evolutionApi": {
+          "id": "xVbSLFLMRuEmS4Jp",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1f893ba-7981-4da0-b392-348eb2be202c",
+              "name": "instancia_formated",
+              "value": "={{ $('Config').item.json.cnpj.replaceAll('/','').replaceAll('/','').replaceAll('.','').replaceAll('-','') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        -144
+      ],
+      "id": "dcda0dc0-d353-45c1-bbd8-729b5f6289b0",
+      "name": "FormatInstancia"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fca98d2d-3e6c-4ef1-83eb-8245ec4f3ecf",
+              "name": "cnpj",
+              "value": "={{ $json.body.Customer.cnpj }}",
+              "type": "string"
+            },
+            {
+              "id": "ee3358f0-bc78-4cd5-b3b3-0fbd6ccce1cd",
+              "name": "phone",
+              "value": "={{ $json.body.Customer.mobile }}",
+              "type": "string"
+            },
+            {
+              "id": "298fef75-7513-4668-a1dc-0e117c1eab85",
+              "name": "email",
+              "value": "={{ $json.body.Customer.email }}",
+              "type": "string"
+            },
+            {
+              "id": "4a6ac1db-3916-49bf-bf31-297aa02e3e59",
+              "name": "start_date",
+              "value": "={{ $json.body.Subscription.start_date }}",
+              "type": "string"
+            },
+            {
+              "id": "c3a2c7ea-5ad1-44c5-8c9d-0b56e7ba1048",
+              "name": "url_strapi",
+              "value": "--URL-STRAPI-AQUI--",
+              "type": "string"
+            },
+            {
+              "id": "f92b79c6-dc2b-4ea2-9a94-a1d93f8c8a81",
+              "name": "table",
+              "value": "businesses",
+              "type": "string"
+            },
+            {
+              "id": "356bd9fa-1796-4315-b47b-4a72c7a31964",
+              "name": "url_webhook_n8n",
+              "value": "=--URL-WEBHOOK-N8N-AQUI--",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        -160
+      ],
+      "id": "af4f47db-be90-4ba5-9070-51ab17291198",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').item.json.url_strapi }}/{{ $('Config').item.json.table }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cnpj",
+              "value": "={{ $('Config').item.json.cnpj }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        64
+      ],
+      "id": "caff2a57-9ba9-4795-8a91-4ccc087dcd79",
+      "name": "FindBusiness",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Config').item.json.url_strapi }}/{{ $('Config').item.json.table }}/{{ $('FindBusiness').item.json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"active\":\"true\",\n\"phone\":\"{{ $('FindBusiness').first().json.phone }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        -144
+      ],
+      "id": "d2396138-6279-47b3-bea5-964fed2c107e",
+      "name": "UpdateBusiness",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        -144
+      ],
+      "id": "6455aa84-9dc7-4537-a488-a725c8e298da",
+      "name": "Wait",
+      "webhookId": "0a464d70-59de-4390-994d-a36ea73c189c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "249e53fd-d65f-41c0-ace4-124e71e6687d",
+              "name": "msg",
+              "value": "Empresa não cadastrada",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        288
+      ],
+      "id": "d844dae1-88d5-4e2e-b045-14f568cfa5f4",
+      "name": "setError"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1232,
+        272
+      ],
+      "id": "8510c09f-857f-4466-a2c8-ebd4c07f0e26",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "163a57c3-ad94-4e72-9b79-f2a63ecb3ddb",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        -144
+      ],
+      "id": "33491b07-3e15-46ed-89f7-79bbf5394494",
+      "name": "If",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "fetch-instances",
+        "instanceName": "={{ $json.instancia_formated }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        -144
+      ],
+      "id": "c4090974-f77b-434f-9988-467d105cc5f6",
+      "name": "FindInstance",
+      "alwaysOutputData": true,
+      "credentials": {
+        "evolutionApi": {
+          "id": "xVbSLFLMRuEmS4Jp",
+          "name": "Evolution account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "\n# Webhook-kiwify\n## Esta função recebe a notificação da Kiwify que o pagamento foinprocessado\n\n# Config\n## url_strapi\n## url_webhook_n8n\n\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -256
+      ],
+      "id": "34546857-2cd0-4d67-a8c0-59a948ab3169",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.empreendedorserial.com",
+            "user-agent": "axios/0.23.0",
+            "content-length": "2668",
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "traceparent": "00-83a5b25f123ac4874dd747ec92c5e2e5-79be6ef6934bf6f6-01",
+            "x-forwarded-for": "10.0.0.2",
+            "x-forwarded-host": "webhook.empreendedorserial.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "3014350d07d6",
+            "x-real-ip": "10.0.0.2",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {
+            "signature": "50874729dffcaa2d4331e773fa4bb3ce4d94ecc0"
+          },
+          "body": {
+            "order_id": "6b815797-6603-4acb-b1ae-fe559e3d929a",
+            "order_ref": "NbKxrEL",
+            "order_status": "paid",
+            "product_type": "membership",
+            "payment_method": "credit_card",
+            "store_id": "AM0RdWj6EdQIIWV",
+            "payment_merchant_id": 73272808,
+            "installments": 1,
+            "card_type": "mastercard",
+            "card_last4digits": "9990",
+            "card_rejection_reason": null,
+            "boleto_URL": null,
+            "boleto_barcode": null,
+            "boleto_expiry_date": null,
+            "pix_code": null,
+            "pix_expiration": null,
+            "sale_type": "producer",
+            "created_at": "2025-07-17 20:14",
+            "updated_at": "2025-07-17 20:14",
+            "approved_date": "2025-07-18 20:14",
+            "refunded_at": null,
+            "webhook_event_type": "order_approved",
+            "Product": {
+              "product_id": "cedb516a-57dd-4709-9597-cbb30c07708e",
+              "product_name": "Example product"
+            },
+            "Customer": {
+              "full_name": "John Doe",
+              "first_name": "John",
+              "email": "johndoe@example.com",
+              "mobile": "+16547921681",
+              "cnpj": "61902478358666",
+              "ip": "236.249.190.144",
+              "instagram": "@kiwify",
+              "street": "Rua 1001",
+              "number": "315",
+              "complement": "SL 05",
+              "neighborhood": "Centro",
+              "city": "Balneário Camboriú",
+              "state": "SC",
+              "zipcode": "88330-756"
+            },
+            "Commissions": {
+              "charge_amount": 7467,
+              "product_base_price": 7467,
+              "product_base_price_currency": "BRL",
+              "kiwify_fee": 821,
+              "kiwify_fee_currency": "BRL",
+              "settlement_amount": 7467,
+              "settlement_amount_currency": "BRL",
+              "sale_tax_rate": 0,
+              "sale_tax_amount": 0,
+              "commissioned_stores": [
+                {
+                  "id": "1e3847f2-e372-4277-bf3e-14cb4e8d9555",
+                  "type": "producer",
+                  "custom_name": "Example store",
+                  "email": "example@store.domain",
+                  "value": "6646"
+                },
+                {
+                  "id": "71549717-6082-4097-a8da-64cd019a6aff",
+                  "type": "coproducer",
+                  "custom_name": "Example coproducer",
+                  "email": "example@coproducer.domain",
+                  "value": "6646"
+                },
+                {
+                  "id": "7ed08d9e-0d1f-45a8-a053-c4c48a3fad0e",
+                  "type": "affiliate",
+                  "affiliate_id": "YFQpeiW",
+                  "custom_name": "Example affiliate",
+                  "email": "example@affiliate.domain",
+                  "value": "6646"
+                }
+              ],
+              "currency": "BRL",
+              "my_commission": 6646,
+              "funds_status": null,
+              "estimated_deposit_date": null,
+              "deposit_date": null
+            },
+            "TrackingParameters": {
+              "src": null,
+              "sck": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_campaign": null,
+              "utm_content": null,
+              "utm_term": null,
+              "s1": null,
+              "s2": null,
+              "s3": null
+            },
+            "Subscription": {
+              "id": "87a44ab3-e212-4af9-b70f-624ce6a183ad",
+              "start_date": "2025-07-14T20:14:13.844Z",
+              "next_payment": "2025-07-21T20:14:13.844Z",
+              "status": "active",
+              "plan": {
+                "id": "9b69ffdb-c285-47f8-8382-a878c90b37ce",
+                "name": "Example plan",
+                "frequency": "weekly",
+                "qty_charges": 0
+              },
+              "charges": {
+                "completed": [
+                  {
+                    "order_id": "6b815797-6603-4acb-b1ae-fe559e3d929a",
+                    "amount": 6646,
+                    "status": "paid",
+                    "installments": 1,
+                    "card_type": "mastercard",
+                    "card_last_digits": "9732",
+                    "card_first_digits": "410208",
+                    "created_at": "2025-07-14T20:14:13.844Z"
+                  }
+                ],
+                "future": [
+                  {
+                    "charge_date": "2025-07-21T20:14:13.844Z"
+                  }
+                ]
+              }
+            },
+            "subscription_id": "87a44ab3-e212-4af9-b70f-624ce6a183ad",
+            "access_url": null
+          },
+          "webhookUrl": "https://webhook.empreendedorserial.com/webhook/kiwify",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FormatInstancia": {
+      "main": [
+        [
+          {
+            "node": "FindInstance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "FindBusiness",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FindBusiness": {
+      "main": [
+        [
+          {
+            "node": "UpdateBusiness",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "setError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateBusiness": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "FormatInstancia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Criar instancia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FindInstance": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d3e53332-25c3-40bb-81c0-df53ac512f35",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e590f4139d93469d1739d22ad320a43d021129fe97f155fd64fd3f5b4a29c49b"
+  },
+  "id": "RSFwnUNj6wwD4t6P",
+  "tags": []
+}

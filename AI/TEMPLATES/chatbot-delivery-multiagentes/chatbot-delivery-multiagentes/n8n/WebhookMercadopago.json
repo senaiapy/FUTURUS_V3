@@ -1,0 +1,208 @@
+{
+  "name": "WebhookMercadopago",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f6ec7bc4-e874-4d41-af3b-96abfd809ecd",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        144
+      ],
+      "id": "5e984f0e-7eba-4408-915d-dee88296db4c",
+      "name": "Webhook",
+      "webhookId": "f6ec7bc4-e874-4d41-af3b-96abfd809ecd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        128
+      ],
+      "id": "236b96cc-9b90-4d64-84be-1311a7da0378",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Config').first().json.url_strapi }}/{{ $('Config').first().json.table_name }}/{{ $json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"paid\":\"true\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -304,
+        144
+      ],
+      "id": "1deda02d-6007-461d-8a4a-efd5124743d1",
+      "name": "UpdateCustomer",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7a702f86-8b3c-4825-a733-8de25b275a42",
+              "name": "url_strapi",
+              "value": "=http://strapi.empreendedorserial.com:1337",
+              "type": "string"
+            },
+            {
+              "id": "8a4e2491-16ca-45cc-a671-d5ccf73e68c5",
+              "name": "table_name",
+              "value": "purchases",
+              "type": "string"
+            },
+            {
+              "id": "1fbd47f5-25c4-4ddc-9484-70f5bf88fea8",
+              "name": "id",
+              "value": "={{ $json.body.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "6996b013-d3a0-4bb5-82b5-df4945d4d6aa",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        144
+      ],
+      "id": "3b4ecd54-071b-425e-a25a-b8a5664e1d2e",
+      "name": "Config",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "\n# WebhookMercadopago\n## Esta função recebe um Webhook do Mercado Pago com a confirmação do pagamento (não está completamente implementada)\n\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 724,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2144,
+        -128
+      ],
+      "id": "c86f690d-dacd-42d4-8f55-afa7010bc452",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.empreendedorserial.com",
+            "user-agent": "restclient-node/4.15.3",
+            "content-length": "175",
+            "accept": "*/*",
+            "accept-encoding": "*",
+            "content-type": "application/json",
+            "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkFwcCIsImFjIjoiOTg5NTg2IiwiYXAiOiI5NjA2MzYwOTQiLCJ0eCI6IjQ0NmMyMjYzZWM1N2Q3YzYiLCJ0ciI6ImQxN2RkMWFiYWE3ODliMmM5MWZiOTk0ZjU1MThmZjQ5IiwicHIiOjAuNTY3MDg5LCJzYSI6ZmFsc2UsInRpIjoxNzQzODAwNzY4ODI3LCJ0ayI6IjE3MDk3MDcifX0=",
+            "traceparent": "00-d17dd1abaa789b2c91fb994f5518ff49-004725e91e685277-00",
+            "tracestate": "1709707@nr=0-0-989586-960636094-004725e91e685277-446c2263ec57d7c6-0-0.567089-1743800768827",
+            "x-forwarded-for": "10.0.0.2",
+            "x-forwarded-host": "webhook.empreendedorserial.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "77b315702bc9",
+            "x-real-ip": "10.0.0.2",
+            "x-request-id": "29a0bd12-0d08-46a6-b8e7-a431f3f80418",
+            "x-rest-pool-name": "/services/webhooks.js",
+            "x-retry": "0",
+            "x-signature": "ts=1743800768826,v1=48ebf282786b0cf5b8aa6a83e9220bc816073c9e3bf19cd5dc1879c8f3357097",
+            "x-socket-timeout": "22000"
+          },
+          "params": {},
+          "query": {
+            "data.id": "123456",
+            "type": "payment"
+          },
+          "body": {
+            "action": "payment.updated",
+            "api_version": "v1",
+            "data": {
+              "id": "123456"
+            },
+            "date_created": "2021-11-01T02:02:02Z",
+            "id": "123456",
+            "live_mode": false,
+            "type": "payment",
+            "user_id": 7162200
+          },
+          "webhookUrl": "https://webhook.empreendedorserial.com/webhook/046592de-c500-45f4-9d07-9d425558a161",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "UpdateCustomer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateCustomer": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d049a374-e641-4369-aea9-a626be4b58b7",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "FeibW5UsvT3xZCOn",
+  "tags": []
+}

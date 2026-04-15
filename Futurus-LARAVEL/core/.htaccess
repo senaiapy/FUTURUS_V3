@@ -1,0 +1,91 @@
+# ============================================
+# LARAVEL CORE SECURITY (Pentest Fixes)
+# ============================================
+
+# Block all direct access to this directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Allow access to public assets only
+    RewriteCond %{REQUEST_URI} !^/core/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+# Block sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block .env file (CRITICAL - Pentest Finding #3)
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files ".env.example">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Block artisan
+<Files "artisan">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Block composer files (Pentest Finding #4)
+<FilesMatch "^composer\.(json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block package files
+<FilesMatch "^package\.(json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block config files
+<FilesMatch "\.php$">
+    <If "%{REQUEST_URI} =~ m#^/core/config/#">
+        Order allow,deny
+        Deny from all
+    </If>
+</FilesMatch>
+
+# Block log files (Pentest Finding #3)
+<FilesMatch "\.log$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block SQL files
+<FilesMatch "\.(sql|sql\.gz)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block YAML files
+<FilesMatch "\.(yml|yaml)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block XML files (except sitemap)
+<FilesMatch "^(?!sitemap).*\.xml$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Block access to storage directory (Pentest Finding #6)
+<IfModule mod_rewrite.c>
+    RewriteRule ^storage/framework/sessions/.*$ - [F,L]
+    RewriteRule ^storage/framework/cache/.*$ - [F,L]
+    RewriteRule ^storage/framework/views/.*$ - [F,L]
+    RewriteRule ^storage/logs/.*$ - [F,L]
+</IfModule>

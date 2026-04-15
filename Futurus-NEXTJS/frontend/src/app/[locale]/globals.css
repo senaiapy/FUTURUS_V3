@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  --background: #020617;
+  --foreground: #f8fafc;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-base: hsl(var(--base));
+  --color-secondary: hsl(var(--secondary));
+  --font-inter: var(--font-inter);
+  --font-outfit: var(--font-outfit);
+  --font-maven: var(--font-maven);
+  --font-lora: var(--font-lora);
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float-delayed 8s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 1s ease-out;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(2deg);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(25px) rotate(-3deg);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glow-orb {
+  background: radial-gradient(
+    circle,
+    rgba(var(--base), 0.15) 0%,
+    transparent 70%
+  );
+  filter: blur(40px);
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.pause-on-hover:hover {
+  animation-play-state: paused;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-maven), var(--font-inter), sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-maven), sans-serif;
+}

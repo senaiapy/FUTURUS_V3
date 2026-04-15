@@ -1,0 +1,49 @@
+/* Responsive Css */
+@media only screen and (max-width: 1199px) {
+
+  .main-menu,
+  .main-header.style-one .outer-container:before {
+    display: none !important;
+  }
+
+  .mobile-nav-toggler {
+    display: flex;
+  }
+
+  .megamenu ul li:first-child {
+    display: none;
+  }
+
+}
+
+@media only screen and (min-width: 768px) {
+
+  .main-menu .navigation>li>ul,
+  .main-menu .navigation>li>ul>li>ul,
+  .main-menu .navigation>li>.megamenu {
+    display: block !important;
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+
+  .sec-title h2 {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+}
+
+@media only screen and (max-width: 499px) {
+  .sec-title h2 {
+    font-size: 28px;
+    line-height: 38px;
+  }
+
+  .mobile-menu {
+    width: 100%;
+  }
+
+}

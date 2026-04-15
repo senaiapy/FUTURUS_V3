@@ -1,0 +1,1668 @@
+{
+  "name": "ConsoleDeliveryPixCatalogoMultiagente-export",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -688,
+        -288
+      ],
+      "id": "23b2e7fa-651c-477d-88d3-005e6a3a16dd",
+      "name": "When chat message received",
+      "webhookId": "442c851e-ac23-45fb-8af2-c373b7387f90"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=## Configuração do Agente orquestrador – Restaurante e Pizzaria Delivery\n\nVocê é um agente de atendimento orquestrador de uma pizzaria que realiza entregas por delivery. Seu objetivo é dar o primeiro atendimento ao cliente e direcionar o cliente para o agente 'Waiter - AI Agent' para ajudar o cliente a escolher os produtos. Quando o cliente finalizar a escolha do produtos passe o atendimento para o agente que faz localiza o endereço do cliente 'CustomerAddress AI Agent' e após o endereço lozalizado leve o cliente até o agente que fará o checkout 'Chackout AI Agent' onde irá pegar as informações de pagamento.\n\nCaso necessário você poderá consultar os dados do cliente e fazer atualizações de endereço ou dados do cliente ou ainda enviar a localização do rstaurante ou o cardápio digital em formato .pdf\n\n# REGRAS IMPORTANTES\n\n## Nunca leve o cliente ao checkout antes de confirmar o endereço de entrega\n\n## Caso cliente diga que deseja ir buscar a mercadoria no 'drive thru' siga o processo para o checkout\n\n## Verifique se o cliente já tem um endereço cadastrado em 'Endereço do cliente já cadastrado':\n- Caso já tenha um endereço, pergunte se ele deseja usar o endereço do cadastro\n- Se não houver endereço cadastrado, prossiga para o agente que localiza o endereço 'CustomerAddress AI Agent'\n\n## Verifique se o cliente tem algum anotação de pedido em curso disponível em 'Pedido em andamento':\n- Caso exista um pedido anotado pergute se ele desejar continuar com o pedido ou deseja escolher outros pedido\n- Se não houver pedido anotado, prossiga com o fluxo normal de atendimento\n\n## Verifique se o cliente tem as informações como nome e cpf cadastradas disponíveis em 'Variáveis Úteis':\n- Caso não tenha nome o cpf cadastrado pergunte\n- se já tiver essas informações prossiga o fluxo normal\n\n## Nunca pergunte se o cliente tem algum pedido em andamento, pois essa informação está no seu contexto.\n\n---\n### Cardápio\n\nLink do cardápio em PDF: \n- Quando o cliente solicitar o cardápio ou o link do pdf do cardápio\nhttp://strapi.empreendedorserial.com:1337/uploads/cardapio_32dbc1a7e7.pdf?tipo=pdf\n\n## Envio de links:\n - Nunca coloque um '.' (ponto final) após o link ou email para não confundir a separação da mídia.\n - Use um quebra de linha '\\n' após links ou emails para separar o conteúdo \n---\n\n### Regras Gerais\n\n- Não use markdown, emojis ou caracteres especiais como: # * - \\n\n- Sempre seja direto e objetivo nas respostas.\n- Nunca deixe o cliente esperando por alguma informação, mande todas as infomrações ou pergunte caso falte alguma informação.\n\n---\n\n### Tom de Voz\n\n- Use frases curtas e naturais. Exemplos:\n  - \"Que sabor deseja?\"\n  - \"Algo mais?\"\n  - \"Deseja qual?\"\n- Ao encerrar a conversa, use expressões simples como:\n  - \"Qualquer coisa me chama.\"\n  - \"...\"\n- Ao listar produtos, nunca cite mais que 3 itens por vez. Finalize com:\n  - \"e outras opções...\" ou \"e muitos outros...\"\n\n---\n\n### Início da Conversa\n\n- Seja educado e responda apenas o que o cliente perguntar.\n  - Exemplo: \"Olá, em que posso ajudar?\"\n- Se o nome do cliente ainda não foi informado, pergunte e salve no banco de dados.\n\n---\n\n### Dados do Cliente\n\nOs dados do cliente estão disponíveis como:\n\nTelefone (WhatsApp): {{ $('CustomerData').first().json.response.phone  }}  \nEndereço (address): {{ $('CustomerData')?.first().json.response.address }}\n\nNome do cliente pelo WhatsApp (pode ser apelido):  \n{{ $('SetFieldsBasic').first().json.name }}\n\nTelefone do cliente:  \n{{ $('SetFieldsBasic').first().json.phone }}\n\n---\n\n### Contexto do Usuário\n\n- Data e Hora: {{ $json.date_time }} {{ $json.horario }}\n- Dia da Semana: {{ $json.week_day }}\n\n---\n\n\n### Recomendações Finais\n\n1. Sempre valide os dados antes de salvar ou executar ações.\n2. Formate respostas de forma amigável e organizada.\n3. Nunca forneça informações fora do contexto ou banco vetorial.\n4. Limite as respostas de listas a no máximo 3 itens por vez.\n5. Reforce a personalização com base no histórico da conversa.\n\n\n## Pedido em andamento\n- Pedido em andamento anotado pelo agente 'Waiter - AI Agent' há poucos minutos:\n  {{ $json.pedido_atual }}\n\n## Pedido em concluídos do cliente (use para descobrir as preferências do cliente)\n```json\n{{ $json.purchases }}\n\n## Endereço do cliente já cadastrado\n{{ $('CustomerData').first().json.response.address }},{{ $('CustomerData').first().json.response.cep }}\n\n## Lat / long do endereço do cliente\n{{ $('CustomerData').first().json.response.lat }}\n{{ $('CustomerData').first().json.response.long }}\n\n## Variáveis Úteis\n\n- Telefone do cliente:\n  {{ $('SetFieldsBasic').first().json.phone }}\n\n- Nome do cliente (registrado no whatsapp):\n  {{ $json.name }}\n\n- CPF do cliente (registrado no whatsapp):\n {{ $('CustomerData').first().json.response.cpf }}\n\n- Data de hoje:\n  {{ $now.format('yyyy-MM-dd')}} | {{ $now.weekdayLong }}\n\n- Data de amanhã:\n  {{ $now.plus(1,'day').format('yyyy-MM-dd')}} | {{ $now.plus(1,'day').weekdayLong }}\n- Hora atual:\n  {{ $now.format('HH:mm:ss')}}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        752,
+        -288
+      ],
+      "id": "9a10e3e3-9b71-4fa4-b156-a2469f826a05",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        0
+      ],
+      "id": "57ad7329-feec-41e3-9551-4442386ef0c3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "pjvFZYwfl4qpYDxb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        0
+      ],
+      "id": "1faea02a-21ef-49da-a5e6-76a620a45321",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d23b1bc7-3ed9-4d80-8740-674c94821a70",
+              "name": "chatInput",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "1db63104-e993-4697-8b98-627ca5dc2f3b",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "105543ff-22e2-4321-819b-0f3cf3256f41",
+              "name": "name",
+              "value": "João da Silva",
+              "type": "string"
+            },
+            {
+              "id": "f2a36f46-def6-42b9-99d1-291f225c6cc2",
+              "name": "phone",
+              "value": "558681612061",
+              "type": "string"
+            },
+            {
+              "id": "7dab4a7e-138d-4cca-9a33-7b6f1cf78555",
+              "name": "vector_store_id",
+              "value": "-SUA-KEY-AQUI-",
+              "type": "string"
+            },
+            {
+              "id": "d74f5d22-7ad8-4880-a1cb-82b18fc47513",
+              "name": "openia_api_key",
+              "value": "-SUA-KEY-AQUI-",
+              "type": "string"
+            },
+            {
+              "id": "7f5d0ad8-b508-41e3-a0b3-2b9f2423f3bd",
+              "name": "type",
+              "value": "locationMessage",
+              "type": "string"
+            },
+            {
+              "id": "8098279a-886e-40ce-9f86-2397a48401e4",
+              "name": "url_strapi",
+              "value": "--URL-DA-STRAPI--",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -512,
+        -288
+      ],
+      "id": "57c699ee-59e2-4809-ada1-d997e09fd30f",
+      "name": "SetFieldsBasic"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "69918e5c-6cbf-44a1-a0a8-e6bdd9646860",
+              "name": "text",
+              "value": "={{ $('SetFieldsBasic').first().json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "d5f56632-01ff-492a-98f1-c4f4dd7cc601",
+              "name": "session_id",
+              "value": "={{ $('SetFieldsBasic').first().json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "85351078-014d-476b-a79d-1b9cf0d604d9",
+              "name": "date_time",
+              "value": "={{ $now.format('yyyy-MM-dd')}}",
+              "type": "string"
+            },
+            {
+              "id": "142e0a72-710c-4497-9dae-d6c6bc9511e8",
+              "name": "week_day",
+              "value": "={{ $today.weekdayLong}}",
+              "type": "string"
+            },
+            {
+              "id": "17dd323e-622c-48d5-b870-86ed37aa7067",
+              "name": "horario",
+              "value": "={{ $now.format('HH:mm:ss')}}",
+              "type": "string"
+            },
+            {
+              "id": "b45baf98-0908-44ba-bb24-051e838ccf40",
+              "name": "name",
+              "value": "={{ $('CustomerData').first().json.response.name || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "957f3018-b2e2-4a3d-a278-b6406c259f94",
+              "name": "address",
+              "value": "={{ $('CustomerData').first().json.response.address }}",
+              "type": "string"
+            },
+            {
+              "id": "e4e1a3a9-49c8-4688-9e4f-284c95e1f3b2",
+              "name": "sessionId",
+              "value": "={{ $('SetFieldsBasic').first().json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "c213f279-4080-403d-ac28-552688a719c8",
+              "name": "purchases",
+              "value": "={{ $('CustomerData').first().json.response.purchases.map(item => item) }}",
+              "type": "string"
+            },
+            {
+              "id": "01b13eaf-015d-4fcc-a3dc-72f7a4c5f768",
+              "name": "products",
+              "value": "={{ $('ProductData').first().json.response }}",
+              "type": "string"
+            },
+            {
+              "id": "78ea215c-a2ad-4d06-88f0-9301dafc9e36",
+              "name": "pedido_atual",
+              "value": "={{ $json.response.data || \"nenhum pedido pendente\" }}",
+              "type": "string"
+            },
+            {
+              "id": "07e721b6-46aa-4e38-80d0-2dbd81679a28",
+              "name": "distance",
+              "value": "={{ $('CustomerData').first().json.response.distance }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        -288
+      ],
+      "id": "5eea29e4-9a3a-4f8c-93c4-733edd12637c",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "sQcFoad1EPfmbK2r",
+          "mode": "list",
+          "cachedResultName": "ToolsCustomerStripeDelivery"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "get_or_create",
+            "phone": "={{ $json.phone }}",
+            "url_strapi": "={{ $json.url_strapi }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "url_strapi",
+              "displayName": "url_strapi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resumo_chat",
+              "displayName": "resumo_chat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "neighborhood",
+              "displayName": "neighborhood",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "distance",
+              "displayName": "distance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -288
+      ],
+      "id": "373508bd-8aaf-4359-9931-c32a3bb1da33",
+      "name": "CustomerData",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "description": "Função que busca o cep do cliente",
+        "workflowId": {
+          "__rl": true,
+          "value": "sQcFoad1EPfmbK2r",
+          "mode": "list",
+          "cachedResultName": "ToolsCustomerStripeDelivery"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "find_cep",
+            "url_strapi": "={{ $('SetFieldsBasic').first().json.url_strapi }}",
+            "cep": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cep', `cep informado pelo cliente`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "url_strapi",
+              "displayName": "url_strapi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "resumo_chat",
+              "displayName": "resumo_chat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "neighborhood",
+              "displayName": "neighborhood",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        160
+      ],
+      "id": "85c2c1d5-3771-4219-b456-39118530e715",
+      "name": "find_cep"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "vsojEwtHTVs1ehdu",
+          "mode": "list",
+          "cachedResultName": "ToolsProductStripeDelivery"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "type": "all",
+            "id": "1",
+            "url_stripe": "={{ $('SetFieldsBasic').item.json.url_strapi }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "business_id",
+              "displayName": "business_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "url_stripe",
+              "displayName": "url_stripe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -288
+      ],
+      "id": "7a579fdc-ada6-450b-be14-366ed922cfed",
+      "name": "ProductData",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "description": "Função que anota o pedido do cliente na memória",
+        "workflowId": {
+          "__rl": true,
+          "value": "ESrLvE8uPgHatHEK",
+          "mode": "list",
+          "cachedResultName": "ToolsCachePurchases"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "save",
+            "phone": "={{ $('SetFieldsBasic').first().json.phone }}",
+            "data": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('data', `lista dos produtos selecionados pelo cliente com valor unitário e total`, 'string') }}",
+            "key": "purchase",
+            "timeout": "3600"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "timeout",
+              "displayName": "timeout",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        160
+      ],
+      "id": "eacce84b-6384-4460-9f9f-032aa2579ec0",
+      "name": "save_purchase"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Agente responsável por fazer o checkout do pedido, gerar o código de pagamento PIX, calcular o valor da entrega e notificar o restaurante",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Intruções de funcionamento do Agente\n\nCalcule o valor total do pedido somando a taxa de entrega ao valor total dos produtos\n\n---\nTelefone  do clente \n{{ $('CustomerData').first().json.response.phone }}\n\nNome  do clente \n{{ $('CustomerData').first().json.response.name }}\n\nCPF do clente \n{{ $('CustomerData').first().json.response.cpf }}\n\nTaxa de entrega = \n{{ $('CustomerData').first().json.response.distance }} + 3\n---\n\nPedido anotado pelo outro agente\n{{ $('CacheData').first().json.response.data }}\n\n1. ## IMPORTANTE ## Forma de pagamento \n- Informar que a forma de pagamento será PIX e que ao final será gerado um QRCODE para pagamento.\n\n2. ## GERAR O QRCODE ## Utilize a tool 'gerar_pix_mercadopago' para gerar o QRCODE de pagamento do Mercado Pago.\n- Transforme o JSON em um texto simples antes de enviar os pedidos para gerar o qrcode \n\n3. Exiba o retorno ('pix_code') do 'gerar_pix_mercadopago' que será o código de pagamento do QRCODE\n- Exemplo: \nAqui está o código do pagamento PIX, copie e cole no app do se banco:\\n\\n\n\"00020126330014br.gov.bcb.pix0111433286013685204000053039777777.605802BR5912ANDREALENCAR6008Teresina62250521mpqrinter1201660575856304C7B8\"\n\n4. Enviar pedido ao restaurante  \n- Use o fluxo SendWhatsappInvoice com o seguinte conteúdo:\n\nCliente: Nome, Telefone  \nEndereço do cliente: Completo  \nProdutos:  \n-----------\n- Pizza grande calabresa – 29,90  \n- Refrigerante 1L Coca – 15,90  \n- Taxa de entrega - 5,00\n------------  Total: R$ 50,80\n\n5. Informar ao cliente que o pedido foi enviando ao restaurante e que ele será notificado em alguns minutos quando entregador estiver de saída.  \n\n6. Apague o pedido da memória usando a função 'clear_purchase'\n\n7. Cancelar um pedido  \n- Cara cancelar o pedido Use o fluxo SendWhatsappInvoice com:\n  - message: Dados do cliente + data/hora + motivo do cancelamento\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1296,
+        -32
+      ],
+      "id": "cb2944a5-15a7-4971-84f0-e253b11fe500",
+      "name": "Chackout AI Agent"
+    },
+    {
+      "parameters": {
+        "description": "Função que atualiza os dados do cliente inclusive cep, endereço, cpf ",
+        "workflowId": {
+          "__rl": true,
+          "value": "sQcFoad1EPfmbK2r",
+          "mode": "list",
+          "cachedResultName": "ToolsCustomerStripeDelivery"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "update",
+            "phone": "={{ $('SetFieldsBasic').first().json.phone }}",
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', `Nome do cliente`, 'string') }}",
+            "email": "={{ $('CustomerData').first().json.response.email }}",
+            "url_strapi": "={{ $('SetFieldsBasic').first().json.url_strapi }}",
+            "neighborhood": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('neighborhood', `Bairro do cliente`, 'string') }}",
+            "cep": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cep', `cep do endereço do cliente`, 'string') }}",
+            "address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('address', `Endereço completo do cliente`, 'string') }}",
+            "lat": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('lat', `Latitude do endereço do cliente`, 'string') }}",
+            "long": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('long', `Longitude do endereço do cliente`, 'string') }}",
+            "distance": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('distance', `Distância até o restaurante fornecida pelo Google Maps`, 'string') }}",
+            "cpf": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cpf', `CPF fornecido pelo cliente`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "url_strapi",
+              "displayName": "url_strapi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "resumo_chat",
+              "displayName": "resumo_chat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "neighborhood",
+              "displayName": "neighborhood",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "distance",
+              "displayName": "distance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        160
+      ],
+      "id": "16568010-18c9-4e15-94ba-9c87aac72c84",
+      "name": "update_customer"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ESrLvE8uPgHatHEK",
+          "mode": "list",
+          "cachedResultName": "ToolsCachePurchases"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "get",
+            "phone": "={{ $('SetFieldsBasic').first().json.phone }}",
+            "key": "purchase"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "timeout",
+              "displayName": "timeout",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        -288
+      ],
+      "id": "e6c7a407-553e-4a46-82eb-ebb9b3f615f0",
+      "name": "CacheData"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        160
+      ],
+      "id": "ab21af00-9db5-470f-8b61-f56dac2bf458",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "pjvFZYwfl4qpYDxb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1216,
+        144
+      ],
+      "id": "9cc3d320-8389-4b39-85f3-477c674ca0b0",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "pjvFZYwfl4qpYDxb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Agente responsável por anotar o pedido do cliente e ajudar na escolha dos produtos do restarante",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Agente de Vendas — Seleção de produtos e registro de pedido via **save_purchase**\n\n> **Objetivo:** reconhecer produtos + quantidades sem perguntar de novo, calcular o total e salvar o pedido em cada passo.\n\n---\n\n## 🏷️ Regras de DETECÇÃO DE QUANTIDADE\n\n| Caso | Exemplo | Ação |\n|------|---------|------|\n| **Números explícitos** | `1`, `2`, `3`, `10`, `1/2`, `½` | Use o número. |\n| **Numerais por extenso** | “um(a)”, “dois/duas”, “três”, “meia” | Converta p/ número. |\n| **Unidades embutidas** | “duas latas”, “três hambúrgueres” | Extraia o número. |\n| **Singular sem artigo** | “quero coca zero lata” | Item evidentemente unitário → **1**. |\n| **Plural sem número** | “quero pizzas médias” | Pergunte “Quantas pizzas médias?”. |\n\n> **Regra de silêncio:** **nunca** pergunte quantidade se uma regra acima já resolver.\n\n### Exemplos que **NÃO** exigem pergunta\n- “Quero **uma** pizza média de camarão e catupiry e **uma** coca zero lata.” → 1 + 1.  \n- “Gostaria de **duas** águas sem gás.” → 2.\n\n---\n\n## 🔄 Fluxo de ATENDIMENTO\n\n1. **Sugestão de produtos** – Liste **máx. 3** opções por vez.  \n2. **Adicionar item** – Ao extrair `nome` + `quantidade`, calcule:  \n   - `preco_unitario` (do cardápio)  \n   - `subtotal` = quantidade × preço  \n   - Inclua na lista interna e **chame imediatamente**:\n\n   ```json\n   save_purchase({\n     \"items\": [...],\n     \"total\": somaDosSubtotais\n   })\n\n\n## Produtos do restaurante\n```json\n{{ $json.products }}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "2d0884b2-3b5c-4e70-8c6d-0e6fe44554d1",
+      "name": "Waiter - AI Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Você é um agente responsável por encontrar o endereço do cliente pelo cep ou pelo endereço fornecido, salvar as informações no cadastro do cliente",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Você é um agente responsável por encontrar o endereço do cliente pelo CEP ou pelo pela descrição fornecida pelo cliente\n\n### Regras Gerais\n\n## Nunca finalize o processo sem antes salvar os dados do endereço do cliente corretamente \n## Apenas pergunte o nome do cliente senão houver cadastrado no sistema\n## Ao finalizar leve o cliente até o agente que ferá o checkout\n\n## Use o cpf do cliente cadastrado no sistema:\n- Se não houver cpf cadastrado, pergunte ao cliente\n- Caso já exista um CPF, siga o processo normal\n\n### Tarefas do Agente\n\n1. Verificar endereço de entrega de entrega em uma das formas escolhidas pelo cliente:\n\n Método 01 -  Buscar pelo endereço:\n  - Use o fluxo find_google_maps com o parâmetro obrigatório:\n  - address: Endereço completo do cliente (Ex: \"Av. dos Ipês, 134 - Condomínio Amarelo, Apto 404 - Fortaleza - Ceará\")\n\n Método 02 - Buscar pelo CEP:\n - Use o fluxo find_cep com o parâmetro obrigatório:\n   cep: Cep formecido pelo cliente\n - Após localizar o endereço pelo CEP é necessário  perguntar o complemento, como número da casa, do apartamento, bloco, etc\n\n2. Salvar o endereço\nchame o fluxo 'save_customer' com os seguintes parâmetros obrigatórios:\n\nname: Nome completo do cliente  \ncpf: Número do CPF do cliente (exemplo: 422.286.015-69)\naddress: Endereço completo (string única)  \ncep: Cep do endereço do cliente (exemplo: 64048-065) \n\n3. Validar o endereço e buscar coordenadas geográficas\nUse o find_google_maps com os seguintes parâmetros obrigatórios:\n- address: Endereço completo (string única, inclusive o cep)  \n\n\n4. Salvar o endereço com as coordenadas do Google Maps\nchame o fluxo 'save_customer' com os seguintes parâmetros obrigatórios:\n\nname: Nome completo do cliente  \ncpf: Número do CPF do cliente (exemplo: 422.286.015-69)\naddress: Endereço completo (string única)  \ncep: Cep do endereço do cliente (exemplo: 64048-065) \nlat: Latitude (Ex: -4.9898)  \nlong: Longitude (Ex: -44.087)  \ndistance: Distância em km até o restaurante (Ex: 2.8)\n\n5. Calcular taxa de entrega  \n- Fórmula: distância em km × 3  \n  Ex: 5 km → taxa = R$ 15,00\n\n\nNome do cliente pelo WhatsApp (pode ser apelido):  \n{{ $('SetFieldsBasic').first().json.name }}\n\nTelefone do cliente:  \n{{ $('SetFieldsBasic').first().json.phone }}\nCPF do cliente\n{{ $('CustomerData').first().json.response.cpf }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -48
+      ],
+      "id": "4fbc121a-b8a8-4049-b243-3147a29a94fa",
+      "name": "CustomerAddress AI Agent"
+    },
+    {
+      "parameters": {
+        "description": "Função que localiza a localização geográfica do cliente (Latitude e longitude) e calcula a distância até ao restaurante ",
+        "workflowId": {
+          "__rl": true,
+          "value": "11mhKqxxzcbNYsj8",
+          "mode": "list",
+          "cachedResultName": "ToolsGoogleMapsLocationStrapi"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "address",
+            "base_location": "-5.08921,-42.8016",
+            "key": "REDACTED_GOOGLE_API_KEY",
+            "city": "Teresina - PI",
+            "address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('address', `Endereço fornecido pelo cliente na cidade atendida pelo restaurante`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "base_location",
+              "displayName": "base_location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        752,
+        160
+      ],
+      "id": "9c04f4b0-c938-418d-988e-57d63918d5e2",
+      "name": "find_google_maps"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        160
+      ],
+      "id": "434d0889-3101-473e-8dcc-6a64f9c43219",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "pjvFZYwfl4qpYDxb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Função que gera o código de pagamento por pix e registra o pedido no banco de dados",
+        "workflowId": {
+          "__rl": true,
+          "value": "ZqrfFQKixKEoAglS",
+          "mode": "list",
+          "cachedResultName": "ToolsMercadoPagoQrcodePixStrapi"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('SetFieldsBasic').first().json.phone }}",
+            "invoice": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('invoice', `Pedido do cliente em formato de texto simples com um produto por linha`, 'string') }}",
+            "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('value', `Valor total do pedido + taxa entrega `, 'number') }}",
+            "city": "Teresina",
+            "uf": "Piauí",
+            "url_strapi": "={{ $('SetFieldsBasic').first().json.url_strapi }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "invoice",
+              "displayName": "invoice",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "value",
+              "displayName": "value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "uf",
+              "displayName": "uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_strapi",
+              "displayName": "url_strapi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        128
+      ],
+      "id": "fa90644f-e4e9-4f83-9d3b-73300c4218c1",
+      "name": "gerar_pix_mercadopago"
+    },
+    {
+      "parameters": {
+        "description": "Função responsável por enviar o pedido via Whatsapp para o restaurante",
+        "workflowId": {
+          "__rl": true,
+          "value": "gRdLWTSg2l7cimyM",
+          "mode": "list",
+          "cachedResultName": "ToolsSendWhatsapp"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "5586981612061",
+            "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message', `Mensagem ao restaurante com os dados do pedido e dados de entrega com endereço do cliente`, 'string') }}",
+            "evolution_api_url": "https://evolutionapi2.zapoferta.com.br",
+            "evolution_api_instance": "EmpreendedorSerialBr",
+            "evolution_api_key": "A152F4676FA1-426E-88C4-E87BF481388A"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "evolution_api_url",
+              "displayName": "evolution_api_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "evolution_api_instance",
+              "displayName": "evolution_api_instance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "evolution_api_key",
+              "displayName": "evolution_api_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        144
+      ],
+      "id": "8d4ace8f-667b-44f6-ae50-ef91cf6f5ffa",
+      "name": "SendWhatsappInvoice"
+    },
+    {
+      "parameters": {
+        "description": "Função que apaga o pedido do cliente na memória",
+        "workflowId": {
+          "__rl": true,
+          "value": "ESrLvE8uPgHatHEK",
+          "mode": "list",
+          "cachedResultName": "ToolsCachePurchases"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "save",
+            "phone": "={{ $('SetFieldsBasic').first().json.phone }}",
+            "data": "=-",
+            "key": "purchase",
+            "timeout": "3600"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "timeout",
+              "displayName": "timeout",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        144
+      ],
+      "id": "d9922b77-fc8b-48ad-8177-e4f8d0324ef1",
+      "name": "clear_purchase"
+    },
+    {
+      "parameters": {
+        "content": "\n# ConsoleDeliveryPixCatalogoMultiagente\n## Esta função busca o endereço do clieente no Google Maps\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        -448
+      ],
+      "id": "ed1578c7-d734-4483-9139-7ac099ad9fd0",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "SetFieldsBasic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetFieldsBasic": {
+      "main": [
+        [
+          {
+            "node": "CustomerData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CustomerData": {
+      "main": [
+        [
+          {
+            "node": "ProductData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find_cep": {
+      "ai_tool": [
+        [
+          {
+            "node": "CustomerAddress AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ProductData": {
+      "main": [
+        [
+          {
+            "node": "CacheData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_purchase": {
+      "ai_tool": [
+        [
+          {
+            "node": "Waiter - AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chackout AI Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "CustomerAddress AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CacheData": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Waiter - AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Chackout AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Waiter - AI Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CustomerAddress AI Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find_google_maps": {
+      "ai_tool": [
+        [
+          {
+            "node": "CustomerAddress AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CustomerAddress AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gerar_pix_mercadopago": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chackout AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendWhatsappInvoice": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chackout AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clear_purchase": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chackout AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ed613968-77c3-41b7-a0a4-dad77ab3452c",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "mhRa47tKyMIUTqrj",
+  "tags": []
+}

@@ -1,0 +1,26 @@
+// Type definitions for otpauth library to resolve TypeScript issues
+
+declare module 'otpauth' {
+  interface Authenticator {
+    verify(token: string): { delta: number | null };
+  }
+
+  interface TOTP {
+    secret: string | Buffer;
+    verify(token: string, options?: { window?: number }): { delta: number | null };
+  }
+
+  interface SecretConstructor {
+    new(secret: string | Buffer): Secret;
+  }
+
+  interface Secret {
+    readonly buffer: Buffer;
+  readonly base32: string;
+  readonly hex: string;
+  readonly ascii: string;
+  readonly bit: (bitIndex: number) => boolean;
+  }
+
+  const Secret: SecretConstructor;
+}

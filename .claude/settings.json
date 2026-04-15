@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nmap:*)",
+      "Bash(git merge:*)"
+    ]
+  }
+}

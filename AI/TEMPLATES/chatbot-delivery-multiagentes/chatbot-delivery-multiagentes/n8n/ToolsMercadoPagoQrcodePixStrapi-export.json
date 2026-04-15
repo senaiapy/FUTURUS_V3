@@ -1,0 +1,950 @@
+{
+  "name": "ToolsMercadoPagoQrcodePixStrapi-export",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ea474508-6086-4086-a078-5695c3c49cd7",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "d77127ca-5a6d-4369-bf87-fbac4907c74a",
+              "name": "ACCESS_TOKEN",
+              "value": "--SEU-ACCESS_TOKEN--",
+              "type": "string"
+            },
+            {
+              "id": "74cea5e7-50bb-45d0-b735-ff8fe50a61bb",
+              "name": "PUBLIC_KEY",
+              "value": "--SUA-PUBLIC_KEY--",
+              "type": "string"
+            },
+            {
+              "id": "69917125-0886-436b-908d-720851c5228a",
+              "name": "app_name",
+              "value": "ecommerce",
+              "type": "string"
+            },
+            {
+              "id": "be1eff98-8144-4289-88d0-6bb13b3cc91e",
+              "name": "expiration",
+              "value": "={{ $now.plus(7,'days').toUTC() }}",
+              "type": "string"
+            },
+            {
+              "id": "7deb3016-d862-4cf5-bab5-e67f928663e5",
+              "name": "notification_url",
+              "value": "SEU-SITE",
+              "type": "string"
+            },
+            {
+              "id": "3887d153-240d-49c3-be20-84d97cdf611e",
+              "name": "created_at",
+              "value": "={{ $now.toUTC() }}",
+              "type": "string"
+            },
+            {
+              "id": "cf32ec27-9457-421f-bd9c-d0af002d9e60",
+              "name": "value",
+              "value": "={{ $json.value }}",
+              "type": "string"
+            },
+            {
+              "id": "9147f90b-2013-42c1-8797-284451009332",
+              "name": "invoice",
+              "value": "={{ $json.invoice }}",
+              "type": "string"
+            },
+            {
+              "id": "a09eb313-9a9e-4257-a33f-8b5c049ef4d4",
+              "name": "url_strapi",
+              "value": "={{ $json.url_strapi }}",
+              "type": "string"
+            },
+            {
+              "id": "4904f4c2-112b-43dc-8c91-15d396df7004",
+              "name": "table_name",
+              "value": "customers",
+              "type": "string"
+            },
+            {
+              "id": "f4508957-033d-42c5-b0cf-a8dd23efa25f",
+              "name": "table_ purchases",
+              "value": "purchases",
+              "type": "string"
+            },
+            {
+              "id": "ffc72845-81ec-4ad8-8a84-a5295e8c1783",
+              "name": "city",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "8959e28e-090f-4273-a71e-f594728ea475",
+              "name": "uf",
+              "value": "={{ $json.uf }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -592,
+        -240
+      ],
+      "id": "ce98b81e-b196-453d-a2cd-9ad2898da7f4",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mercadopago.com/v1/payments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Config').item.json.ACCESS_TOKEN }}"
+            },
+            {
+              "name": "X-Idempotency-Key",
+              "value": "={{$now.format('x')+$('CacheData').item.json.cpf }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"transaction_amount\": {{ $('CacheData').first().json.value }},\n    \"date_of_expiration\": \"2025-12-25T19:30:00.000-03:00\",\n    \"payment_method_id\": \"pix\",\n    \"external_reference\": \"{{ $('CacheData').first().json.invoiceNumber }}\",\n    \"notification_url\": \"{{ $('Config').first().json?.notification_url }}\",\n    \"metadata\": {\n        \"order_number\": \"order_1724857044\"\n    },\n    \"description\": \"{{ $('CacheData').first().json.description.replaceAll('\"','').replaceAll('\\n','') }}\",\n    \"payer\": {\n        \"first_name\": \"{{ $('CacheData').first().json.first_name }}\",\n        \"last_name\": \"{{ $('CacheData').first().json.last_name }}\",\n        \"email\": \"{{ $('CacheData').first().json.email }}\",\n        \"identification\": {\n            \"type\": \"CPF\",\n            \"number\": \"{{ $('CacheData').first().json.cpf }}\"\n        },\n        \"address\": {\n            \"zip_code\": \"{{ $('CacheData').first().json.zip_code }}\",\n            \"street_name\": \"{{ $('CacheData').first().json.street_name }}\",\n            \"street_number\": \"{{ $('CacheData').first().json.street_number }}\",\n            \"neighborhood\": \"{{ $('CacheData').first().json.bairro }}\",\n            \"city\": \"{{ $('CacheData').first().json.city }}\",\n            \"federal_unit\": \"{{ $('CacheData').first().json.uf }}\"\n        }\n    },\n    \"additional_info\": {\n        \"items\": [\n            {\n                \"id\": \"{{ $('CacheData').first().json.invoiceNumber }}\",\n                \"title\": \"{{ $('CacheData').first().json.description.replaceAll('\"','').replaceAll('\\n','')  }}\",\n                \"description\":\"{{ $('CacheData').first().json.description.replaceAll('\"','').replaceAll('\\n','') }}\",\n                \"picture_url\": null,\n                \"category_id\": \"Product\",\n                \"quantity\": 1,\n                \"unit_price\": {{ $('Config').first().json.value }},\n                \"event_date\": \"{{ $('Config').first().json.created_at }}\"\n            }\n        ],\n        \"payer\": {\n            \"first_name\": \"{{ $('CacheData').first().json.first_name }}\",\n            \"last_name\": \"{{ $('CacheData').first().json.last_name }}\",\n            \"is_prime_user\": \"1\",\n            \"is_first_purchase_online\": \"1\",\n            \"last_purchase\": \"2025-10-25T19:30:00.000-03:00\",\n            \"phone\": {\n                \"area_code\": \"11\",\n                \"number\": \"{{ $('Config').first().json.phone }}\"\n            },\n            \"address\": {\n                \"zip_code\": \"{{ $('CacheData').first().json.zip_code }}\",\n                \"street_name\": \"{{ $('CacheData').first().json.street_name }}\",\n                \"street_number\": \"13\"\n            },\n            \"registration_date\": \"2025-08-06T09:25:04.000-03:00\"\n        },\n        \"shipments\": {\n            \"express_shipment\": \"0\",\n            \"pick_up_on_seller\": \"1\",\n            \"receiver_address\": {\n                \"zip_code\": \"{{ $('CacheData').first().json.zip_code }}\",\n                \"street_name\": \"{{ $('CacheData').first().json.street_name }}\",\n                \"street_number\": \"13\",\n                \"floor\": \"12\",\n                \"apartment\": \"123\"\n            }\n        }\n    }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -240
+      ],
+      "id": "034df8a6-6893-4d2f-a724-5eb563faaa47",
+      "name": "Gerar_QR_CODE_MERCADO_PAGO",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "numberInputs": 6
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        832,
+        288
+      ],
+      "id": "ca08d70d-03c5-4a82-85f4-81fa19e66b9c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'webContentLink':'',\n\"payload\": '',\n\"error\":  $('Merge').last().json.message\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        672
+      ],
+      "id": "bd1e562b-78c0-48e6-9715-63bc8134f2d7",
+      "name": "ResponseError"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n\"pix_code\":  $('SetResponse').last().json?.copia_cola\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        512
+      ],
+      "id": "ffb5710a-e881-46c5-b2ca-47edd321c859",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "568c3c79-4c79-4426-a3f7-35ea279c5c99",
+              "name": "first_name",
+              "value": "={{ $('get_customer').first().json.name.split(' ').first() }}",
+              "type": "string"
+            },
+            {
+              "id": "a342d8bc-c9af-4f52-9e96-7bb059224406",
+              "name": "last_name",
+              "value": "={{ $('get_customer').item.json.name.split(' ').last() }}",
+              "type": "string"
+            },
+            {
+              "id": "219aab30-cb4c-4647-88a2-8377ff1c921f",
+              "name": "cpf",
+              "value": "={{ $('get_customer').first().json.cpf }}",
+              "type": "string"
+            },
+            {
+              "id": "e15b19a1-c7e3-4db7-84c8-9e0a9945d410",
+              "name": "description",
+              "value": "={{ $('Config').item.json.invoice }}",
+              "type": "string"
+            },
+            {
+              "id": "933bee20-5889-4c1f-bac5-b8b063cdb5ec",
+              "name": "value",
+              "value": "={{ $('Config').first().json.value.toNumber() }}",
+              "type": "string"
+            },
+            {
+              "id": "f71af993-8b14-4ab7-bf76-2c7156e8501d",
+              "name": "zip_code",
+              "value": "={{ $('get_customer').first().json.cep }}",
+              "type": "string"
+            },
+            {
+              "id": "80def6f9-bcda-4741-a209-62723fb4626d",
+              "name": "email",
+              "value": "={{ $('get_customer').first().json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "67595506-f836-4f8b-a7df-f1c45922ebec",
+              "name": "street_name",
+              "value": "={{ $('get_customer').first().json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "eca6823d-e7b9-4ec8-a830-cc9337d88305",
+              "name": "street_number",
+              "value": "=[undefined]",
+              "type": "string"
+            },
+            {
+              "id": "1d1e8718-7027-4cce-9b54-5398fc14b5e8",
+              "name": "bairro",
+              "value": "={{ $('get_customer').first().json.neighborhood }}",
+              "type": "string"
+            },
+            {
+              "id": "7eaf90c8-24c1-4232-a448-9b89943df913",
+              "name": "city",
+              "value": "={{ $('Config').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "7d58c9ac-7eb3-498b-8f67-e2db90edc834",
+              "name": "uf",
+              "value": "={{ $('Config').item.json.uf }}",
+              "type": "string"
+            },
+            {
+              "id": "544b3e41-7588-4baa-9524-4ae69806388c",
+              "name": "invoiceNumber",
+              "value": "={{ $('get_customer').item.json.cpf }}{{ $today.format('x') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -240
+      ],
+      "id": "dc4d6dd4-0a2b-4c96-b562-476e87ec5fef",
+      "name": "CacheData"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c2640eb9-8ccc-4e1a-93d4-cb322475da37",
+              "name": "X-Idempotency-Key",
+              "value": "={{$now.format('x')+$('CacheData').item.json.cpf }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        -240
+      ],
+      "id": "f425298c-5ae1-49d8-b15c-f6c9a0b018f0",
+      "name": "MakeID"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7c1e4384-49e9-4ece-808d-b096176176d2",
+              "name": "copia_cola",
+              "value": "={{ $('Gerar_QR_CODE_MERCADO_PAGO').first().json.point_of_interaction.transaction_data.qr_code }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        512
+      ],
+      "id": "61430614-0a98-4a1b-a4e4-a31d0ed4ff79",
+      "name": "SetResponse",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5dac2949-9a6a-4b4c-afef-c2b01abc238b",
+              "leftValue": "={{ $json.point_of_interaction?.transaction_data?.qr_code_base64 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        -16
+      ],
+      "id": "14048401-9679-4fe0-ba31-5e83ee12f163",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "={{ $('Gerar_QR_CODE_MERCADO_PAGO').item.json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        0
+      ],
+      "id": "b5f43348-4d90-4844-8498-8df316c83ffa",
+      "name": "SetMessageQrCode"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7139412c-aead-42dd-90a9-32bddcbf4c71",
+              "name": "qrcode_base64",
+              "value": "={{ $('Gerar_QR_CODE_MERCADO_PAGO').last().json.point_of_interaction.transaction_data.qr_code_base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "7f437a3d-7cab-4eb1-922f-e8c34cea7670",
+              "name": "copia_cola",
+              "value": "={{ $('Gerar_QR_CODE_MERCADO_PAGO').last().json.point_of_interaction.transaction_data.qr_code }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        240
+      ],
+      "id": "462c1031-19e3-4ec5-add9-0121ccab99d3",
+      "name": "ConfigFile"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c8ed78d1-453e-483c-a3c9-10638e3a660d",
+                    "leftValue": "={{ $('get_customer').item.json.id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "number",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.cpf }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    },
+                    "id": "9229af18-ce30-4642-b59a-36dea9ab58ad"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a50b53f8-330d-463c-b456-0326ceade757",
+                    "leftValue": "={{ $json.email }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2e8e3288-5a26-4709-8919-ad0d371c8ca8",
+                    "leftValue": "={{ $json.cep }}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -704,
+        224
+      ],
+      "id": "bc8ed1d8-6579-4827-8651-a5bae1ab4809",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "Telefone do cliente não localizado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        48
+      ],
+      "id": "f851b254-bf1a-481b-9b72-ab0a3e5c8b92",
+      "name": "SetMessagePhone"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "CPF do cliente não cadastrado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        224
+      ],
+      "id": "42652012-03d7-4155-8fef-49b28d0b37d9",
+      "name": "SetMessageCPF"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "E-mail do cliente não cadastrado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        384
+      ],
+      "id": "622bfb51-13af-48f5-9353-8791ec11547b",
+      "name": "SetMessageEmail"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "CEP do cliente não cadastrado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        560
+      ],
+      "id": "47aa4f75-1661-40b6-a31d-b3d187fd8743",
+      "name": "SetMessageCEP"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.url_strapi }}/{{ $('Config').item.json['table_ purchases'] }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"resumo\":\"{{ $('Config').first().json.invoice.toJsonString().replaceAll('\"','') }}\",\n\"customer\":\"{{ $('get_customer').first().json.id }}\",\n\"pix_code\":\"{{ $json.copia_cola }}\",\n\"valor_total\":\"{{ $('Config').first().json.value }}\",\n\"payment_type\":\"pix\",\n\"invoiceNumber\":\"{{ $('CacheData').first().json.invoiceNumber }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1504,
+        240
+      ],
+      "id": "c23846ec-2ca3-44b3-8c6c-6d28bc6d4080",
+      "name": "CreatePurchase",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_strapi }}/{{ $json.table_name }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $json.phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -384,
+        -240
+      ],
+      "id": "ec08e6c1-b85c-44c9-995c-48fde5aeba11",
+      "name": "get_customer",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "phone"
+            },
+            {
+              "name": "invoice"
+            },
+            {
+              "name": "value",
+              "type": "number"
+            },
+            {
+              "name": "city"
+            },
+            {
+              "name": "uf"
+            },
+            {
+              "name": "url_strapi"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -784,
+        -240
+      ],
+      "id": "af8e6a76-c6ce-46ac-84c1-8f08bbefd3fa",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsMercadoPagoQrcodePixStrapi\n## Esta função gera a cobrança no Mecado Pago e código para pagamento PIX\n\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Config\n## Utilize o NÓ 'config' para configurar o ACCESS_TOKEN, PUBLIC_KEY e URL do seu site\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        -288
+      ],
+      "id": "a23d57c5-6623-4c5d-9656-214b90b2c14e",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "phone": "558681612061",
+          "invoice": "Pizza CAMARÃO & CATUPIRY (Média) - 1 x R$ 96,00\nRefrigerante Coca Zero 1 Litro - 1 x R$ 25,00",
+          "value": 126.6,
+          "city": "Teresina",
+          "uf": "Piauí",
+          "url_strapi": "http://strapi.empreendedorserial.com:1337"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "get_customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar_QR_CODE_MERCADO_PAGO": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "ResponseError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CacheData": {
+      "main": [
+        [
+          {
+            "node": "MakeID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MakeID": {
+      "main": [
+        [
+          {
+            "node": "Gerar_QR_CODE_MERCADO_PAGO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetResponse": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "ConfigFile",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetMessageQrCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetMessageQrCode": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "ConfigFile": {
+      "main": [
+        [
+          {
+            "node": "CreatePurchase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "SetResponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "SetMessagePhone",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetMessageCPF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetMessageEmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetMessageCEP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CacheData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetMessagePhone": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetMessageCPF": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "SetMessageEmail": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "SetMessageCEP": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "get_customer": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "edd2c39b-b3e1-424a-8d99-aef0cf9bdd30",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "DJMbWhJHTSb6B3PP",
+  "tags": []
+}

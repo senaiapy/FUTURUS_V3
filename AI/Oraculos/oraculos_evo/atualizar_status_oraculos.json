@@ -1,0 +1,87 @@
+{
+  "name": "atualizar_status_futurus",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "futurus-digitando-4985aea910f1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        96,
+        224
+      ],
+      "id": "45fbeed9-aa74-4094-a933-b63afef77b02",
+      "name": " Webhook Digitando...",
+      "webhookId": "e56e25c6-d00e-40aa-83b6-4985aea910f1"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "send-presence",
+        "instanceName": "={{ $json.body.instancia }}",
+        "remoteJid": "={{ $json.body.telefone }}",
+        "presence": "={{ $json.body.status }}",
+        "delay": 20000
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        336,
+        224
+      ],
+      "id": "7a59585f-1900-45b0-9a34-b777644f9820",
+      "name": "Atualizar status",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "![Evolution API](https://mintlify.s3.us-west-1.amazonaws.com/evolution/logo/dark.svg)",
+        "height": 100,
+        "width": 280,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "42dcc49f-2c61-4864-bbaf-02bf69281380",
+      "name": "Sticky Note20"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    " Webhook Digitando...": {
+      "main": [
+        [
+          {
+            "node": "Atualizar status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "06c23d44-4233-4f84-bfc2-bfe73359cae7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a4b03526fb8f96a771a0d22efb306192170d3f3f49453bcde6003f24d0eac2f5"
+  },
+  "id": "AYMkr14krHw7TVBH",
+  "tags": []
+}

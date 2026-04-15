@@ -1,0 +1,485 @@
+{
+  "name": "ToolsProductStripeDelivery",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $json.url_stripe }}/{{ $json.table_name }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "_limit",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        -64
+      ],
+      "id": "73ca7af9-3110-4953-8a4e-6d8993c6aa3e",
+      "name": "HTTP Request",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id"
+            },
+            {
+              "name": "type"
+            },
+            {
+              "name": "business_id"
+            },
+            {
+              "name": "url_stripe"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -64
+      ],
+      "id": "f76e6a3c-c7c2-458b-ac6f-7a3c638a07f5",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aeeede6d-086d-41e8-a90e-312d26d76721",
+              "name": "url_stripe",
+              "value": "={{ $json.url_stripe }}",
+              "type": "string"
+            },
+            {
+              "id": "ffcda997-85fe-4683-87b4-0b54e3a45454",
+              "name": "table_name",
+              "value": "produtos",
+              "type": "string"
+            },
+            {
+              "id": "92874c42-d412-4c14-8ea6-bf109ebc2c22",
+              "name": "type",
+              "value": "={{ $json.type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        -64
+      ],
+      "id": "76f3a129-3c1d-4bbd-b1c4-7a57a0ae50cd",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1952,
+        -80
+      ],
+      "id": "9bb998ac-a05f-4c1f-8f84-79818c0b6ff3",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8N Custom Node - Processador de Imóveis\n// Este código deve ser usado em um nó \"Code\" no n8n\n\n// URL base para transformar URLs relativas em absolutas\nconst url_base = $('Config').first().json.url_stripe;\n\n// Limite de caracteres para o campo description\nconst descriptionMaxLength = 300;\n\n// Lista de campos configuráveis - customize conforme necessário\nconst fieldsToInclude = [\n  'id',\n  'title', \n  'description',\n  'preco'\n];\n\n// Configuração para seleção de imagem\nconst imageSelectionConfig = {\n  // Opções: 'first', 'last', 'largest', 'smallest'\n  strategy: 'first'\n};\n\nfunction processProperties(inputData) {\n  if (!Array.isArray(inputData)) {\n    throw new Error('Erro interno: processProperties esperava um array');\n  }\n\n  return inputData.map(property => {\n    // Objeto de saída\n    const processedProperty = {};\n    \n    // Adiciona campos configurados\n    fieldsToInclude.forEach(field => {\n      if (property.hasOwnProperty(field)) {\n        let fieldValue = property[field];\n        \n        // Limita caracteres do campo description\n        if (field === 'description' && typeof fieldValue === 'string') {\n          fieldValue = limitDescription(fieldValue, descriptionMaxLength);\n        }\n        \n        processedProperty[field] = fieldValue;\n      }\n    });\n\n    // Processa imagens\n    if (property.images && Array.isArray(property.images) && property.images.length > 0) {\n      const selectedImage = selectImage(property.images, imageSelectionConfig);\n      processedProperty.foto = selectedImage;\n    } else {\n      processedProperty.foto = null;\n    }\n\n    return processedProperty;\n  });\n}\n\nfunction selectImage(images, config) {\n  if (images.length === 0) return null;\n  \n  let selectedImage;\n  \n  // Seleciona imagem baseada na estratégia\n  switch (config.strategy) {\n    case 'first':\n      selectedImage = images[0];\n      break;\n    case 'last':\n      selectedImage = images[images.length - 1];\n      break;\n    case 'largest':\n      selectedImage = images.reduce((largest, current) => \n        (current.size || 0) > (largest.size || 0) ? current : largest\n      );\n      break;\n    case 'smallest':\n      selectedImage = images.reduce((smallest, current) => \n        (current.size || Infinity) < (smallest.size || Infinity) ? current : smallest\n      );\n      break;\n    default:\n      selectedImage = images[0];\n  }\n\n  // Pega a URL original da imagem (diretamente do objeto, não de formats)\n  // Esta é a URL que está em selectedImage.url, não em selectedImage.formats\n  const imageUrl = makeAbsoluteUrl(selectedImage.url, url_base);\n\n  // Retorna apenas a URL diretamente\n  return imageUrl;\n}\n\nfunction limitDescription(description, maxLength) {\n  if (!description || typeof description !== 'string') {\n    return description;\n  }\n  \n  if (description.length <= maxLength) {\n    return description;\n  }\n  \n  // Corta no limite e adiciona reticências\n  let truncated = description.substring(0, maxLength);\n  \n  // Tenta cortar na última palavra completa para não quebrar no meio\n  const lastSpaceIndex = truncated.lastIndexOf(' ');\n  if (lastSpaceIndex > maxLength * 0.8) { // Se o último espaço não está muito longe do final\n    truncated = truncated.substring(0, lastSpaceIndex);\n  }\n  \n  return truncated.trim() + '...';\n}\n\nfunction makeAbsoluteUrl(url, baseUrl) {\n  if (!url) return url;\n  \n  // Se já é uma URL absoluta, retorna como está\n  if (url.startsWith('http://') || url.startsWith('https://')) {\n    return url;\n  }\n  \n  // Se é uma URL relativa, combina com a base\n  if (url.startsWith('/')) {\n    return baseUrl.replace(/\\/$/, '') + url;\n  }\n  \n  // Se não tem barra inicial, adiciona\n  return baseUrl.replace(/\\/$/, '') + '/' + url + '?tipo=image';\n}\n\n// Código principal para n8n\ntry {\n  // No n8n, os dados de entrada estão em $input.all()\n  const inputItems = $input.all();\n  \n  // Extrai o JSON dos itens de entrada\n  let properties = inputItems[0].json;\n  \n  // Verifica se já é um array ou se precisa converter\n  if (!Array.isArray(properties)) {\n    // Se for um objeto único, transforma em array\n    if (typeof properties === 'object' && properties !== null) {\n      properties = [properties];\n    } else {\n      throw new Error('Dados de entrada inválidos. Esperado um objeto ou array de imóveis.');\n    }\n  }\n  \n  // Processa os imóveis\n  const processedProperties = processProperties(properties);\n  \n  // Retorna os dados processados\n  // No n8n, cada item do array se torna um item separado na saída\n  return processedProperties.map(property => ({\n    json: property\n  }));\n  \n} catch (error) {\n  // Em caso de erro, retorna informação do erro\n  return [{\n    json: {\n      error: true,\n      message: error.message,\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\n/* \nCONFIGURAÇÃO ALTERNATIVA - Cole este código se quiser configurar via parâmetros do nó:\n\n// Configuração via parâmetros do nó n8n\nconst url_base = $parameter.urlBase || \"https://seudominio.com.br\";\nconst descriptionMaxLength = $parameter.descriptionMaxLength || 300;\nconst fieldsToInclude = $parameter.fieldsToInclude ? \n  $parameter.fieldsToInclude.split(',').map(f => f.trim()) : \n  ['id', 'title', 'price', 'bairro', 'cidade'];\n\nconst imageSelectionConfig = {\n  strategy: $parameter.imageStrategy || 'first'\n};\n*/"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        -32
+      ],
+      "id": "77454d73-b9c7-4f07-a47a-8cfc954313a9",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.last().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2592,
+        688
+      ],
+      "id": "ed16d3d2-9038-40df-aa8b-71d76aca3a79",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "all",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4c547a93-4b7f-46c6-b621-52ac56b50573"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "49bf1f5b-5930-4a2b-a5fa-4c70182bbf2a",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "get",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1232,
+        -64
+      ],
+      "id": "3a31ff23-d2e9-43e5-9720-f6ef809211a6",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2592,
+        336
+      ],
+      "id": "a2381042-b628-4d02-a56a-6cc1b26470e6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_stripe }}/{{ $json.table_name }}/{{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        160
+      ],
+      "id": "759013dc-87e5-44a4-bb75-3440ec85e86f",
+      "name": "HTTP Request1",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef74a3e7-6076-473a-9671-fd3227b8e378",
+              "name": "error",
+              "value": "={{ $json.error.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1760,
+        416
+      ],
+      "id": "e9b64f05-160a-4ca4-841d-01b510be6e1b",
+      "name": "setError",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef74a3e7-6076-473a-9671-fd3227b8e378",
+              "name": "error",
+              "value": "={{ $json.error.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1520,
+        624
+      ],
+      "id": "7c3a1060-87d0-4fd7-ac06-9edcf55440b6",
+      "name": "setError1"
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsProductStripeDelivery\n## Esta função busca todos os produtos no STRAPI ou apenas um produto pelo ID\n\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -208
+      ],
+      "id": "fe9d46d1-ef0f-454e-b656-a5f6cf46c72c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Defina a URL base\nconst base_url = $('Config').first().json.url_stripe;\n\n// Função para processar o JSON\nfunction transformPropertyData(inputData) {\n  // Verificar se inputData existe e é um array\n  if (!inputData || !Array.isArray(inputData)) {\n    console.log('Input data is not a valid array:', inputData);\n    return [];\n  }\n  \n  // Verificar se o array não está vazio\n  if (inputData.length === 0) {\n    console.log('Input data is empty array');\n    return [];\n  }\n  \n  return inputData.map(property => {\n    // Verificar se property existe e tem a propriedade images\n    if (!property || !property.images || !Array.isArray(property.images)) {\n      console.log('Property does not have valid images array:', property);\n      return {\n        ...property,\n        images: []\n      };\n    }\n    \n    // Processar as imagens - usando URL original (não formats)\n    const processedImages = property.images\n      .map(image => {\n        // Verificar se image existe e tem a URL original\n        if (!image || !image.url) {\n          return null;\n        }\n        \n        // Usar a URL original da imagem (não de formats)\n        return base_url + image.url + '?tipo=image';\n      })\n      .filter(url => url !== null); // Remover valores nulos\n    \n    // Retornar o objeto transformado\n    return {\n      ...property,\n      images: processedImages\n    };\n  });\n}\n\n// Para uso no n8n, o código deve ser executado assim:\n// Verificar diferentes estruturas de dados possíveis\nlet inputData;\ntry {\n  // Verificar se items existe e não está vazio\n  if (!items || items.length === 0) {\n    console.log('No items found');\n    inputData = [];\n  }\n  // Se items[0].json já é um array\n  else if (items[0] && items[0].json && Array.isArray(items[0].json)) {\n    inputData = items[0].json;\n  } \n  // Se items[0].json é um objeto único\n  else if (items[0] && items[0].json && typeof items[0].json === 'object' && items[0].json !== null) {\n    inputData = [items[0].json];\n  }\n  // Se os dados estão diretamente em items (múltiplos itens)\n  else if (items.length > 0) {\n    inputData = items.map(item => item && item.json ? item.json : null).filter(item => item !== null);\n  }\n  // Fallback\n  else {\n    inputData = [];\n  }\n} catch (error) {\n  console.error('Error processing input data:', error);\n  inputData = [];\n}\n\n// Transformar os dados\nconst transformedData = transformPropertyData(inputData);\n\n// Verificar se há dados para retornar\nif (!transformedData || transformedData.length === 0) {\n  console.log('No data to return');\n  return [{ json: { message: 'No data processed', count: 0 } }];\n}\n\n// Retornar os dados transformados\nreturn transformedData.map(item => ({\n  json: item\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        256
+      ],
+      "id": "7c1bec4c-2918-418c-a3ed-4ef3a87ff462",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.all().map( item => item.json)\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2592,
+        160
+      ],
+      "id": "4c32d8f6-2deb-4262-94fb-f23ad5dd2f51",
+      "name": "Code3"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "id": "1",
+          "type": "all",
+          "business_id": null,
+          "url_stripe": "http://strapi.empreendedorserial.com:1337"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "setError1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "setError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "setError1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ab4f5a5a-8d2d-451e-9ef0-a3f02ed03c7f",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "vsojEwtHTVs1ehdu",
+  "tags": []
+}

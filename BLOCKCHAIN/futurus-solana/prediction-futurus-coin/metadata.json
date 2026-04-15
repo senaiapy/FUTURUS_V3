@@ -1,0 +1,21 @@
+{
+  "name": "Futurus Coin",
+  "symbol": "FUT",
+  "description": "The official utility token for the Futurus Prediction Market.",
+  "image": "https://raw.githubusercontent.com/user/repo/main/futurus.png",
+  "attributes": [
+    {
+      "trait_type": "Category",
+      "value": "Payment"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://raw.githubusercontent.com/user/repo/main/futurus.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image"
+  }
+}

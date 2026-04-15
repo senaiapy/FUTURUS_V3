@@ -1,0 +1,408 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ============================================================
+   PREVEJO — "The Sovereign Futurist" Design System
+   Extracted exactly from Stitch project #11067415733490789510
+   ============================================================ */
+
+:root {
+  /* === CORE PALETTE (from Stitch designTheme.namedColors) === */
+  --background:              #10141a;
+  --surface:                 #10141a;
+  --surface-dim:             #10141a;
+  --surface-bright:          #353940;
+  --surface-container-lowest: #0a0e14;
+  --surface-container-low:   #181c22;
+  --surface-container:       #1c2026;
+  --surface-container-high:  #262a31;
+  --surface-container-highest: #31353c;
+
+  /* Brand */
+  --primary:                 #f2ca50;
+  --primary-container:       #d4af37;
+  --primary-fixed:           #ffe088;
+  --primary-fixed-dim:       #e9c349;
+
+  /* Tertiary (Cyan) */
+  --tertiary:                #00e3fd;
+  --tertiary-container:      #00c5db;
+
+  /* Secondary (Slate Blue) */
+  --secondary:               #b5c8df;
+  --secondary-container:     #36485b;
+
+  /* Text */
+  --on-background:           #dfe2eb;
+  --on-surface:              #dfe2eb;
+  --on-surface-variant:      #d0c5af;
+  --on-primary:              #3c2f00;
+  --on-secondary:            #203243;
+  --on-secondary-container:  #a4b7cd;
+
+  /* Borders */
+  --outline:                 #99907c;
+  --outline-variant:         #4d4635;
+
+  /* Errors */
+  --error:                   #ffb4ab;
+
+  /* === TYPOGRAPHY === */
+  --font-headline: 'Manrope', sans-serif;
+  --font-body:     'Inter', sans-serif;
+  --font-label:    'Space Grotesk', monospace;
+
+  /* === SPACING (spacing-scale: 3 from Stitch) === */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* === COMPONENTS === */
+  --radius-sharp: 0.125rem; /* rounded-sm - tech-forward */
+  --radius-mild:  0.25rem;  /* rounded */
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--on-background);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   GRAIN TEXTURE OVERLAY (subtle premium feel)
+   ============================================================ */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+}
+
+/* ============================================================
+   TYPOGRAPHY — from Stitch designMD
+   ============================================================ */
+.display-lg {
+  font-family: var(--font-headline);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--on-background);
+}
+
+.headline-md {
+  font-family: var(--font-headline);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--on-background);
+}
+
+.label-mono {
+  font-family: var(--font-label);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+/* ============================================================
+   BUTTONS — from Stitch designMD
+   ============================================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2.5rem;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-primary);
+  background: linear-gradient(45deg, var(--primary), var(--primary-container));
+  border: none;
+  border-radius: var(--radius-sharp);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, var(--primary-container), var(--primary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(242, 202, 80, 0.35);
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+.btn-primary span {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--on-background);
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.btn-ghost::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.btn-ghost:hover {
+  color: var(--primary);
+}
+
+.btn-ghost:hover::after {
+  width: 100%;
+}
+
+/* ============================================================
+   GLASS CARDS — "frosted glass" from Stitch designMD
+   ============================================================ */
+.glass-card {
+  background: rgba(38, 42, 49, 0.4); /* surface-container-high at 40% */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(77, 70, 53, 0.15); /* outline-variant ghost border */
+  border-radius: var(--radius-sharp);
+}
+
+/* ============================================================
+   COUNTDOWN CHIPS — Space Grotesk data display
+   ============================================================ */
+.timer-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-value {
+  background: var(--surface-container-highest); /* #31353c */
+  color: var(--primary);
+  font-family: var(--font-label);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sharp);
+  /* Futuristic glow */
+  box-shadow: 0 0 20px rgba(242, 202, 80, 0.08);
+}
+
+.timer-value::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.04), transparent);
+  pointer-events: none;
+}
+
+/* ============================================================
+   TEXT GRADIENTS & ACCENTS
+   ============================================================ */
+.text-gold {
+  color: var(--primary);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, var(--primary-fixed) 0%, var(--primary) 50%, var(--primary-container) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-cyan {
+  color: var(--tertiary);
+}
+
+/* ============================================================
+   SECTION SEPARATORS — no 1px borders rule from designMD
+   Background color shifts create hierarchy instead
+   ============================================================ */
+.section-dark {
+  background-color: var(--surface-container-lowest); /* #0a0e14 */
+}
+
+.section-mid {
+  background-color: var(--surface-container-low); /* #181c22 */
+}
+
+.section-elevated {
+  background-color: var(--surface-container); /* #1c2026 */
+}
+
+/* ============================================================
+   AMBIENT GLOWS & DECORATIVE ELEMENTS
+   ============================================================ */
+.glow-gold {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.glow-cyan {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 227, 253, 0.1) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* Grid pattern overlay */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(242, 202, 80, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 202, 80, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ============================================================
+   STATS / DATA INDICATORS
+   ============================================================ */
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  background: rgba(0, 227, 253, 0.08);
+  border: 1px solid rgba(0, 227, 253, 0.2);
+  border-radius: var(--radius-sharp);
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--tertiary);
+  letter-spacing: 0.08em;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-container-lowest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-container);
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ============================================================
+   FOOTER LINKS
+   ============================================================ */
+.footer-link {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: rgba(223, 226, 235, 0.55);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+::selection {
+  background: rgba(242, 202, 80, 0.25);
+  color: var(--primary-fixed);
+}

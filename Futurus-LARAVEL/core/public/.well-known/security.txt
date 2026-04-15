@@ -1,0 +1,10 @@
+# Futurus Security Policy
+# https://securitytxt.org/
+
+Contact: mailto:security@futurus.net.br
+Expires: 2027-03-23T00:00:00.000Z
+Preferred-Languages: pt, en
+Canonical: https://futurus.net.br/.well-known/security.txt
+
+# If you discover a security vulnerability, please report it responsibly.
+# We appreciate your help in keeping our users safe.

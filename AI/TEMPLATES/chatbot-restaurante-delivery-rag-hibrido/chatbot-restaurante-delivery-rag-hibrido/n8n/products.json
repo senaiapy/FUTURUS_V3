@@ -1,0 +1,1013 @@
+{
+    "restaurante": "Delícias do Brasil",
+    "produtos": [
+      {
+        "name": "Salada Tropical Nordestina",
+        "price": 32.00,
+        "description": "Manga, abacaxi, castanha de caju, rúcula, queijo coalho, molho de maracujá",
+        "category": "Entradas Frias"
+      },
+      {
+        "name": "Tábua de Queijos Artesanais",
+        "price": 58.00,
+        "description": "Queijo minas, coalho, canastra, requeijão cremoso, geleia de pequi (serve 2-3 pessoas)",
+        "category": "Entradas Frias"
+      },
+      {
+        "name": "Carpaccio de Carne de Sol",
+        "price": 45.00,
+        "description": "Carne de sol fatiada, rúcula, parmesão, azeite trufado, limão siciliano",
+        "category": "Entradas Frias"
+      },
+      {
+        "name": "Ceviche Amazônico",
+        "price": 52.00,
+        "description": "Tucumã, leite de coco, cebola roxa, coentro, pimenta de cheiro",
+        "category": "Entradas Frias"
+      },
+      {
+        "name": "Bruschetta de Cachaça",
+        "price": 28.00,
+        "description": "Pão italiano, tomate, manjericão, queijo minas, redução de cachaça (4 unidades)",
+        "category": "Entradas Frias"
+      },
+      {
+        "name": "Bolinho de Bacalhau Tradicional",
+        "price": 42.00,
+        "description": "Bacalhau do Porto, batata, cebola, salsinha, ovo, farinha de trigo (6 unidades)",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Dadinho de Tapioca Recheado",
+        "price": 38.00,
+        "description": "Tapioca, queijo coalho, leite, manteiga, pimenta biquinho",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Casquinha de Siri Baiana",
+        "price": 56.00,
+        "description": "Siri, dendê, cebola roxa, tomate, coentro, pimenta malagueta (2 unidades)",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Coxinha de Frango Caipira",
+        "price": 35.00,
+        "description": "Frango caipira, batata, farinha de trigo, ovo, temperos especiais (5 unidades)",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Pastéis de Queijo Mineiro",
+        "price": 30.00,
+        "description": "Massa folhada, queijo minas, orégano, ovo para pincelar (4 unidades)",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Bolinhos de Mandioca",
+        "price": 25.00,
+        "description": "Mandioca, queijo ralado, cheiro verde, farinha de rosca (6 unidades)",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Escondidinho Individual de Carne Seca",
+        "price": 48.00,
+        "description": "Carne seca desfiada, purê de batata doce, queijo gratinado",
+        "category": "Entradas Quentes"
+      },
+      {
+        "name": "Picanha Nobre na Brasa",
+        "price": 125.00,
+        "description": "Picanha argentina 400g, sal grosso, alho. Acompanhamentos: Feijão tropeiro, vinagrete, farofa de bacon",
+        "category": "Pratos Principais - Carnes"
+      },
+      {
+        "name": "Costela Bovina no Bafo",
+        "price": 98.00,
+        "description": "Costela 800g, cebola, alho, louro, cachaça, temperos secretos. Acompanhamentos: Angu cremoso, couve mineira, torresmo",
+        "category": "Pratos Principais - Carnes"
+      },
+      {
+        "name": "Bife de Chorizo Argentino",
+        "price": 145.00,
+        "description": "Chorizo premium 500g, chimichurri, sal de ervas. Acompanhamentos: Batata rústica, salada mista",
+        "category": "Pratos Principais - Carnes"
+      },
+      {
+        "name": "Cordeiro Assado com Ervas",
+        "price": 165.00,
+        "description": "Pernil de cordeiro 450g, alecrim, tomilho, vinho tinto. Acompanhamentos: Batata hasselback, ratatouille brasileiro",
+        "category": "Pratos Principais - Carnes"
+      },
+      {
+        "name": "Cabrito Guisado Nordestino",
+        "price": 135.00,
+        "description": "Cabrito 400g, jerimum, quiabo, temperos nordestinos. Acompanhamentos: Arroz de coco, pirão de leite",
+        "category": "Pratos Principais - Carnes"
+      },
+      {
+        "name": "Feijoada Completa Premium",
+        "price": 95.00,
+        "description": "15 tipos de carne, feijão preto especial. Todos os acompanhamentos clássicos + laranja caramelizada (serve 1-2 pessoas)",
+        "category": "Pratos Principais - Carnes"
+      },
+      {
+        "name": "Moqueca Capixaba de Robalo",
+        "price": 85.00,
+        "description": "Robalo fresco, urucum, tomate, cebola, coentro. Acompanhamentos: Arroz de coco, pirão d'água, banana frita",
+        "category": "Pratos Principais - Frutos do Mar"
+      },
+      {
+        "name": "Bobó de Camarão Bahiano",
+        "price": 110.00,
+        "description": "Camarão rosa grande, mandioca, leite de coco, dendê. Acompanhamentos: Arroz branco, farofa de dendê",
+        "category": "Pratos Principais - Frutos do Mar"
+      },
+      {
+        "name": "Salmão Grelhado Especial",
+        "price": 125.00,
+        "description": "Salmão chileno 350g, molho de maracujá, ervas finas. Acompanhamentos: Risotto de camarão, legumes grelhados",
+        "category": "Pratos Principais - Frutos do Mar"
+      },
+      {
+        "name": "Paella Brasileira",
+        "price": 155.00,
+        "description": "Camarão, lula, mexilhão, linguiça calabresa, frango, arroz bomba, açafrão, pimentões (serve 2 pessoas)",
+        "category": "Pratos Principais - Frutos do Mar"
+      },
+      {
+        "name": "Pirarucu de Casaca Amazônico",
+        "price": 115.00,
+        "description": "Pirarucu, banana da terra, farinha de mandioca, ovos. Acompanhamentos: Arroz regional, farofa de dendê",
+        "category": "Pratos Principais - Frutos do Mar"
+      },
+      {
+        "name": "Casquinha de Caranguejo Especial",
+        "price": 75.00,
+        "description": "Caranguejo catado, leite de coco, coentro, pimenta. Acompanhamentos: Limão, pimenta artesanal (2 unidades grandes)",
+        "category": "Pratos Principais - Frutos do Mar"
+      },
+      {
+        "name": "Escondidinho de Jaca Verde",
+        "price": 68.00,
+        "description": "Jaca desfiada, mandioquinha, temperos especiais. Acompanhamentos: Salada verde, vinagrete (100% vegano)",
+        "category": "Pratos Vegetarianos e Veganos"
+      },
+      {
+        "name": "Baião de Dois Tradicional",
+        "price": 52.00,
+        "description": "Arroz, feijão de corda, queijo coalho, linguiça de soja. Acompanhamentos: Torresmo vegetal, couve refogada",
+        "category": "Pratos Vegetarianos e Veganos"
+      },
+      {
+        "name": "Quiche de Palmito e Espinafre",
+        "price": 45.00,
+        "description": "Massa integral, palmito, espinafre, queijo cottage. Acompanhamentos: Salada de rúcula, molho de ervas",
+        "category": "Pratos Vegetarianos e Veganos"
+      },
+      {
+        "name": "Hambúrguer de Grão-de-Bico",
+        "price": 42.00,
+        "description": "Grão-de-bico, quinoa, cenoura, temperos árabes. Acompanhamentos: Pão brioche, batata rústica, salada",
+        "category": "Pratos Vegetarianos e Veganos"
+      },
+      {
+        "name": "Curry de Legumes Tropicais",
+        "price": 55.00,
+        "description": "Abóbora, quiabo, maxixe, leite de coco, curry. Acompanhamentos: Arroz jasmin, farofa de coco (100% vegano)",
+        "category": "Pratos Vegetarianos e Veganos"
+      },
+      {
+        "name": "Lasanha de Berinjela com Ricota",
+        "price": 62.00,
+        "description": "Berinjela grelhada, ricota, molho pomodoro, manjericão. Acompanhamentos: Salada caprese, pão de alho",
+        "category": "Pratos Vegetarianos e Veganos"
+      },
+      {
+        "name": "Pudim de Leite Condensado da Vovó",
+        "price": 28.00,
+        "description": "Leite condensado artesanal, ovos caipira, açúcar cristal",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Brigadeirão de Panela",
+        "price": 32.00,
+        "description": "Leite condensado, chocolate amargo, manteiga, sorvete",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Torta de Limão Siciliano",
+        "price": 35.00,
+        "description": "Biscoito, limão siciliano, leite condensado, merengue",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Quindim Gigante Individual",
+        "price": 25.00,
+        "description": "Coco fresco, gemas, açúcar cristal, manteiga",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Mousse de Maracujá do Cerrado",
+        "price": 30.00,
+        "description": "Maracujá do cerrado, creme de leite, leite condensado",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Pavê de Paçoca Artesanal",
+        "price": 38.00,
+        "description": "Biscoito champagne, paçoca artesanal, creme, amendoim",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Cocada de Forno com Queijo",
+        "price": 22.00,
+        "description": "Coco fresco, açúcar mascavo, queijo minas, canela",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Bolo de Rolo Pernambucano",
+        "price": 35.00,
+        "description": "Massa fininha, goiabada cascão, açúcar de confeiteiro (3 fatias)",
+        "category": "Sobremesas Tradicionais"
+      },
+      {
+        "name": "Caju Orgânico",
+        "price": 18.00,
+        "description": "Suco natural 500ml",
+        "category": "Bebidas Especiais - Sucos Naturais"
+      },
+      {
+        "name": "Açaí com Banana",
+        "price": 22.00,
+        "description": "Suco natural 500ml",
+        "category": "Bebidas Especiais - Sucos Naturais"
+      },
+      {
+        "name": "Cupuaçu Amazônico",
+        "price": 25.00,
+        "description": "Suco natural 400ml",
+        "category": "Bebidas Especiais - Sucos Naturais"
+      },
+      {
+        "name": "Graviola Fresca",
+        "price": 20.00,
+        "description": "Suco natural 500ml",
+        "category": "Bebidas Especiais - Sucos Naturais"
+      },
+      {
+        "name": "Umbu do Sertão",
+        "price": 24.00,
+        "description": "Suco natural 400ml",
+        "category": "Bebidas Especiais - Sucos Naturais"
+      },
+      {
+        "name": "Caipirinha Tradicional",
+        "price": 28.00,
+        "description": "Cachaça Salinas/MG",
+        "category": "Bebidas Especiais - Alcoólicas"
+      },
+      {
+        "name": "Caipirinha de Cajá",
+        "price": 32.00,
+        "description": "Fruta nordestina",
+        "category": "Bebidas Especiais - Alcoólicas"
+      },
+      {
+        "name": "Chopp Artesanal",
+        "price": 15.00,
+        "description": "400ml - 4,5% álcool",
+        "category": "Bebidas Especiais - Alcoólicas"
+      },
+      {
+        "name": "Vinho da Casa Tinto",
+        "price": 18.00,
+        "description": "Taça - Uva brasileira",
+        "category": "Bebidas Especiais - Alcoólicas"
+      },
+      {
+        "name": "Batida de Coco Premium",
+        "price": 35.00,
+        "description": "Coco baiano",
+        "category": "Bebidas Especiais - Alcoólicas"
+      },
+      {
+        "name": "Expresso Brasileiro",
+        "price": 8.00,
+        "description": "Minas Gerais torra média",
+        "category": "Bebidas Especiais - Cafés"
+      },
+      {
+        "name": "Café Coado Tradicional",
+        "price": 12.00,
+        "description": "Cerrado/Sul de Minas",
+        "category": "Bebidas Especiais - Cafés"
+      },
+      {
+        "name": "Cappuccino Artesanal",
+        "price": 15.00,
+        "description": "Leite vaporizado",
+        "category": "Bebidas Especiais - Cafés"
+      },
+      {
+        "name": "Café Gelado com Leite Condensado",
+        "price": 16.00,
+        "description": "Especialidade da casa",
+        "category": "Bebidas Especiais - Cafés"
+      },
+      {
+        "name": "Laranja",
+        "price": 8.90,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Limão",
+        "price": 7.60,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Maracujá",
+        "price": 9.40,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Caju",
+        "price": 10.20,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Manga",
+        "price": 11.80,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Abacaxi",
+        "price": 9.70,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Goiaba",
+        "price": 10.50,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Acerola",
+        "price": 8.40,
+        "description": "Suco natural 500ml",
+        "category": "Sucos Naturais"
+      },
+      {
+        "name": "Vitamina de Banana",
+        "price": 12.30,
+        "description": "Vitamina 400ml",
+        "category": "Vitaminas e Shakes"
+      },
+      {
+        "name": "Vitamina de Abacate",
+        "price": 13.80,
+        "description": "Vitamina 400ml",
+        "category": "Vitaminas e Shakes"
+      },
+      {
+        "name": "Shake de Morango",
+        "price": 14.60,
+        "description": "Shake 400ml",
+        "category": "Vitaminas e Shakes"
+      },
+      {
+        "name": "Vitamina de Mamão",
+        "price": 11.90,
+        "description": "Vitamina 400ml",
+        "category": "Vitaminas e Shakes"
+      },
+      {
+        "name": "Hamburger Artesanal Gaúcho",
+        "price": 28.50,
+        "description": "Pão brioche, hambúrguer 180g, queijo prato, alface, tomate",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Bauru Tradicional Paulista",
+        "price": 24.90,
+        "description": "Pão francês, presunto, queijo, tomate, orégano",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Sanduíche de Mortadela Premium",
+        "price": 18.75,
+        "description": "Mortadela artesanal, pão italiano, mostarda Dijon",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Misto Quente Caprichado",
+        "price": 15.30,
+        "description": "Pão de forma, presunto, queijo mussarela, manteiga",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Cachorro-Quente Completo",
+        "price": 22.40,
+        "description": "Salsicha, pão, batata palha, milho, ervilha, queijo",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "X-Salada Especial",
+        "price": 26.80,
+        "description": "Hambúrguer, queijo, alface, tomate, ovo, batata",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Pastel de Queijo Mineiro",
+        "price": 12.60,
+        "description": "Massa caseira, queijo minas, óleo, sal",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Coxinha de Frango Grande",
+        "price": 8.90,
+        "description": "Massa de batata, frango desfiado, temperos",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Esfiha de Carne Síria",
+        "price": 9.50,
+        "description": "Massa árabe, carne moída, cebola, especiarias",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Pão de Açúcar Carioca",
+        "price": 6.70,
+        "description": "Pão doce, açúcar cristal, canela",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Tapioca Nordestina Simples",
+        "price": 14.20,
+        "description": "Goma de tapioca, queijo coalho, manteiga",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Acarajé Baiano Tradicional",
+        "price": 16.40,
+        "description": "Feijão fradinho, dendê, camarão seco, vatapá",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Pão de Queijo Mineiro",
+        "price": 19.80,
+        "description": "Polvilho, queijo minas, ovos, leite, óleo (6 unidades)",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Biscoito de Polvilho Doce",
+        "price": 11.30,
+        "description": "Polvilho doce, açúcar, ovos, manteiga (10 unidades)",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Enroladinho de Salsicha",
+        "price": 23.70,
+        "description": "Massa folhada, salsicha, queijo, orégano (5 unidades)",
+        "category": "Sanduíches e Lanches"
+      },
+      {
+        "name": "Espaguete à Carbonara",
+        "price": 32.90,
+        "description": "Massa italiana, bacon, ovos, queijo parmesão, pimenta",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Lasanha de Frango com Catupiry",
+        "price": 28.60,
+        "description": "Massa, frango, catupiry, molho branco, queijo",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Nhoque de Batata ao Sugo",
+        "price": 24.40,
+        "description": "Batata, farinha, ovos, molho de tomate, manjericão",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Macarrão Alho e Óleo",
+        "price": 18.90,
+        "description": "Espaguete, alho, azeite extra virgem, salsinha",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Penne ao Molho Rosé",
+        "price": 26.70,
+        "description": "Penne, molho de tomate, creme de leite, manjericão",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Risotto de Camarão Rosa",
+        "price": 45.80,
+        "description": "Arroz arbóreo, camarão, vinho branco, queijo parmesão",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Fettuccine Alfredo",
+        "price": 29.50,
+        "description": "Fettuccine, manteiga, creme de leite, parmesão",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Capeleti de Ricota ao Pomodoro",
+        "price": 31.20,
+        "description": "Massa recheada, ricota, molho de tomate fresco",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Ravióli de Espinafre",
+        "price": 33.40,
+        "description": "Massa fresca, espinafre, ricota, molho branco",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Macarrão Integral com Legumes",
+        "price": 22.60,
+        "description": "Massa integral, abobrinha, cenoura, brócolis",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Risotto de Funghi Secchi",
+        "price": 38.90,
+        "description": "Arroz arbóreo, cogumelos, vinho branco, trufa",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Parafuso ao Pesto Genovês",
+        "price": 27.80,
+        "description": "Parafuso, manjericão, pinhões, alho, parmesão",
+        "category": "Massas e Risotos"
+      },
+      {
+        "name": "Pizza Margherita Individual",
+        "price": 22.90,
+        "description": "Molho de tomate, mussarela, manjericão, azeite",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Pepperoni Individual",
+        "price": 26.40,
+        "description": "Molho, mussarela, pepperoni importado, orégano",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Portuguesa Individual",
+        "price": 28.70,
+        "description": "Presunto, ovos, cebola, azeitona, mussarela",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Calabresa Individual",
+        "price": 24.50,
+        "description": "Calabresa fatiada, cebola, mussarela, orégano",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Quatro Queijos Individual",
+        "price": 32.10,
+        "description": "Mussarela, parmesão, gorgonzola, catupiry",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Frango com Catupiry Individual",
+        "price": 29.80,
+        "description": "Frango desfiado, catupiry, milho, azeitona",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Napolitana Individual",
+        "price": 25.30,
+        "description": "Mussarela, tomate, alho, manjericão, azeite",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Atum Individual",
+        "price": 27.60,
+        "description": "Atum, cebola, azeitona preta, mussarela",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Vegetariana Individual",
+        "price": 26.90,
+        "description": "Tomate, pimentão, cebola, azeitona, champignon",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Bacon Individual",
+        "price": 28.40,
+        "description": "Bacon crocante, mussarela, cebola roxa",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Lombinho Individual",
+        "price": 30.20,
+        "description": "Lombinho suíno, catupiry, milho verde",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Escarola Individual",
+        "price": 24.80,
+        "description": "Escarola refogada, alho, mussarela, azeitona",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Palmito Individual",
+        "price": 26.10,
+        "description": "Palmito em conserva, mussarela, tomate",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Romeu e Julieta Individual",
+        "price": 23.70,
+        "description": "Queijo minas, goiabada, canela, açúcar",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Banana com Canela Individual",
+        "price": 21.90,
+        "description": "Banana nanica, açúcar, canela, leite condensado",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Chocolate Individual",
+        "price": 25.60,
+        "description": "Chocolate ao leite derretido, morango, açúcar",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Prestígio Individual",
+        "price": 27.30,
+        "description": "Chocolate, coco ralado, leite condensado",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Brigadeiro Individual",
+        "price": 26.80,
+        "description": "Brigadeiro cremoso, granulado, morango",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Sensação Individual",
+        "price": 28.90,
+        "description": "Chocolate branco, morango, leite condensado",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Pizza Dois Amores Individual",
+        "price": 29.40,
+        "description": "Metade prestígio, metade romeu e julieta",
+        "category": "Pizzas"
+      },
+      {
+        "name": "Salada Caesar com Frango",
+        "price": 32.40,
+        "description": "Alface romana, frango grelhado, croutons, parmesão",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Tropical de Frutas",
+        "price": 28.60,
+        "description": "Manga, abacaxi, mamão, uva, mel, granola",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Verde Simples",
+        "price": 18.90,
+        "description": "Mix de folhas, tomate cereja, azeite, limão",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada de Atum com Grão-de-Bico",
+        "price": 26.70,
+        "description": "Atum em conserva, grão-de-bico, cebola, salsinha",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Caprese Italiana",
+        "price": 29.80,
+        "description": "Tomate, mussarela de búfala, manjericão, azeite",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada de Quinoa Colorida",
+        "price": 31.50,
+        "description": "Quinoa, cenoura, beterraba, pepino, limão",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Waldorf Clássica",
+        "price": 24.20,
+        "description": "Maçã, aipo, nozes, uvas passas, maionese",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Tabule Árabe Tradicional",
+        "price": 22.80,
+        "description": "Trigo para quibe, tomate, cebola, hortelã, limão",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada de Palmito Heart",
+        "price": 27.40,
+        "description": "Palmito pupunha, rúcula, tomate seco, azeite",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Grega Mediterrânea",
+        "price": 30.90,
+        "description": "Pepino, tomate, azeitona, queijo feta, orégano",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Bowl de Açaí Natural",
+        "price": 18.60,
+        "description": "Açaí puro, banana, granola, mel - 500ml",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada de Frutos do Mar",
+        "price": 38.70,
+        "description": "Camarão, lula, mexilhão, rúcula, limão siciliano",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Poke de Salmão Hawaiano",
+        "price": 42.30,
+        "description": "Salmão fresco, arroz, abacate, alga nori",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Detox Verde",
+        "price": 25.50,
+        "description": "Couve, espinafre, pepino, limão, gengibre",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Wrap Light de Peru",
+        "price": 21.40,
+        "description": "Tortilha integral, peito de peru, alface, tomate",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Salada Niçoise Francesa",
+        "price": 34.80,
+        "description": "Atum, ovos, vagem, azeitona, mostarda Dijon",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Ceviche Peruano de Peixe",
+        "price": 36.20,
+        "description": "Peixe branco, limão, cebola roxa, pimenta",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Carpaccio de Salmão",
+        "price": 39.60,
+        "description": "Salmão laminado, alcaparras, azeite trufado",
+        "category": "Saladas e Pratos Light"
+      },
+      {
+        "name": "Yakisoba de Frango",
+        "price": 28.90,
+        "description": "Macarrão chinês, frango, brócolis, cenoura, molho",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Sushi Combinado",
+        "price": 45.80,
+        "description": "Salmão, atum, kani, pepino, arroz temperado (12 peças)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Temaki de Salmão",
+        "price": 24.60,
+        "description": "Alga nori, arroz, salmão fresco, pepino (2 unidades)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Hot Roll Filadélfia",
+        "price": 32.40,
+        "description": "Salmão, cream cheese, pepino, gergelim (8 peças)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Lamen Tradicional Japonês",
+        "price": 26.70,
+        "description": "Macarrão ramen, caldo de porco, ovos, cebolinha",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Gyoza de Porco",
+        "price": 19.80,
+        "description": "Massa chinesa, porco moído, repolho, gengibre (6 unidades)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Pad Thai Tailandês",
+        "price": 31.50,
+        "description": "Macarrão de arroz, camarão, broto de feijão, amendoim",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Tempurá de Legumes",
+        "price": 22.30,
+        "description": "Abobrinha, berinjela, cenoura, massa tempurá (8 peças)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Arroz Chop Suey",
+        "price": 24.80,
+        "description": "Arroz branco, legumes variados, molho shoyu",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Sashimi Misto",
+        "price": 42.90,
+        "description": "Salmão, atum, peixe branco frescos (15 fatias)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Bibimbap Coreano",
+        "price": 29.60,
+        "description": "Arroz, legumes marinados, ovo frito, gochujang",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Spring Roll Vietnamita",
+        "price": 18.40,
+        "description": "Papel de arroz, camarão, alface, hortelã (4 unidades)",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Curry Tailandês de Frango",
+        "price": 33.20,
+        "description": "Frango, leite de coco, curry verde, manjericão",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Udon com Tempurá",
+        "price": 27.90,
+        "description": "Macarrão udon, caldo dashi, tempurá de camarão",
+        "category": "Pratos Orientais"
+      },
+      {
+        "name": "Brigadeiro Gourmet",
+        "price": 18.90,
+        "description": "Sabores: Tradicional, pistache, maracujá, café, coco, morango (6 unidades)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Beijinho de Coco",
+        "price": 16.40,
+        "description": "Leite condensado, coco ralado, cravo da índia (6 unidades)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Cajuzinho Artesanal",
+        "price": 17.60,
+        "description": "Amendoim torrado, leite condensado, açúcar cristal (6 unidades)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Pudim de Leite Caseiro",
+        "price": 12.80,
+        "description": "Leite integral, ovos, açúcar, essência de baunilha",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Mousse de Chocolate Belga",
+        "price": 15.20,
+        "description": "Chocolate 70% cacau, creme de leite, ovos",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Torta de Limão Individual",
+        "price": 14.70,
+        "description": "Biscoito maria, limão siciliano, leite condensado",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Pavê de Oreo Individual",
+        "price": 16.90,
+        "description": "Biscoito oreo, creme branco, leite condensado",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Quindim da Bahia",
+        "price": 8.60,
+        "description": "Gemas, açúcar, coco fresco, manteiga",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Bem-casado Tradicional",
+        "price": 11.30,
+        "description": "Massa de pão de ló, doce de leite, açúcar de confeiteiro (2 unidades)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Cocada Branca Baiana",
+        "price": 6.50,
+        "description": "Coco fresco, açúcar cristal, leite",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Doce de Abóbora com Coco",
+        "price": 7.80,
+        "description": "Abóbora cabotiá, açúcar mascavo, coco ralado",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Pé de Moleque Crocante",
+        "price": 5.90,
+        "description": "Amendoim torrado, rapadura, água, bicarbonato",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Paçoca de Amendoim Caseira",
+        "price": 4.20,
+        "description": "Amendoim torrado, açúcar cristal, sal",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Bolo de Cenoura com Chocolate",
+        "price": 13.40,
+        "description": "Cenoura, farinha, ovos, cobertura de chocolate",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Cheesecake de Frutas Vermelhas",
+        "price": 18.60,
+        "description": "Cream cheese, biscoito, morango, mirtilo, framboesa",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Tiramisu Individual",
+        "price": 19.90,
+        "description": "Mascarpone, café expresso, biscoito champagne, cacau",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Petit Gateau de Chocolate",
+        "price": 22.30,
+        "description": "Chocolate amargo, manteiga, ovos, sorvete de baunilha",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Sorvete Artesanal",
+        "price": 11.80,
+        "description": "Sabores: Baunilha, chocolate, morango, coco, açaí, cupuaçu (2 bolas)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Milk Shake de Ovomaltine",
+        "price": 16.70,
+        "description": "Sorvete de baunilha, leite, ovomaltine, chantilly - 400ml",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Açaí na Tigela Premium",
+        "price": 24.50,
+        "description": "Açaí, banana, granola, mel, frutas da estação - 500ml",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Crepe Doce de Nutella",
+        "price": 21.40,
+        "description": "Massa de crepe, nutella, banana, morango, chantilly",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Waffle Belga com Frutas",
+        "price": 19.80,
+        "description": "Massa de waffle, frutas frescas, mel, açúcar de confeiteiro",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Churros com Doce de Leite",
+        "price": 17.30,
+        "description": "Massa choux, açúcar, canela, doce de leite argentino (5 unidades)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Bombom de Morango",
+        "price": 20.60,
+        "description": "Morango fresco, chocolate branco, chocolate ao leite (4 unidades)",
+        "category": "Doces e Sobremesas"
+      },
+      {
+        "name": "Sonho de Padaria Recheado",
+        "price": 9.40,
+        "description": "Recheios: Doce de leite, creme, chocolate, coco",
+        "category": "Doces e Sobremesas"
+      }
+    ]
+  }

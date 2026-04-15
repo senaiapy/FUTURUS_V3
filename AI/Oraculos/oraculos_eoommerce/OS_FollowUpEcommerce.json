@@ -1,0 +1,802 @@
+{
+  "name": "Futurus_FollowUpEcommerce",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "=chats_futurus",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "updated_at",
+              "condition": "lte",
+              "keyValue": "={{ $now.toUTC().minus(5,'minutes')}}"
+            },
+            {
+              "keyName": "app",
+              "condition": "eq",
+              "keyValue": "delivery"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        192,
+        512
+      ],
+      "id": "0627dcea-6209-44b0-9832-726832f28659",
+      "name": "ListChats-Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Você é um agente facilitador de vendas e está buscando conversas não finalizadas entre o cliente e um agent de IA. \n\n# Cria a responda apenas a resposta não precisa justificar sua resposta\n\n# Identifique o cliente não enviou mais mensagens de resposta\n\n# Se o cliente não responder mesmo assim, agradeça e diga que irá encerrar o pedido e está a disposição para outros pedidos\n\n# Use frase simples e naturais como nos exemplos\n\nExemplos : \n - 'Oi .. ainda está ai'\n - 'E ai ? vamos finalizar o pedido?' \n\n# Conversa entre o cliete e o agente de IA:\n{{ $json.texto }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        2144,
+        64
+      ],
+      "id": "72309c55-2883-4baf-b03a-ef81e210962f",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "inputText": "=Data/Hora:\n{{ $now.toDateTime().format('yyyy-MM-dd HH:mm:ss') }}\n\nÚltimo diálogo entre o cliente e o chatbot:\n\n- Menasgem do cliente: {{ $json.user_message || \"\"}}\n\n- Resposta do chatbot : {{ $json.bot_message }}\n\n",
+        "categories": {
+          "categories": [
+            {
+              "category": "pendente_resposta",
+              "description": "O bot fez uma pergunta ou conversa está pendente devido a uma informação que o cliente ficou de fornecer ou confirmar"
+            },
+            {
+              "category": "encerrada",
+              "description": "Houve um desfecho da conversa e o agente de IA se despediu"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        80
+      ],
+      "id": "cf00e59d-6780-4384-840b-a3c406a24700",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "tableId": "=chat_messages_futurus",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $('Text Classifier').item.json.phone }}"
+            },
+            {
+              "fieldId": "conversation_id",
+              "fieldValue": "={{ $('Text Classifier').item.json.phone }}"
+            },
+            {
+              "fieldId": "message_type",
+              "fieldValue": "=followup"
+            },
+            {
+              "fieldId": "bot_message",
+              "fieldValue": "={{ $('SetConfig').item.json.output }}"
+            },
+            {
+              "fieldId": "active",
+              "fieldValue": "false"
+            },
+            {
+              "fieldId": "user_message",
+              "fieldValue": ".."
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1184
+      ],
+      "id": "aedbcb28-534d-4ad7-ac2f-7d3456fd3fa9",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        448,
+        80
+      ],
+      "id": "3bc68efa-4510-447d-8889-b3a00109fc14",
+      "name": "Loop Over Items1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        400
+      ],
+      "id": "cfcbeb00-5b06-4d0b-a574-f07e2124284f",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "czfsa36YSvhqfxx1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        400
+      ],
+      "id": "8a72c1da-68b3-48ca-ac79-1654e37dd6d4",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "czfsa36YSvhqfxx1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        1184
+      ],
+      "id": "f2c1259a-3eed-4127-a298-2a16027c771a",
+      "name": "Wait1",
+      "webhookId": "0f1ac48e-51a2-435e-99a4-fb1c3f3fa26a"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        112
+      ],
+      "id": "17910453-a5ad-4f90-a4d3-b4d79e33ebf9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "=chat_messages_futurus",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('SetData1')?.item?.json?.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "active",
+              "fieldValue": "false"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        1168
+      ],
+      "id": "1af2382f-1bfd-48dd-99a0-cc5639dca454",
+      "name": "DisableMessage-Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.evolution_api_url }}/message/sendText/{{ $json.evolution_api_instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.evolution_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ce08292c-57ae-4fbd-9a17-e78bde5b1855",
+      "name": "Evolution API - HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2368,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9c00627-84a9-49a9-bc7e-d923a5918346",
+              "name": "output",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "1e57eb87-d78f-424b-ab84-7738ce384405",
+              "name": "evolution_api_url",
+              "value": "https://evo.yoenvio.de",
+              "type": "string"
+            },
+            {
+              "id": "44fd293f-0a32-4499-90fc-bffca5bb524b",
+              "name": "evolution_api_key",
+              "value": "F1B107B4CDB0-4A9D-94EA-963BA6AAB902",
+              "type": "string"
+            },
+            {
+              "id": "8fd329d8-2237-4ad3-a496-ee49b5042fc5",
+              "name": "evolution_api_instance",
+              "value": "futurus",
+              "type": "string"
+            },
+            {
+              "id": "0e34f673-b6dc-4748-89d2-a178dfe91853",
+              "name": "phone",
+              "value": "={{ $('SetData1').item.json.phone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2352,
+        368
+      ],
+      "id": "1fa0b28f-121d-4443-9212-bef6ef599ffd",
+      "name": "SetConfig"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        80
+      ],
+      "id": "c47ea9e9-461f-4b78-9a2d-849cbc04600d",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        80
+      ],
+      "id": "cd5d36d5-41d8-4a70-b3de-2f38b90d3b92",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "=chat_messages_futurus",
+        "limit": 10,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $json.phone }}"
+            },
+            {
+              "keyName": "active",
+              "condition": "eq",
+              "keyValue": "true"
+            },
+            {
+              "keyName": "message_type",
+              "condition": "neq",
+              "keyValue": "followup"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        720,
+        112
+      ],
+      "id": "53e7daa7-d8fa-4140-9a54-67e1389a448d",
+      "name": "ListMessages-Supabase",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cd59cd96-3e3e-466f-9e2a-a6ed035fc96b",
+              "leftValue": "={{ $('ListMessages-Supabase').item.json.values() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        384
+      ],
+      "id": "e47833c9-ef50-4412-9d47-b9576c000c53",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        768
+      ],
+      "id": "8e3a15d8-da78-4a64-8621-056fd051bad7",
+      "name": "Wait2",
+      "webhookId": "fee20628-422b-44f6-abba-d1f9a20ecfdf"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4a874784-906e-4dc0-b6b7-a9381254a240",
+              "name": "id",
+              "value": "={{ $('Limit')?.item?.json?.id }}",
+              "type": "string"
+            },
+            {
+              "id": "4d40dba4-549d-4496-8fcb-fa8a5608d71e",
+              "name": "bot_message",
+              "value": "={{ $json.bot_message }}",
+              "type": "string"
+            },
+            {
+              "id": "07d676dc-189d-4749-8e96-4602b687f21b",
+              "name": "user_message",
+              "value": "={{ $json.user_message }}",
+              "type": "string"
+            },
+            {
+              "id": "d03da6a5-32bf-4ace-9f9e-934d6eb20edd",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "46bb45be-5250-408c-8852-5db12d4dd5ee",
+              "name": "message_type",
+              "value": "={{ $json.message_type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        80
+      ],
+      "id": "45436be0-a1e4-4528-abe7-a6d4213f17fe",
+      "name": "SetData1"
+    },
+    {
+      "parameters": {
+        "content": "## Followup-restauranet\n",
+        "height": 1400,
+        "width": 2680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        48
+      ],
+      "id": "3d0fdb8e-3eed-49e3-aa88-715a1fa0fab5",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-01-09T23:00:59.004-03:00",
+          "Readable date": "January 9th 2025, 11:00:59 pm",
+          "Readable time": "11:00:59 pm",
+          "Day of week": "Thursday",
+          "Year": "2025",
+          "Month": "January",
+          "Day of month": "09",
+          "Hour": "23",
+          "Minute": "00",
+          "Second": "59",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ],
+    "Evolution API - HTTP Request1": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ],
+    "SetData1": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
+  "connections": {
+    "ListChats-Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "SetConfig",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "ListMessages-Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "DisableMessage-Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "ListChats-Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DisableMessage-Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evolution API - HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetConfig": {
+      "main": [
+        [
+          {
+            "node": "Evolution API - HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "SetData1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ListMessages-Supabase": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetData1": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bcf77575-b573-49f5-b736-1e2eef21b7a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "TAAgxwsPITdKV2F0",
+  "tags": [
+    {
+      "updatedAt": "2025-10-09T14:04:54.663Z",
+      "createdAt": "2025-10-09T14:04:54.663Z",
+      "id": "mQimZDErbk2F6Rjo",
+      "name": "ecommerce-mcp"
+    }
+  ]
+}

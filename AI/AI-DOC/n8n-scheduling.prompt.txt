@@ -1,0 +1,172 @@
+Prompt: WhatsApp Task Scheduling Automation using Gemini & OpenAI
+
+Objective: Create an n8n workflow that listens for incoming WhatsApp messages (text or voice), processes the request using AI, schedules a task for a professional, and sends a confirmation.
+
+Workflow Overview
+
+    1.Trigger: An incoming WhatsApp message (text or voice) via a webhook.
+
+    2.AI Processing:
+
+        Transcription: If a voice message, use OpenAI's Whisper API to transcribe the audio to text.
+
+        Intent Recognition & Data Extraction: Use Gemini 1.5 Pro to identify the user's intent (to schedule a shift) and extract key information:
+
+            Professional's Name
+
+            Day of the week
+
+            Month
+
+            Specific Time
+
+        Validation: Gemini should also validate the extracted data (e.g., check if the date is valid, if the time format is correct).
+
+    3.Scheduling:
+
+        Task Management: Add the scheduled task to a specified list (e.g., Google Sheets, Airtable, or a similar database). The entry should include all extracted information and a unique ID.
+
+    4.Confirmation:
+
+        Response Generation: Use Gemini to create a friendly confirmation message for the user, summarizing the scheduled task.
+
+        Notification: Send the confirmation message back to the user on WhatsApp.
+
+        Internal Notification (Optional): Send a notification to the professional or a team channel (e.g., Slack, email) with the details of the new booking.
+
+Detailed n8n Node Configuration & Logic
+
+    1.Start Node:
+
+        Type: Webhook
+
+        Configuration: Set up the webhook to receive POST requests from your WhatsApp Business API provider (e.g., Twilio, 360dialog, or other). The node should listen for message events.
+
+    2.Condition Node:
+
+        Type: IF
+
+        Logic: Check the incoming message payload.
+
+            If message.type is voice, proceed down one path.
+
+            If message.type is text, proceed down another path.
+
+    3.Voice Message Path:
+
+        Node: HTTP Request
+
+        Action: Download the audio file from the provided URL in the webhook payload.
+
+        Node: OpenAI
+
+        Action: Audio Transcriptions (using Whisper)
+
+        Configuration: Pass the downloaded audio file to the node. The output should be the transcribed text.
+
+        Next Node: Connect the output to the Gemini AI node for intent recognition.
+
+    4.Text Message Path:
+
+        Node: Set (optional, for clarity)
+
+        Action: Extract the text from the webhook payload.
+
+        Next Node: Connect this text directly to the Gemini AI node.
+
+   5. AI Processing Node:
+
+        Type: Google Gemini
+
+        Model: gemini-1.5-pro
+
+        System Prompt:
+
+        You are a highly efficient scheduling assistant. Your task is to extract scheduling details from a user's request.
+        Extract the following information:
+        - professional_name: The name of the professional being scheduled.
+        - day_of_week: The day of the week (e.g., "Monday", "Tuesday").
+        - month: The month (e.g., "August", "September").
+        - time: The specific time of the shift (e.g., "2:00 PM", "14:00").
+
+        If you cannot extract a value, set it to "null".
+
+        Example Input: "Schedule David for a shift on Friday in September at 3:30 PM."
+        Expected Output (as JSON):
+        {
+          "professional_name": "David",
+          "day_of_week": "Friday",
+          "month": "September",
+          "time": "3:30 PM"
+        }
+
+        If the user's intent is NOT to schedule a task, return:
+        {
+          "intent": "non-scheduling"
+        }
+
+        User Message: Pass the transcribed text (from the Whisper node) or the text message directly.
+
+    6.Conditional Node (Post-AI):
+
+        Type: IF
+
+        Logic: Check the output from the Gemini node.
+
+            If output.intent is "non-scheduling", send a polite message back saying "I'm sorry, I can only assist with scheduling tasks."
+
+            If output.professional_name is NOT "null", day_of_week is NOT "null", etc., proceed to the next step.
+
+   7. Scheduling Node:
+
+        Type: Google Sheets or Airtable or Database Node
+
+        Action: Append Row
+
+        Configuration: Map the extracted JSON values from the Gemini node to the corresponding columns in your spreadsheet/database.
+
+            Name -> professional_name
+
+            Day -> day_of_week
+
+            Month -> month
+
+            Time -> time
+
+            Status -> "Scheduled"
+
+            WhatsApp Number -> The sender's phone number from the webhook.
+
+    8.Confirmation Message Generation Node:
+
+        Type: Google Gemini
+
+        Model: gemini-1.5-pro
+
+        System Prompt:
+
+        You are an assistant that generates friendly confirmation messages.
+        Create a message confirming a scheduled task.
+        The message should include the professional's name, day, month, and time of the scheduled shift.
+
+        User Message: Pass the extracted JSON data from the previous Gemini node. For example: The following shift was scheduled: {{$json.professional_name}}, {{$json.day_of_week}} {{$json.month}} at {{$json.time}}
+
+    9.WhatsApp Reply Node:
+
+        Type: Twilio or 360dialog or similar.
+
+        Action: Send WhatsApp Message
+
+        Configuration:
+
+            To: The sender's phone number from the initial webhook.
+
+            Body: The confirmation message text generated by the previous Gemini node.
+
+   10. (Optional) Internal Notification Node:
+
+        Type: Slack or Email
+
+        Action: Send Message or Send Email
+
+        Configuration: Send a message to a team channel or email address with the details of the new booking, pulling the data from the scheduling node.

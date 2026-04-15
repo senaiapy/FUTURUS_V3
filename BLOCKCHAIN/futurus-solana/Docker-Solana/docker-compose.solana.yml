@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  solana-dev:
+    build: .
+    container_name: solana-tooling
+    volumes:
+      # Mount the main project code
+      - ..:/workspace
+      # Persist solana config and keys
+      - ./volumes/solana-config:/root/.config/solana
+      # Cache cargo dependencies to speed up subsequent builds
+      - cargo-cache:/usr/local/cargo/registry
+    environment:
+      - TERM=xterm-256color
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    networks:
+      - solana-net
+
+networks:
+  solana-net:
+    driver: bridge
+
+volumes:
+  cargo-cache:

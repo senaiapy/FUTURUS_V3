@@ -1,0 +1,25 @@
+name: Check for stale issues
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  check-for-stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v9
+        with:
+          exempt-issue-labels: "never stale"
+          days-before-issue-stale: 20
+          days-before-issue-close: 7
+          stale-issue-label: "stale"
+          stale-issue-message: "This issue is stale because it has been open for 20 days with no activity."
+          close-issue-message: "This issue was closed because it has been inactive for 7 days since being marked as stale."
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

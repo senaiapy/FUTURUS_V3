@@ -1,0 +1,28 @@
+{
+  "services": [
+    {
+      "type": "app",
+      "data": {
+        "serviceName": "n8n",
+        "env": "WEBHOOK_URL=https://$(EASYPANEL_DOMAIN)",
+        "source": {
+          "type": "image",
+          "image": "n8nio/n8n:latest"
+        },
+        "domains": [
+          {
+            "host": "$(EASYPANEL_DOMAIN)",
+            "port": 5678
+          }
+        ],
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "data",
+            "mountPath": "/home/node/.n8n"
+          }
+        ]
+      }
+    }
+  ]
+}

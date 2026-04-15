@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Futurus Design System - Global Styles
+ * OLED-optimized with premium glass morphism effects
+ */
+
+@layer base {
+  /* Default to dark theme for OLED optimization */
+  :root {
+    --color-background: #000000;
+    --color-surface: #1E1E1E;
+    --color-surface-elevated: #2C2C2C;
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-text-primary: #E8E8E8;
+    --color-text-secondary: #A0A0A0;
+    --color-primary: #6366F1;
+    --color-secondary: #A855F7;
+  }
+}
+
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    background-color: rgba(30, 30, 30, 0.6);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* Glass card with stronger effect */
+  .glass-card-strong {
+    background-color: rgba(30, 30, 30, 0.8);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Premium button base */
+  .btn-premium {
+    border-radius: 16px;
+    padding: 14px 24px;
+  }
+
+  /* Text with proper OLED contrast */
+  .text-oled-primary {
+    color: #E8E8E8;
+  }
+
+  .text-oled-secondary {
+    color: #A0A0A0;
+  }
+
+  .text-oled-tertiary {
+    color: #707070;
+  }
+
+  /* Surface backgrounds */
+  .bg-surface {
+    background-color: #1E1E1E;
+  }
+
+  .bg-surface-elevated {
+    background-color: #2C2C2C;
+  }
+
+  .bg-true-black {
+    background-color: #000000;
+  }
+}
+
+@layer utilities {
+  /* Safe area utilities */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Touch target minimum (44px iOS, 48px Android) */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .touch-target-android {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}

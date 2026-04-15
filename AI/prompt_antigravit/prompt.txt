@@ -1,0 +1,96 @@
+Modifica el script para que, antes de subir los leads validados con MillionVerifier, se cree para cada uno un correo personalizado. Este correo debe ser generado con el modelo gemini-3-flash-preview (uno de los últimos modelos IA de Google).
+
+La instrucción de la IA debe ser:
+
+´´´
+Quiero que generes un correo en frío altamente persuasivo, breve (máximo 150 palabras), con el objetivo de captar la atención de un potencial cliente. El correo debe seguir esta estructura de 4 partes:
+
+1. Introducción / Contexto: Personaliza el saludo con el nombre de la persona y menciona brevemente cómo descubrí su perfil o empresa.
+2. Identificación de un problema o necesidad: Muestra de forma sutil una oportunidad de mejora relacionada con sus servicios actuales.
+3. Presentación de la solución: Ofrece un recurso gratuito y sin compromiso (puede ser una llamada, una demo, un documento, etc.).
+4. Llamada a la acción clara y fácil: Incluye una acción sencilla, como agendar una reunión o responder al email.
+
+Usa un tono profesional, cercano y enfocado al beneficio del destinatario. Usa saltos de línea para mejorar la legibilidad.
+
+Te proporcionaré los siguientes datos:
+
+- Nombre del destinatario: { nombre }
+- Titular: { headline }
+- Empresa:  { nombre de la empresa }
+- Descripción de la empresa: { descripción de la empresa }
+- Palabras clave / sector de enfoque: { keywords }
+
+Responde con el **correo completo**, bien estructurado y listo para enviar.
+
+Asunto: ¿Y si tuvieras un sistema que capta y sigue clientes sin que se te escape ninguno?
+
+Hola [Nombre],
+
+Estuve revisando vuestra agencia y me llamó la atención la calidad de los inmuebles que gestionáis y el potencial que tenéis en vuestra zona. Sé lo complicado que es mantenerse al día con todos los leads que entran y no perder oportunidades valiosas.
+
+Muchos agentes inmobiliarios se enfrentan al mismo reto: clientes interesados que se enfrían por falta de seguimiento, herramientas poco conectadas y procesos manuales que no escalan. ¿Y si tuvieras un asistente inteligente que te ayudara a captar, filtrar y dar seguimiento automáticamente a cada cliente potencial?
+
+En nuestra agencia ayudamos a profesionales inmobiliarios a implementar sistemas con IA que centralizan todos los leads, priorizan automáticamente los más cualificados y generan respuestas personalizadas sin esfuerzo, para que no se pierda ni una venta por el camino.
+
+Si te interesa, me encantaría ofrecerte una llamada estratégica sin compromiso, donde te muestro cómo podrías automatizar esta parte de tu captación sin perder el toque humano.
+
+¿Te gustaría agendar 15 minutos esta semana? Solo responde a este correo y lo coordinamos.
+
+⸻
+
+Nunca añadas: [Tu Nombre]  
+[Tu Empresa]  
+[Tu Teléfono]  
+[Tu LinkedIn] Ni cosas por el estilo. Solo saludos,  y ya. 
+
+Aquí tienes datos relativos a mi estrategia de marketing: 
+
+ICP: Empresas de bienes raíces
+
+Propuesta de automatizacion: Automatización en WhatsApp para la gestión de clientes
+
+NSVP: Ahorra 80% de tiempo automatizando los mensajes que le envías a tus clientes.
+
+Oferta: Creamos sistemas de gestión de clientes automatizados con IA. Mejoramos la experiencia de tus clientes y liberamos 80% de tu carga de trabajo.
+
+Un saludo,
+´´´
+
+La respuesta de la IA debe estar en formato JSON para que siga esta estructura:
+
+{
+  "asunto": "<Línea de asunto>"
+  "cuerpo": "<Cuerpo del correo>"
+}
+
+Este es un ejemplo de cómo usar Gemini 3 (cambiar gemini-3-pro-preview por gemini-3-flash-preview):
+
+from google import genai
+from google.genai import types
+from pydantic import BaseModel, Field
+from typing import List
+
+class MatchResult(BaseModel):
+    winner: str = Field(description="The name of the winner.")
+    final_match_score: str = Field(description="The final match score.")
+    scorers: List[str] = Field(description="The name of the scorer.")
+
+client = genai.Client()
+
+response = client.models.generate_content(
+    model="gemini-3-pro-preview",
+    contents="Search for all details for the latest Euro.",
+    config={
+        "tools": [
+            {"google_search": {}},
+            {"url_context": {}}
+        ],
+        "response_mime_type": "application/json",
+        "response_json_schema": MatchResult.model_json_schema(),
+    },  
+)
+
+result = MatchResult.model_validate_json(response.text)
+print(result)
+
+La línea de asunto y el cuerpo deben subirse en nuevas columnas dentro de la hoja de cálculo

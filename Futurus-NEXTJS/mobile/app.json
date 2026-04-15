@@ -1,0 +1,77 @@
+{
+  "expo": {
+    "name": "FUTURUS",
+    "slug": "futurus-solutions",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "futurus",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0B10"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.futurus",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow FUTURUS to access your camera to update your profile picture.",
+        "NSPhotoLibraryUsageDescription": "Allow FUTURUS to access your photo library to update your profile picture."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0B10"
+      },
+      "package": "com.futurus",
+      "versionCode": 1,
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./src/assets/fonts/Poppins-Black.ttf",
+            "./src/assets/fonts/Poppins-Bold.ttf",
+            "./src/assets/fonts/Poppins-ExtraBold.ttf",
+            "./src/assets/fonts/Poppins-ExtraLight.ttf",
+            "./src/assets/fonts/Poppins-Light.ttf",
+            "./src/assets/fonts/Poppins-Medium.ttf",
+            "./src/assets/fonts/Poppins-Regular.ttf",
+            "./src/assets/fonts/Poppins-SemiBold.ttf",
+            "./src/assets/fonts/Poppins-Thin.ttf"
+          ]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "762f480f-9c15-44b5-99a6-e228c430a71c"
+      }
+    },
+    "owner": "senaiapy"
+  }
+}

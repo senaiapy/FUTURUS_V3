@@ -1,0 +1,73 @@
+# EAS Build Ignore File
+# Files and directories listed here will not be uploaded to EAS Build
+
+# Dependencies (EAS will run pnpm install)
+node_modules/
+
+# Expo
+.expo/
+
+# Documentation
+*.md
+docs/
+README*
+
+# Development files
+.vscode/
+.idea/
+*.log
+*.DS_Store
+
+# Test files
+__tests__/
+__mocks__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+jest.config.js
+jest-setup.ts
+
+# Build artifacts (will be regenerated)
+android/app/build/
+ios/build/
+ios/Pods/
+*.xcworkspace
+*.xcodeproj
+*.ipa
+
+# Git
+.git/
+.gitignore
+
+# Scripts
+scripts/
+*.sh
+
+# Maestro tests
+.maestro/
+
+# Prompt files
+prompts/
+
+# Other config
+.cursorrules
+netlify.toml
+vercel.json
+commitlint.config.js
+lint-staged.config.js
+eslint.config.mjs
+
+# Figma files
+*.fig
+
+# CLI tools & Binaries
+bin/
+cli/
+
+# License
+LICENSE
+errors/*
+
+# Agent/Skills
+.agent/

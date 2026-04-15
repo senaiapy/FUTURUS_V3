@@ -1,0 +1,1021 @@
+{
+  "name": "Futurus_CustomerEcommerceSupabaseCep",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('CacheData').item.json.function }}",
+                    "rightValue": "get_or_create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2ba71c7e-932a-48d6-9e98-fe922c9122af"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "61ad9fb3-58ca-48f7-9cf0-d52c39400446",
+                    "leftValue": "={{ $('CacheData').item.json.function }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "40cbf966-b03f-4376-9af5-60733c67af73",
+                    "leftValue": "={{ $('CacheData').item.json.function }}",
+                    "rightValue": "find_cep",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "150a92b9-b3fa-486c-beb6-938a7f625259",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8a011e5f-4fa4-4788-a027-4e8a5e3ec3ef",
+              "leftValue": "={{ $('Find_Customer-Supabase')?.last()?.json?.id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3904,
+        0
+      ],
+      "id": "b7102ca6-3f2c-4671-9992-d8f032063f98",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "customers_futurus",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "keyValue": "={{ $('CacheData').item.json.phone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "69fb6777-61d0-4eb4-86b3-ba0f436ab15a",
+      "name": "Find_Customer-Supabase",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b472184-de47-4205-bccd-3c3710f98bb8",
+              "name": "phone",
+              "value": "={{ $('CacheData').item.json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "3c5d0b81-d4c7-4069-b14f-77842890c2d2",
+              "name": "cliente_name",
+              "value": "={{ $json.cliente_name }}",
+              "type": "string"
+            },
+            {
+              "id": "8fb1b4bf-f239-4408-9987-cdd3c1e0eb31",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "056bebdd-ceca-4204-b3da-a117bfabc25b",
+              "name": "lat",
+              "value": "={{ $json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "8cdb1beb-fe86-4a43-a5e2-a6d36436df40",
+              "name": "long",
+              "value": "={{ $json.long }}",
+              "type": "string"
+            },
+            {
+              "id": "3623929e-b762-40ff-80a1-ed6264c060cf",
+              "name": "cpf",
+              "value": "={{ $json.cpf }}",
+              "type": "string"
+            },
+            {
+              "id": "5301be13-a7c3-449a-8c85-979053abba79",
+              "name": "zip_code",
+              "value": "={{ $json.zip_code }}",
+              "type": "string"
+            },
+            {
+              "id": "ea553a16-c8f8-4072-8ee1-957e92b8d214",
+              "name": "street_name",
+              "value": "={{ $json.street_name }}",
+              "type": "string"
+            },
+            {
+              "id": "76c85c25-b8ef-46e4-b95a-17c00e92ff5e",
+              "name": "street_number",
+              "value": "={{ $json.street_number }}",
+              "type": "string"
+            },
+            {
+              "id": "70fb0c6e-52c7-432b-bdcc-635530835210",
+              "name": "city",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "f2be0ca7-9a4e-41d4-8db5-d48e0d40f742",
+              "name": "uf",
+              "value": "={{ $json.uf }}",
+              "type": "string"
+            },
+            {
+              "id": "a4b46205-b619-4b7b-a0ad-54b77b4d2f93",
+              "name": "bairro",
+              "value": "={{ $json.bairro }}",
+              "type": "string"
+            },
+            {
+              "id": "e3b1096f-2af3-46d6-92fe-578fa4f74340",
+              "name": "complemeto",
+              "value": "={{ $json.complemento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3200,
+        0
+      ],
+      "id": "1ebf4fe6-cdd9-4d9c-9dc3-cd0e88542bae",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.last().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3872,
+        848
+      ],
+      "id": "0ef0b2ee-e063-48c8-a891-cfa40bd25480",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "tableId": "customers_futurus",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $('Config').item.json.phone }}"
+            },
+            {
+              "fieldId": "cliente_name",
+              "fieldValue": "={{ $('Config').item.json.name }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $('Config').item.json.email }}"
+            },
+            {
+              "fieldId": "location",
+              "fieldValue": "={{ $('Config').item.json.location }}"
+            },
+            {
+              "fieldId": "lat",
+              "fieldValue": "={{ $('Config').item.json.lat }}"
+            },
+            {
+              "fieldId": "long",
+              "fieldValue": "={{ $('Config').item.json.long }}"
+            },
+            {
+              "fieldId": "active",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "app",
+              "fieldValue": "={{ $('CacheData').item.json.app }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3552,
+        272
+      ],
+      "id": "fa633f40-1e39-4f10-804e-32935f4de189",
+      "name": "Create_Customer-Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        3920,
+        384
+      ],
+      "id": "ab6faebb-07d9-4b40-9e5b-006523cb5078",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "customers_futurus",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('CacheData').item.json.phone }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "cliente_name",
+              "fieldValue": "={{ $json.mergedObject.cliente_name }}"
+            },
+            {
+              "fieldId": "location",
+              "fieldValue": "={{ $json.mergedObject.location }}"
+            },
+            {
+              "fieldId": "lat",
+              "fieldValue": "={{ $json.mergedObject.lat}}"
+            },
+            {
+              "fieldId": "long",
+              "fieldValue": "={{ $json.mergedObject.long }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $json.mergedObject.email }}"
+            },
+            {
+              "fieldId": "cpf",
+              "fieldValue": "={{ $json.mergedObject.cpf }}"
+            },
+            {
+              "fieldId": "street_number",
+              "fieldValue": "={{ $json.mergedObject.street_number }}"
+            },
+            {
+              "fieldId": "complemento",
+              "fieldValue": "={{ $json.mergedObject.complemento }}\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        464
+      ],
+      "id": "ea7f4da0-8fb6-4d6a-b1c6-538ef6979901",
+      "name": "Update_Customer-Supabase",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "332b1821-9580-4cfd-a520-1f8189e9d764",
+              "name": "function",
+              "value": "={{ $json.function || 'get_or_create' }}",
+              "type": "string"
+            },
+            {
+              "id": "2e31c66f-31b8-4800-9154-e5365bcbfdec",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "a7de30b6-1398-4812-a589-68eb0aa9d604",
+              "name": "cliente_name",
+              "value": "={{ $json.cliente_name }}",
+              "type": "string"
+            },
+            {
+              "id": "bed1554c-d83b-4a11-b9aa-e59e2a63cbb9",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "7437d6f3-54ea-4a89-ab95-8a12c3510870",
+              "name": "cpf",
+              "value": "={{ $json.cpf || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "495064cf-b146-48e3-9bc0-0d31601aa392",
+              "name": "lat",
+              "value": "={{ $json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "aa962888-9af0-4e93-a2bf-1e496200d62f",
+              "name": "long",
+              "value": "={{ $json.long }}",
+              "type": "string"
+            },
+            {
+              "id": "56f3c2e2-b3b2-439c-b421-a0b668e5ae2e",
+              "name": "distance",
+              "value": "={{ $json.distance  || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "7ff00a13-53cc-42d7-9ab4-2970d9a38463",
+              "name": "app",
+              "value": "ecommerce",
+              "type": "string"
+            },
+            {
+              "id": "96f589b9-9d9f-4b8a-9e46-aed3a771f728",
+              "name": "zip_code",
+              "value": "={{ $json.cep.replaceAll('-','').replaceAll(' ','') }}",
+              "type": "string"
+            },
+            {
+              "id": "a3af05ec-7cd2-4541-aad9-fa35685911e5",
+              "name": "street_number",
+              "value": "={{ $json.street_number }}",
+              "type": "string"
+            },
+            {
+              "id": "ee446d4a-5bb8-463f-be75-63a6bca22fcc",
+              "name": "complemento",
+              "value": "={{ $json.complemento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        0
+      ],
+      "id": "bb0555fe-8c43-450b-8ea5-03b67c9d9db4",
+      "name": "CacheData",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through input items\nconst output = $input.all().map(item => {\n  // Objeto 1 e Objeto 2\n\n  const object1 = $(\"Find_Customer-Supabase\").first().json; // Primeiro objeto \n  const object2 = $(\"CacheData\").first().json // Segundo objeto\n  // Validar que os objetos existem\n  if (!object1 || !object2) {\n    throw new Error('Os campos \"object1\" e \"object2\" são obrigatórios nos dados de entrada.');\n  }\n\n  // Misturar os objetos, sobrepondo os valores do segundo objeto, caso não estejam em branco\n  const mergedObject = { ...object1 }; // Começa com os valores do objeto 1\n\n  for (const [key, value] of Object.entries(object2)) {\n    // Sobrescreve o valor apenas se não estiver vazio\n    if (value !== null && value !== undefined && value !== '') {\n      mergedObject[key] = value;\n    }\n  }\n\n  // Retornar o novo objeto combinado\n  return { json: { mergedObject } };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        464
+      ],
+      "id": "60f913ab-01ce-4f8f-ab1d-1f9df1afd25d",
+      "name": "MergeData"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1dbcca50-6942-4456-92b2-9175d0416950",
+              "leftValue": "={{ $('Find_Customer-Supabase').last().json.isEmpty() }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        448
+      ],
+      "id": "58678f7e-2adf-405d-a733-e2db51013b7e",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2752,
+        0
+      ],
+      "id": "45058f1b-a338-403c-a701-69765e84594a",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "url": "=https://viacep.com.br/ws/{{ $('CacheData').item.json.zip_code }}/json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        944,
+        800
+      ],
+      "id": "eedc56a9-3993-439c-9f1e-6bc8a621674e",
+      "name": "ConsultaCep",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.last().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3872,
+        1072
+      ],
+      "id": "8249788e-7327-4a55-a7bb-de2fa71ec6bb",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d85ea53c-6018-4697-afc9-57f0c87f2750",
+              "leftValue": "={{ $json.cep }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        800
+      ],
+      "id": "adc4001c-798e-462a-8185-a8d4e349adf3",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "CEP não localizado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        1088
+      ],
+      "id": "861959b5-737e-4abe-bb11-c195ebef9318",
+      "name": "SetMessageZipCode2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "customers_futurus",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('CacheData').item.json.phone }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "zip_code",
+              "fieldValue": "={{ $json.mergedObject.cep }}"
+            },
+            {
+              "fieldId": "uf",
+              "fieldValue": "={{ $json.mergedObject.uf }}"
+            },
+            {
+              "fieldId": "city",
+              "fieldValue": "={{ $json.mergedObject.localidade }}"
+            },
+            {
+              "fieldId": "bairro",
+              "fieldValue": "={{ $json.mergedObject.bairro }}"
+            },
+            {
+              "fieldId": "street_name",
+              "fieldValue": "={{ $json.mergedObject.logradouro }}"
+            },
+            {
+              "fieldId": "complemento",
+              "fieldValue": "={{ $json.mergedObject.complemento }}"
+            },
+            {
+              "fieldId": "street_number",
+              "fieldValue": "={{ $json.mergedObject.street_number }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $json.mergedObject.email }}"
+            },
+            {
+              "fieldId": "cliente_name",
+              "fieldValue": "={{ $json.mergedObject.cliente_name }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3328,
+        784
+      ],
+      "id": "65d672ef-7087-4586-a4f4-653d20fbf079",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through input items\nconst output = $input.all().map(item => {\n  // Objeto 1 e Objeto 2\n\n  const object1 = $(\"Find_Customer-Supabase\").first().json; // Primeiro objeto \n  const object2 = $(\"ConsultaCep\").first().json // Segundo objeto\n  // Validar que os objetos existem\n  if (!object1 || !object2) {\n    throw new Error('Os campos \"object1\" e \"object2\" são obrigatórios nos dados de entrada.');\n  }\n\n  // Misturar os objetos, sobrepondo os valores do segundo objeto, caso não estejam em branco\n  const mergedObject = { ...object1 }; // Começa com os valores do objeto 1\n\n  for (const [key, value] of Object.entries(object2)) {\n    // Sobrescreve o valor apenas se não estiver vazio\n    if (value !== null && value !== undefined && value !== '') {\n      mergedObject[key] = value;\n    }\n  }\n\n  // Retornar o novo objeto combinado\n  return { json: { mergedObject } };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        784
+      ],
+      "id": "8acf2185-2fe2-412a-a4ff-7c1a7f8d3c2c",
+      "name": "MergeData1"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "function"
+            },
+            {
+              "name": "phone"
+            },
+            {
+              "name": "cliente_name"
+            },
+            {
+              "name": "email"
+            },
+            {
+              "name": "street_number"
+            },
+            {
+              "name": "complemento"
+            },
+            {
+              "name": "cep"
+            },
+            {
+              "name": "cpf"
+            },
+            {
+              "name": "lat"
+            },
+            {
+              "name": "long"
+            },
+            {
+              "name": "city"
+            },
+            {
+              "name": "uf"
+            },
+            {
+              "name": "bairro"
+            },
+            {
+              "name": "street_name"
+            },
+            {
+              "name": "address"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "45823736-bd3b-4b08-9fa8-08555c6873a7",
+      "name": "Start"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ConsultaCep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create_Customer-Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find_Customer-Supabase": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create_Customer-Supabase": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update_Customer-Supabase": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "CacheData": {
+      "main": [
+        [
+          {
+            "node": "Find_Customer-Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MergeData": {
+      "main": [
+        [
+          {
+            "node": "Update_Customer-Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "MergeData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ConsultaCep": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "MergeData1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetMessageZipCode2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetMessageZipCode2": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "MergeData1": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "CacheData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6380a8a1-30c6-4de1-a572-bdfde2951e45",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "S72HNXmYMpCzO9pi",
+  "tags": [
+    {
+      "updatedAt": "2025-10-09T14:04:54.663Z",
+      "createdAt": "2025-10-09T14:04:54.663Z",
+      "id": "mQimZDErbk2F6Rjo",
+      "name": "ecommerce-mcp"
+    }
+  ]
+}

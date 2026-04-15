@@ -1,0 +1,1 @@
+cd /Users/galo/PROJECTS/FUTURUS_V2/Futurus-NEXTJS && docker compose down && docker compose up -d --build

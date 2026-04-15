@@ -1,0 +1,171 @@
+.main-menu .navigation>li.current>a,
+.main-menu .navigation>li.active>a,
+.main-menu .navigation>li:hover>a,
+.main-menu .navigation>li>ul>li>a:hover,
+.main-menu .navigation>li>.megamenu li>a:hover,
+.main-menu .navigation>li>ul>li>ul>li>a:hover,
+.scroll-to-top .scroll-bar-text,
+.sec-title .sub-title,
+.account-block-one .inner-box h3 a:hover,
+.award-section .award-table tr td h3 a:hover,
+.main-footer .links-widget .links-list li a:hover,
+.footer-bottom .bottom-inner p a,
+.trading-block-three .inner-box .icon-box,
+.trading-style-four .tab-btns li.active-btn .icon-box,
+.trading-style-four .tab-btns li:hover .icon-box,
+.trading-style-four .tab-btns li.active-btn h4,
+.trading-style-four .tab-btns li:hover h4,
+.account-block-two .inner-box:hover .icon-box,
+.blog-card .inner-box .lower-content h3 a:hover,
+.content_block_seven .content-box .accordion-box .accordion .acc-content a,
+.sec-title h2 span,
+.image_block_one .image-box .content-one span,
+.page-title .bread-crumb li a:hover,
+.markets-block-one .inner-box .lower-content h3 a:hover,
+.pricing-block-one .inner-box .lower-content h3 a:hover,
+.pricing-block-one .inner-box .lower-content .link a,
+.pricing-section .tab-btns li.active-btn,
+.pricing-section .tab-btns li:hover,
+.education-sidebar h4,
+.education-sidebar .share-option li a:hover,
+.team-block-one .inner-box .content-box h3 a:hover,
+.team-details .content-box .social-links li a:hover,
+.team-details .image-box .info-list li i,
+.blog-sidebar .search-widget .search-form .form-group input:focus+button,
+.blog-sidebar .search-widget .search-form .form-group button:hover,
+.blog-sidebar .category-widget .category-list li a:hover,
+.blog-sidebar .post-widget .post h6 a:hover,
+.blog-sidebar .archives-widget .archives-list li a:hover,
+.blog-card .inner-box h2 a:hover,
+.blog-details-content blockquote .icon-box,
+.blog-details-content .comment-box .form-inner .form-group label span,
+.contact-section .single-info p a:hover,
+.contact-section .form-inner .form-group label span {
+  color: hsl(var(--base));
+}
+
+/** background **/
+
+button.rtl,
+button.ltr,
+.theme-btn.btn-one,
+.theme-btn.btn-two:before,
+.theme-btn.btn-two:after,
+.sec-title .sub-title:before,
+.account-block-one .inner-box .icon-box,
+.project-tab .tab-btns li.active-btn,
+.project-tab .tab-btns li:hover,
+.process-block-one .inner-box:before,
+.process-block-one .inner-box:hover,
+.content_block_two .content-box .download-list li a:hover,
+.subscribe-section .inner-container,
+.main-footer .download-list li a:hover,
+.main-footer .social-links li a:hover,
+.about-style-two .tab-btns li.active-btn,
+.about-style-two .tab-btns li:hover,
+.trading-block-three .inner-box .icon-box:before,
+.trading-style-four .tab-btns li,
+.account-block-two .inner-box .icon-box,
+.account-block-two .inner-box:before,
+.apps-style-two,
+.cta-section .inner-container,
+.list-style-one li:before,
+.testimonial-section .dots-style-one .owl-dots button.active,
+.testimonial-section .dots-style-one .owl-dots button:hover,
+.progress-box .bar,
+.account-details .account-info .list-item li:before,
+.pricing-section .tab-btns,
+.education-details-content .text-box .list-item li:before,
+.team-block-one .inner-box .content-box .social-links li a:hover,
+.team-details .progress-box .bar-inner,
+.team-details .image-box .info-list,
+.faq-section .accordion-box .accordion .acc-btn.active,
+.blog-sidebar .tags-widget .tags-list li a:hover,
+.blog-details-content blockquote h4:before,
+.blog-details-content .content-one .list-item li:before,
+.blog-details-content .post-share-option .tags-list li a:hover,
+.blog-details-content .post-share-option .social-links li a:hover,
+.check-box input:checked+label:before,
+.contact-section .single-info .icon-box {
+  background: hsl(var(--base));
+}
+
+
+
+
+/** border-color **/
+
+.main-menu .navigation>li>ul,
+.main-menu .navigation>li>.megamenu,
+.main-menu .navigation>li>ul>li>ul,
+.theme-btn.btn-two:hover,
+.sec-title .sub-title:after,
+.process-block-one .inner-box:hover,
+.content_block_three .content-box .btn-box .theme-btn.btn-two,
+.funfact-block-two .inner-box:hover,
+.content_block_seven .content-box .accordion-box .accordion .acc-content a,
+.experience-section .inner-box .single-item,
+.experience-style-two .lower-box .single-item,
+.markets-block-one .inner-box .lower-content .theme-btn,
+.pricing-block-one .inner-box .lower-content .link a,
+.team-block-one .inner-box .content-box .social-links li a:hover,
+.faq-section .accordion-box .accordion .acc-btn.active,
+.blog-sidebar .search-widget .search-form .form-group input:focus,
+.blog-sidebar .tags-widget .tags-list li a:hover,
+.blog-details-content blockquote,
+.blog-details-content .post-share-option .tags-list li a:hover,
+.blog-details-content .post-share-option .social-links li a:hover,
+.blog-details-content .comment-box .form-inner .form-group input:focus,
+.blog-details-content .comment-box .form-inner .form-group textarea:focus,
+.check-box input:checked+label:before,
+.contact-section .form-inner .form-group input:focus,
+.contact-section .form-inner .form-group textarea:focus {
+  border-color: hsl(var(--base)) !important;
+}
+
+
+/************ theme-color-2 ************/
+.dark_home .scroll-to-top::after,
+.dark_home .sec-title .sub-title,
+.dark_home .process-block-one .inner-box:hover .count-text,
+.dark_home .image_block_one .image-box .content-one span,
+.dark_home .content_block_nine .content-box .inner-box .single-item h3 a:hover,
+.dark_home .footer-bottom .bottom-inner p a {
+  color: hsl(var(--base-two));
+}
+
+
+/** background **/
+
+.dark_home .theme-btn.btn-one,
+.dark_home .theme-btn.btn-two:before,
+.dark_home .theme-btn.btn-two:after,
+.dark_home button.rtl,
+.dark_home button.ltr,
+.dark_home .menu-area .mobile-nav-toggler,
+.dark_home .sec-title .sub-title:before,
+.dark_home .process-block-one .inner-box:before,
+.dark_home .list-style-one li:before,
+.dark_home .content_block_two .content-box .download-list li:first-child a:hover,
+.dark_home .content_block_nine .content-box .inner-box .single-item:hover .count-text,
+.dark_home .content_block_nine .content-box .inner-box .single-item:after,
+.dark_home .main-footer .download-list li:first-child a:hover,
+.dark_home .main-footer .social-links li a:hover {
+  background: hsl(var(--base-two));
+}
+
+
+
+
+/** border-color **/
+.dark_home .theme-btn.btn-two:hover,
+.dark_home .sec-title .sub-title:after,
+.dark_home .content_block_three .content-box .btn-box .theme-btn.btn-two,
+.dark_home .experience-section .inner-box .single-item,
+.dark_home .news-block-one .inner-box .link a:hover {
+  border-color: hsl(var(--base-two)) !important;
+}
+
+.dark_home .scroll-to-top .scroll-top-inner path {
+  stroke: hsl(var(--base-two));
+}

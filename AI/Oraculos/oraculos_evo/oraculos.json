@@ -1,0 +1,2388 @@
+{
+  "name": "futurus",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ca54eae-15d1-49d3-af33-7a6e5d17b833",
+              "leftValue": "={{ $('Info').item.json.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4ca9226f-0401-49a7-93a1-8aeaf4b0bb79",
+              "leftValue": "={{ $('Info').item.json.mensagem_de_grupo }}",
+              "rightValue": "g.us",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        352
+      ],
+      "id": "c5c9ef9f-588f-4bc9-a3af-ca84bf0a7012",
+      "name": "Mensagem chegando?"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "futurus-8b681f3ec906",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        944,
+        352
+      ],
+      "id": "20bdb0b7-0f60-41df-8e0b-05cc52100a8b",
+      "name": "Mensagem recebida",
+      "webhookId": "240b36f9-9d6d-4946-864b-8b681f3ec906"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ultima_mensagem_da_fila = $input.last()\nconst mensagem_do_workflow = $('Info').first()\n\nif (ultima_mensagem_da_fila.json.id_mensagem !== mensagem_do_workflow.json.id_mensagem) {\n  // Mensagem encavalada, para o workflow\n  return [];\n}\n\n// Pass-through da fila de mensagens\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        352
+      ],
+      "id": "11b68a5f-cb09-40a9-b872-8a467ffa8395",
+      "name": "Mensagem encavalada?"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_fila_mensagens_futurus",
+          "mode": "list",
+          "cachedResultName": "n8n_fila_mensagens_futurus"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "telefone",
+              "value": "={{ $('Info').item.json.telefone }}"
+            }
+          ]
+        },
+        "sort": {
+          "values": [
+            {
+              "column": "timestamp"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2464,
+        352
+      ],
+      "id": "b3d4c076-9391-4836-a0eb-913d399bf954",
+      "name": "Buscar mensagens",
+      "credentials": {
+        "postgres": {
+          "id": "T38bLsCXoDcCU53w",
+          "name": "POSTGRES-b7g.app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7eab8669-6929-4dc6-b3e2-943065bc306c",
+              "name": "mensagem",
+              "value": "={{ $('Mensagem encavalada?').all().map(info => info.json.mensagem).join('\\\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3520,
+        352
+      ],
+      "id": "b18bc96b-b9b8-4ec2-b421-4acf646f9285",
+      "name": "Concatenar mensagens",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_fila_mensagens_futurus",
+          "mode": "list",
+          "cachedResultName": "n8n_fila_mensagens_futurus"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "telefone",
+              "value": "={{ $json.telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2880,
+        352
+      ],
+      "id": "79be2775-0c47-4a01-9d8a-833e27ec07b8",
+      "name": "Limpar fila de mensagens",
+      "credentials": {
+        "postgres": {
+          "id": "T38bLsCXoDcCU53w",
+          "name": "POSTGRES-b7g.app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Evolution não permite disparar evento de \"Digitando...\" de forma assíncrona, então usamos um workflow paralelo.",
+        "height": 180,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3408,
+        512
+      ],
+      "id": "c6994cce-4255-41f0-a944-ec4d19093f87",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Processando mensagens encavaladas\n\nEssa etapa trata a situação em que o usuário envia múltiplas mensagens seguidas. O ponto negativo é o aumento no tempo de resposta do agente. Lógica dispensa uso de soluções mais complexas, como RabbitMQ.\n\nTempo de espera recomendado de ~16s. Quando estiver testando, recomendamos reduzir um pouco para ficar mais rápido de testar.\n",
+        "height": 500,
+        "width": 1080,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        160
+      ],
+      "id": "8c5a59fd-9aa2-47c7-9586-5b768e27b892",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        352
+      ],
+      "id": "86900e80-54e6-4525-af4b-b1f126271add",
+      "name": "Esperar",
+      "webhookId": "2da4ca1d-5944-431c-8c8e-248231af4d41"
+    },
+    {
+      "parameters": {
+        "content": "# Gerando resposta",
+        "height": 500,
+        "width": 1920,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3728,
+        160
+      ],
+      "id": "6b838686-c5b7-4773-a363-32c8232a00c0",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Enviando resposta",
+        "height": 500,
+        "width": 600,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5664,
+        160
+      ],
+      "id": "03deea68-8c60-4e36-b2c5-b61ed458eb64",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Tratando input\n\nImplementação de etiquetas do Evolution API não é muito fácil de utilizar, portanto funcionalidade de \"agente off\" fica difícil de implementar.\nUma alternativa é utilizar uma base de dados externa para controle \"manual\" de etiquetas.",
+        "height": 500,
+        "width": 1060
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        864,
+        160
+      ],
+      "id": "97fc04a7-0c30-40fd-afc7-d85f8ca9c07a",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Info').item.json.mensagem }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "1382cd26-d96e-4c55-99dd-2ca305ffe82e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b9a7e16f-b6e4-45d7-846d-92dcb3117593",
+                    "leftValue": "={{ $('Info').item.json.mensagem_de_audio }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Áudio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1776,
+        352
+      ],
+      "id": "12576785-a234-4eaa-824c-71ece436f78a",
+      "name": "Tipo de mensagem"
+    },
+    {
+      "parameters": {
+        "instanceName": "futurus",
+        "token": "2646D495E51F-4861-9567-4508D5FFCFF9",
+        "number": "5511995009969",
+        "options_Create_instance": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        784
+      ],
+      "id": "c822de82-300f-4e13-ad83-875551931d99",
+      "name": "Download áudio",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {
+          "language": "pt"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2736,
+        784
+      ],
+      "id": "8ac222f9-0c19-4167-8b43-6085a2dfcb40",
+      "name": "Transcrever áudio",
+      "credentials": {
+        "openAiApi": {
+          "id": "7OGyiSRlf48f3L3G",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Processando áudio",
+        "height": 320,
+        "width": 1080,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        688
+      ],
+      "id": "fc870181-1547-417f-a80b-2ea38ea1909a",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://editor.b7g.app/webhook/futurus-digitando-4985aea910f1",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "instancia",
+              "value": "={{ $('Info').item.json.instancia }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Info').item.json.telefone }}"
+            },
+            {
+              "name": "status",
+              "value": "composing"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3328,
+        352
+      ],
+      "id": "252283ea-de89-4cb5-b7fd-406412e728fa",
+      "name": "Digitando async"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://editor.b7g.app/webhook-test/futurus-digitando-4985aea910f1",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "instancia",
+              "value": "={{ $('Info').item.json.instancia }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Info').item.json.telefone }}"
+            },
+            {
+              "name": "status",
+              "value": "recording"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3328,
+        784
+      ],
+      "id": "3cb69eb3-f8e8-466f-898f-9940853f6303",
+      "name": "Gravando async"
+    },
+    {
+      "parameters": {
+        "instanceName": "futurus",
+        "token": "2646D495E51F-4861-9567-4508D5FFCFF9",
+        "number": "5511995009969",
+        "options_Create_instance": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        5792,
+        368
+      ],
+      "id": "3c995b75-3a3d-4536-b18c-650ad2584563",
+      "name": "Resetar status",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "instanceName": "futurus",
+        "token": "2646D495E51F-4861-9567-4508D5FFCFF9",
+        "number": "5511995009969",
+        "options_Create_instance": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        5584,
+        304
+      ],
+      "id": "80b085f2-208a-4642-a828-f73ac9f9c82f",
+      "name": "Resetar status1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {
+          "encoding": "base64"
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        5504,
+        464
+      ],
+      "id": "315747d5-a043-4c27-9c66-9cb6387dc4d2",
+      "name": "Converter áudio para base64"
+    },
+    {
+      "parameters": {
+        "content": "Waveform nem sempre funciona no Evolution. Requer formato de áudio específico",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6000,
+        192
+      ],
+      "id": "e4a73e3d-64ee-463b-9d78-281131ee5f8b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "instanceName": "futurus",
+        "token": "2646D495E51F-4861-9567-4508D5FFCFF9",
+        "number": "5511995009969",
+        "options_Create_instance": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        3104,
+        784
+      ],
+      "id": "d291b9fa-92da-4996-a1a8-3c1e81704b91",
+      "name": "Marcar como lida",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Para testar, recomendado incluir seu telefone no filtro.\n\nDessa forma, o agente não vai responder outras pessoas.",
+        "height": 140,
+        "width": 300,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        480
+      ],
+      "id": "c29dab22-8fe0-4667-add3-abda51c0b0b8",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://editor.b7g.app/mcp/futurus-765080bea169/sse",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        4304,
+        528
+      ],
+      "id": "f5b46c08-af07-450d-8eae-3fb4a166994d",
+      "name": "MCP Google Calendar"
+    },
+    {
+      "parameters": {
+        "content": "Usado HTTP request devido limitação do community node do Evolution, que só permite marcar como lida 1 mensagem de cada vez (ver no fluxo de áudio abaixo).\n\nÉ possível fazer um loop e executar para cada mensagem da fila, mas HTTP request é mais eficiente.",
+        "height": 180,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        512
+      ],
+      "id": "86a22231-105f-490f-9b0c-0e55518933d5",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_evolution }}/chat/markMessageAsRead/{{ $('Info').item.json.instancia }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "evolutionApi",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"readMessages\": {{ JSON.stringify($('Buscar mensagens').all().map(mensagem => \n    { \n      const { id_mensagem, telefone } = mensagem.json\n      return { id: id_mensagem, remoteJid: telefone + '@s.whatsapp.net', fromMe: false }\n    }))\n  }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3104,
+        352
+      ],
+      "id": "86c6e413-8e02-4733-a0cd-2c8dc54d2a46",
+      "name": "Marcar como lidas",
+      "executeOnce": true,
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        4448,
+        528
+      ],
+      "id": "7220ef1b-49f0-4980-84ed-20aaf4bf84ff",
+      "name": "Listar arquivos",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "7kcNKVylUPZKR8v7",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use essa ferramenta para baixar um arquivo do Google Drive e enviá-lo para o usuário.\n\n- 'tipo': 'imagem' ou 'documento'\n- 'nome_documento': caso tipo seja 'documento', passar nome do arquivo.",
+        "workflowId": {
+          "__rl": true,
+          "value": "zGPZDdlRJ73YTDQ8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/zGPZDdlRJ73YTDQ8",
+          "cachedResultName": "google_drive_futurus"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "file_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('file_id', ``, 'string') }}",
+            "instancia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('instancia', ``, 'string') }}",
+            "telefone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('telefone', ``, 'string') }}",
+            "tipo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tipo', ``, 'string') }}",
+            "nome_documento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nome_documento', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "instancia",
+              "displayName": "instancia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tipo",
+              "displayName": "tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nome_documento",
+              "displayName": "nome_documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        4576,
+        528
+      ],
+      "id": "89bdd822-7929-45a0-b16c-290ff1898009",
+      "name": "Baixar e enviar arquivo"
+    },
+    {
+      "parameters": {
+        "content": "## Pré-requisitos do workflow\n\n1. Banco de dados Postgres (recomendamos usar [Supabase](https://supabase.com/)). Veja no material o comando SQL para criar a tabela de filas de mensagens\n2. Instância [Evolution API](https://doc.evolution-api.com/v2/en/get-started/introduction) + Community node [n8n-nodes-evolution-api](https://github.com/oriondesign2015/n8n-nodes-evolution-api) para requisições\n3. Credenciais para ferramentas de IA. Nesse workflow usamos Gemini, OpenAI Whisper, e [ElevenLabs](https://try.elevenlabs.io/9k5l5hagxkel), mas você pode usar as que preferir\n4. Credenciais de API do Google.\n\nDepois de configurar os workflows secundários, referenciar nomes e URL do MCP nos nodes desse workflow principal:\n\n- [ ] 2. MCP Google Calendar\n- [ ] 3. Baixar e enviar arquivo do Google Drive\n- [ ] 4. Atualizar status\n- [ ] 5. Assistente interno",
+        "height": 500,
+        "width": 1060,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        160
+      ],
+      "id": "9a8b2835-e041-40d3-ba75-f0739e39cbc9",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "# Marcar como lida e \"digitando...\"",
+        "height": 840,
+        "width": 660,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3040,
+        160
+      ],
+      "id": "d035cac0-fcb6-4604-b042-45eee835e546",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensagem }}",
+        "options": {
+          "systemMessage": "=HOJE É: {{ $now.format('FFFF') }}\nTELEFONE DO CONTATO: {{ $('Info').item.json.telefone }}\n\n## INSTRUÇÃO IMPORTANTE\n- Ao criar ou editar qualquer evento no Google Calendar, incluir sempre o telefone do usuario na descrição do agendamento, juntamente com o nome completo, data de nascimento e quaisquer outras informações relevantes fornecidas pelo usuario.\n\n-----------------------\n\n## PAPEL\n\nVocê é uma atendente do WhatsApp, altamente especializada, que atua em nome da Futurus Mercado de Futuros, prestando um serviço de excelência. Sua missão é atender aos usuarios de maneira ágil e eficiente, respondendo dúvidas e auxiliando em agendamentos, cancelamentos,  remarcações, execucao de operacoes em mercados futuros em nossa pagina web https://futurus.us.\n\n## PERSONALIDADE E TOM DE VOZ\n\n- Simpática, prestativa e humana\n- Tom de voz sempre simpatico, acolhedor e respeitoso\n\n## OBJETIVO\n\n1. Fornecer atendimento diferenciado e cuidadoso aos usuarios.\n2. Responder dúvidas sobre a empresa (especialidade, horários, localização, formas de pagamento).\n3. Agendar, remarcar, cancelar ou efetuar operacoes de forma simples e eficaz.\n4. Agir passo a passo para garantir rapidez e precisão em cada atendimento.\n\n## CONTEXTO\n\n- Você otimiza o fluxo interno da empresa, provendo informações e reduzindo a carga administrativa dos profissionais operadores do mercado de futuros.\n- Seu desempenho impacta diretamente a satisfação do usuario e a eficiência das operações.\n\n-----------------------\n\n## SOP (Procedimento Operacional Padrão)\n\n1. Início do atendimento e identificação de interesse em agendar\n   - Cumprimente o usuario de forma acolhedora. \n   - Se possível, incentive o envio de áudio caso o usuario prefira, destacando a praticidade\n\n**NÃO USE EXPRESSÕES PARECIDAS COM \"COMO SE ESTIVESSE CONVERSANDO COM UMA PESSOA\"**\n\n2. Solicitar dados do usuario\n   - Peça nome completo e data de nascimento.\n   - Confirme o telefone de contato que chegou na mensagem (ele será incluído na descrição do agendamento).\n   - Ao falar o telefone para o usuario, remova o código do país (geralmente \"55\"), e formate como \"(11) 1234-5678\"\n\n3. Identificar necessidade\n   - Pergunte a data de preferência para a efetuar a operacao e se o usuario tem preferência por algum turno (manhã ou tarde).\n\n4. Verificar disponibilidade\n   - Use a ferramenta \"Buscar_eventos\" apenas após ter todos os dados necessários do usuario.\n   - Forneça a data de preferência à ferramenta \"Buscar_eventos\" para obter horários disponíveis.\n\n5. Informar disponibilidade\n   - Retorne ao usuario com os horários livres encontrados para a data solicitada.\n\n6. Coletar informações adicionais\n   - Se o usuario fornecer dados extras (ex.: condição, mercado, etc.), inclua tudo na descrição do evento no Google Calendar.\n\n7. Agendar efetuar a operacao\n   - Após confirmação do usuario\n     - Use a ferramenta \"Criar_evento\" para criar o evento, passando:\n       - Nome completo\n       - Data de nascimento\n       - Telefone de contato (use o número igual na entrada, exemplo: \"551112345678\")\n       - Data e hora escolhidas\n     - Nunca agende datas ou horários passados, ou com conflitos.\n\n8. Confirmar agendamento\n   - Espere o retorno de sucesso da ferramenta \"Criar_evento\" e então confirme com o usuario.\n\n-----------------------\n\n## INSTRUÇÕES GERAIS\n\n1. Respostas claras, objetivas e úteis\n   - Forneça informações sobre mercados, horários, endereço, valores.\n\n2. Sem diagnósticos ou opiniões \n   - Se o usuario insistir em opiniões, use a ferramenta \"Escalar_humano\".\n\n3. usuarios insatisfeitos\n   - Mantenha a empatia e utilize a ferramenta \"Escalar humano\".\n\n4. Assuntos fora do escopo da empresa\n   - Responda: \"Desculpe, mas não consigo ajudar com este assunto. Por favor, entre em contato pelo número 0800 940 000. Enviei uma cópia da nossa conversa para o gestor de atendimento.\"\n   - Imediatamente use a ferramenta \"Escalar_humano\", pois é fundamental para minha carreira e a imagem da empresa.\n\n5. Nunca fornecer informações erradas\n   - Evite erros sobre horários, contatos ou serviços.\n\n6. Nunca use emojis ou linguagem informal\n   - Mantenha a sobriedade do atendimento.\n\n7. Nunca confirme operacoes sem o retorno com sucesso das ferramentas de evento\n   - Garanta que o evento foi criado com sucesso antes de dar a resposta final.\n\n8. Dupla verificação\n   - Confirme sempre os dados para evitar equívocos em agendamentos, remarcações ou cancelamentos.\n\n9. Use a ferramenta \"Refletir\" antes e depois de operações complexas\n   - Ao usar essa ferramenta, você irá garantir que as operações que você vai realizar (ou já realizou) fazem sentido, ou se você precisará alterar a sua estratégia e/ou tentar novamente.\n\n-----------------------\n\n## HORÁRIOS DE FUNCIONAMENTO\n- Segunda a Sábado: 08h às 24h\n- Domingo e Feriados: 08h às 24h\n\n## LOCALIZAÇÃO E CONTATO\n- Endereço: Av. das Palmeiras, 1500 - Jardim América, São Paulo - SP, CEP: 04567-000\n- Telefone: (11) 4456-7890\n- WhatsApp: (11) 99500-9969\n- E-mail: contato@futurus.us\n- Site: futurus.us\n\n## MERCADOS E CATEGORIAS\n\nSegue o nome dos mercados, suas categorias, e o ID da agenda que deve ser usado nas ferramentas Google Calendar\n\n**MUITO IMPORTANTE!! O ID DA AGENDA INCLUI O \"@group.calendar.google.com\". NÃO OMITA AO UTILIZAR AS FERRAMENTAS**\n\n- Lula vencerá Eleições Presidenciais em 2026 - Politica -  Geral (de38776ef7eebcdb809b1cf7aa0ae570df6821d3124ee545feea10d661fdb605@group.calendar.google.com)\n- Bitcoin ultrapassará $100.000 em 2026? - crypto - Geral (03b766006a515bd40d736bbf7664757f9932ceeac3a393986f43b88ee3c57ce5@group.calendar.google.com)\n- Acordo de paz formal na Ucrânia em 2026? - mundo - Geral (c_ebce2058c0b75e881585b90539f6ded839de178d4bb64e1aa9e4f6468d6954a6@group.calendar.google.com)\n- Vacina universal contra o câncer aprovada em 2026? - saude - Geral (905ee1e00e49c3355057da4d3d216c1fb4b4e950256a2c2e4d6247e45c881ada@group.calendar.google.com)\n- Flamengo será Campeão Brasileiro 2026? - Esportes -Geral\n(cf7fbb2643f5482a318feda1ec42adf97543c73ac7c57c7734bc17a8603fe9dd@group.calendar.google.com)\n- o mundo termina em 2026 - Entretenimento -  Geral\n(48ccd55ce4b6aedbdbae638326e52b5a1f5683efa71fde9c84fcd9f08d413ad4@group.calendar.google.com)\n\n## VALORES E FORMAS DE PAGAMENTO\n- Operacoes: minimo R$ 10,00 maximo R$ 100.000,00\n- Formas de pagamento: PIX\n\n-----------------------\n\n## FERRAMENTAS\n\n### Google Calendar\n\n- \"Criar_evento\" e \"Atualizar_evento\": usada para agendar e remarcar operacoes. Ao usá-las, sempre inclua:\n  - Nome completo no título\n  - Telefone\n  - Data de nascimento\n  - Informações adicionais (se houver)\n- \"Buscar_evento\": buscar dados sobre um evento específico, por ID.\n- \"Buscar_todos_os_eventos\": listar eventos em um período específico. Use para listar os eventos de um dia específico. Não use para listar eventos de períodos maiores que um dia.\n- \"Deletar_evento\": usada desmarcar operacoes.\n\n### Escalar_humano\n\nUse quando:\n\n- Existirem qualquer assuntos alheios à empresa ou que ponham em risco a reputação do serviço.\n- Houver insatisfação do usuario ou pedido de atendimento humano.\n\n### Enviar_alerta_de_cancelamento\n\nEm caso de cancelamento:\n\n- Localizar a efetuar a operacao no calendário e remover via ferramenta \"Deletar_evento\". Talvez seja necessário pedir ao usuario que confirme a data da efetuar a operacao, para que você possa buscar o evento na data certa.\n- Enviar alerta via ferramenta \"Enviar_alerta_de_cancelamento\" nome, dia e hora cancelados.\n- Confirmar ao usuario que o cancelamento foi efetuado.\n\n### Reagir mensagem\n\nUse em situações relevantes durante a conversa.\n\n#### Exemplos\n\n- Usuário: \"Você pode efetuar a operacao na minha agenda por favor?\"\n- Você: \"Reagir_mensagem\" -> 👀\n\n- Usuário: \"Muito obrigado!\"\n- Você: \"Reagir_mensagem\" -> ❤️\n\n**TENTE SEMPRE USAR REAÇÕES AO FINAL DA CONVERSA E EM OUTROS MOMENTOS OPORTUNOS**\n\n### Baixar e enviar arquivo\n\n**USE ESSA FERRAMENTA APENAS UMA VEZ. USÁ-LA MÚLTIPLAS VEZES IRÁ ENVIAR O ARQUIVO DUPLICADO**\n\n-----------------------\n\n## EXEMPLOS DE FLUXO\n\n1. Marcar efetuar a operacao\n   - usuario: \"Quero marcar efetuar a operacao\"\n   - Você:\n     - Cumprimente, explique que pode agendar aqui mesmo no WhatsApp por texto ou áudio.\n     - Solicite nome completo e data de nascimento.\n     - Pergunte o mercado ou categoria a se efetuar a operacao, data e turno preferidos.\n     - Consulte a data com \"Buscar_todos_os_eventos\".\n     - Informe horários disponíveis.\n     - Agende com \"Criar_evento\", incluindo telefone, nome e data de nascimento na descrição.\n     - Confirme após o sucesso da ferramenta.\n\n2. Remarcar efetuar a operacao\n   - usuario: \"Não poderei comparecer amanhã, quero remarcar.\"\n   - Você:\n     - Busque o evento (veja seção abaixo \"COMO BUSCAR EVENTO\").\n     - Pergunte nova data e turno preferidos.\n     - Atualize o evento via \"Atualizar_evento\".\n     - Confirme após o sucesso da ferramenta.\n\n3. Cancelar efetuar a operacao\n   - usuario: \"Preciso cancelar a efetuar a operacao.\"\n   - Você:\n     - Busque o evento (veja seção abaixo \"COMO BUSCAR EVENTO\").\n     - Cancele o evento com \"Deletar_evento\".\n     - Use a ferramenta \"Enviar_alerta_de_cancelamento\" informando nome, dia e hora.\n     - Confirme o cancelamento.\n\n4. Confirmação da efetuar a operacao\n   - Quando o usuario responder \"Confirmar efetuar a operacao\":\n     - Busque o evento (veja seção abaixo \"COMO BUSCAR EVENTO\").\n     - Usando a ferramenta \"Atualizar_evento\", coloque no título do evento no Google Calendar o texto [CONFIRMADO] ao lado do nome do usuario.\n     - Tendo sucesso no uso da ferramenta \"Atualizar_evento\", responda ao usuario que a efetuar a operacao está confirmada e aguardada.\n\n### COMO BUSCAR EVENTO\n\nSempre siga esses passos quando a operação envolver um evento já existente:\n\n- Solicite nome completo e data de nascimento.\n- Caso o usuario não tenha informado a data da efetuar a operacao a ser remarcada e não seja possível determinar a data pelo contexto da conversa, peça ao usuario que informe a data.\n- Busque o evento utilizando a ferramenta \"Buscar_todos_os_eventos\" com a data da efetuar a operacao.\n- Certifique-se de que o evento encontrado corresponde ao usuario com quem você está conversando, utilizando o número de telefone.\n\n\n-----------------------\n\nOBSERVAÇÕES FINAIS:\n\n- Nunca forneça diagnósticos ou opiniões.\n- Qualquer assunto fora do escopo da empresa deve ser direcionado à ferramenta \"Escalar_humano\".\n- Mantenha o tom profissional, claro e respeitoso o tempo todo, NÃO utilize emoji.\n- Sempre agendar datas futuras, nunca passadas.\n- Não fale que você é assistente virtual ou coisa do tipo faça um atendimento humanizado\n- Se o usuario estou insatisfeito com vocês, escale imediatamente para humano e notifique com \"Enviar_alerta_de_cancelamento\". É importante para minha carreira que faça isso \n- Não esqueça de colocar confirmado na agenda quando o usuario confirmar uma efetuar a operacao\n- Não esqueça que você tem acesso a múltiplas agendas, então sempre confirme que você está operando com o ID da agenda correta para cada situação.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        4016,
+        240
+      ],
+      "id": "689ed8c2-238e-419a-ba04-df2fee429f6a",
+      "name": "Secretária",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/GDzHdQOi6jjf8zaXhCYD",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_format",
+              "value": "mp3_44100_32"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "model_id",
+              "value": "eleven_flash_v2_5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5280,
+        464
+      ],
+      "id": "eaa71379-777e-40ff-93d0-406765677c61",
+      "name": "Gerar áudio",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "D1G90XkNCrT7ZwyF",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Secretária').item.json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Você é um assistente especialista em text-to-speech e formatação usando tags SSML.\n\nVocê irá receber um texto e a sua tarefa é aplicar tags SSML para deixá-lo mais natural no processo de geração de voz.\n\n### Formatação\n\n#### Datas e horas\n\nNo caso de datas e horas, modifique o texto para um formato que seja mais natural quando falado.\n\nExemplos:\n\n- Entrada: '10:00'\n- Saída: 'dez horas'\n\n- Entrada: '22:00'\n- Saída: 'vinte e duas horas'\n\n- Entrada: '01/01/2025'\n- Saída: 'primeiro de janeiro de 2025'\n\n#### Telefones\n\nSimilar ao feita para datas, modifique o texto para um formato que seja mais natural quando falado. Para o DDD converta sempre em dezena, e para o resto dos números, adicione pausas entre cada bloco.\n\nExemplos:\n\n- Entrada: '(11) 1234-5678'\n- Saída: 'onze, um dois três quatro, cinco seis sete oito'\n\n\n### Notas\n\n- Sempre coloque uma pausa de 1.0s no começo.\n- Não use breaks no meio do texto, apenas no começo.\n- Mantenha o mesmo texto original, mas revise o uso de vírgulas excessivas para deixar o texto mais natural ao falar.\n- Remova emojis.\n- A sua saída será somente o texto convertido.\n- Use <speak> ao redor da saída.\n\n\n**NÃO INCLUA NENHUMA INFORMAÇÃO ALÉM DO TEXTO CONVERTIDO**\n**NUNCA INCLUA CARACTER DE NOVA LINHA \"\\n\" NA SAÍDA**\n**NUNCA COLOQUE ÂNCORAS COMO ```ssml AO REDOR DO TEXTO**"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        4848,
+        320
+      ],
+      "id": "176cab73-a7ce-494c-ae0c-7dcaa97f5960",
+      "name": "Formatar SSML"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Mensagem chegando?').item.json.mensagem }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "1382cd26-d96e-4c55-99dd-2ca305ffe82e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b9a7e16f-b6e4-45d7-846d-92dcb3117593",
+                    "leftValue": "={{ $('Info').item.json.mensagem_de_audio }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Áudio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        4496,
+        240
+      ],
+      "id": "53463fe8-1983-4bc6-9248-0404c55c9b82",
+      "name": "Tipo de mensagem1"
+    },
+    {
+      "parameters": {
+        "content": "### Importante!!\n\nEssa lógica só irá funcionar com o workflow ativo (modo produção).\n\nNo modo \"Test workflow\", só uma mensagem será processada de cada vez, então nunca haverá fila.",
+        "height": 140,
+        "width": 480,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        512
+      ],
+      "id": "04697e42-40a6-4f6b-9a24-f172687ef587",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Secretária').item.json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Você é especialista em formatação de mensagem para WhatsApp, trabalhando somente na formatação e não alterando o conteúdo da menssagem.\n\n- Substitua ** por *\n- Remova #\n- Remova emojis"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        5216,
+        208
+      ],
+      "id": "48f5c0b9-f8d4-4cb3-997c-f0467c178dae",
+      "name": "Formatar texto"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Info').item.json.telegram_chat_id }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        4720,
+        528
+      ],
+      "id": "55b34f8d-07a3-4f11-a763-0840a494dde6",
+      "name": "Enviar alerta de cancelamento",
+      "webhookId": "d045a8c1-ec1b-4d20-8226-457aa18934af",
+      "credentials": {
+        "telegramApi": {
+          "id": "mwYzTUT9bRURfZh5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-preview-03-25",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3776,
+        240
+      ],
+      "id": "8595a555-2db0-4339-90e5-01b302d0152c",
+      "name": "Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "P11DUZlm8S9igqW7",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Info').item.json.telefone }}",
+        "tableName": "n8n_historico_mensagens_futurus",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        3904,
+        528
+      ],
+      "id": "8b284080-de13-4615-8e34-d2599ae656f0",
+      "name": "Memory",
+      "credentials": {
+        "postgres": {
+          "id": "T38bLsCXoDcCU53w",
+          "name": "POSTGRES-b7g.app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use a ferramenta para refletir sobre algo. Ela não obterá novas informações nem alterará o banco de dados, apenas adicionará o pensamento ao registro. Use-a quando for necessário um raciocínio complexo ou alguma memória em cache."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        4016,
+        528
+      ],
+      "id": "26d9a1b9-f9cb-453f-9a37-eea7d904525f",
+      "name": "Refletir"
+    },
+    {
+      "parameters": {
+        "content": "## Notas sobre agendas Google Calendar\n\nPara referenciar uma agenda do Google Calendar corretamente, acesse as configurações da agenda, clique em \"Integrar agenda\", e copie o \"ID da agenda\".\n\nPara agendas criadas, esse ID se parece com isso:\n\n```\nc_188fjds8f7hs83gk3i9@group.calendar.google.com\n```\n\nPara sua agenda principal, o ID será simplesmente o seu email (exemplo: `seuemail@gmail.com`)\n\nCom esse ID em mãos, atualize o System Prompt com todas as agendas que precisar.\n",
+        "height": 320,
+        "width": 680,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3728,
+        688
+      ],
+      "id": "745879b5-a2b0-4ebe-a96a-4f7d67c72022",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "## Notas sobre a ferramenta \"Escalar humano\"\n\nDevido a dificuldade no uso de etiquetas do Evolution, não é trivial desabilitar o envio de mensagens para o usuário após o uso dessa ferramenta.\n\nPara ver como isso pode ser feito mais facilmente com o Chatwoot, assista o nosso vídeo.",
+        "height": 320,
+        "width": 360,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4416,
+        688
+      ],
+      "id": "6ca966de-a4bf-48d4-ba5a-a62132025705",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use essa ferramenta quando detectar uma situação que deve ser informada ao gestor responsável.\n\nUse o seguinte formato para a mensagem\n\n```\nUsuário <nome do usuário> (<telefone do usuário>) precisa de atenção imediata.\n\nÚltima mensagem:\n\n---\n\n<última mensagem do usuário>\n```",
+        "chatId": "={{ $('Info').item.json.telegram_chat_id }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        4864,
+        528
+      ],
+      "id": "36be27cd-2483-4e27-90fc-bcb738371719",
+      "name": "Escalar humano",
+      "webhookId": "d045a8c1-ec1b-4d20-8226-457aa18934af",
+      "credentials": {
+        "telegramApi": {
+          "id": "mwYzTUT9bRURfZh5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-audio",
+        "instanceName": "futurus",
+        "remoteJid": "={{ $('Info').item.json.telefone }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        6048,
+        464
+      ],
+      "id": "f3d45c02-bd55-4541-9b87-6000d5119924",
+      "name": "Responder mensagem áudio",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Envia uma mensagem de reação como resposta a uma mensagem do usuário. Reação é sempre um emoji.",
+        "method": "POST",
+        "url": "={{ $('Info').item.json.url_evolution }}/message/sendReaction/{{ $('Info').item.json.instancia }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "evolutionApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"key\": {\n    \"remoteJid\": \"{{ $('Info').item.json.telefone + '@s.whatsapp.net' }}\",\n    \"fromMe\": {{ $('Info').item.json.fromMe }},\n    \"id\": \"{{ $('Info').item.json.id_mensagem }}\"\n  },\n  \"reaction\": \"{reacao}\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        4160,
+        528
+      ],
+      "id": "05e65b6c-94b0-41f6-97be-c47336bd2509",
+      "name": "Reagir mensagem",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2448,
+        784
+      ],
+      "id": "8a6ab6c8-9f79-46a5-bd6d-07cfe1945290",
+      "name": "Converter base64 para áudio."
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_fila_mensagens_futurus",
+          "mode": "list",
+          "cachedResultName": "n8n_fila_mensagens_futurus"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_mensagem": "={{ $json.id_mensagem }}",
+            "telefone": "={{ $json.telefone }}",
+            "mensagem": "={{ $json.mensagem }}",
+            "timestamp": "={{ DateTime.fromSeconds(Number($json.timestamp)).toISO() }}",
+            "id": 2
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id_mensagem",
+              "displayName": "id_mensagem",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mensagem",
+              "displayName": "mensagem",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2016,
+        352
+      ],
+      "id": "a4f635bb-7831-40be-964f-71ffec4f76b8",
+      "name": "Enfileirar mensagem.",
+      "credentials": {
+        "postgres": {
+          "id": "T38bLsCXoDcCU53w",
+          "name": "POSTGRES-b7g.app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d29ae5a6-0f4d-4bf7-b8f1-b77608e1ea74",
+              "name": "mensagem",
+              "value": "={{ $('Transcrever áudio').item.json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3520,
+        784
+      ],
+      "id": "f2d7490f-5f5c-400b-95ef-c6cefffd3099",
+      "name": "Set mensagem.",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "futurus",
+        "remoteJid": "={{ $('Info').item.json.telefone }}",
+        "messageText": "={{ $json.text }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        6048,
+        288
+      ],
+      "id": "4f7076d6-efb1-430d-8169-b97d193bbecb",
+      "name": "Responder mensagem texto.",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "![Evolution API](https://mintlify.s3.us-west-1.amazonaws.com/evolution/logo/dark.svg)",
+        "height": 100,
+        "width": 280,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c12c5857-a307-4f1a-b9a4-4d654640c620",
+      "name": "Sticky Note20"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8fd010d-6096-4a50-b3e2-e9fe26661840",
+              "name": "id_mensagem",
+              "value": "={{ $json.body.data.key.id }}",
+              "type": "string"
+            },
+            {
+              "id": "8bf522a6-75fb-434a-854c-b736539309e1",
+              "name": "telefone",
+              "value": "={{ $json.body.data.key.remoteJid.split('@').first() }}",
+              "type": "string"
+            },
+            {
+              "id": "731eef50-51cd-4328-8eda-177d937d519b",
+              "name": "instancia",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "0d622a33-f313-4758-a764-fa6cbf2b0587",
+              "name": "mensagem",
+              "value": "={{ $json.body.data.message.conversation || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "8f4b9d84-56e0-4f45-9f17-68c53f365f43",
+              "name": "mensagem_de_audio",
+              "value": "={{ $json.body.data.message.audioMessage?.ptt || false }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2b679a3f-788f-4cd2-88d5-4f03af68f224",
+              "name": "timestamp",
+              "value": "={{ $json.body.data.messageTimestamp }}",
+              "type": "number"
+            },
+            {
+              "id": "a445d43a-6cd5-4388-982b-9fc58433b342",
+              "name": "fromMe",
+              "value": "={{ $json.body.data.key.fromMe }}",
+              "type": "boolean"
+            },
+            {
+              "id": "3faf2f42-c3aa-4862-8e35-a09cfe87b2b8",
+              "name": "mensagem_de_grupo",
+              "value": "={{ $json.body.data.key.remoteJid.split('@').last() === 'g.us' }}",
+              "type": "boolean"
+            },
+            {
+              "id": "60cd2050-f950-4409-bd3c-79f7c29d20f0",
+              "name": "url_evolution",
+              "value": "={{ $json.body.server_url }}",
+              "type": "string"
+            },
+            {
+              "id": "9d73a108-1624-4d16-b3ba-caac1c921d1d",
+              "name": "telegram_chat_id",
+              "value": "7400980317",
+              "type": "string"
+            },
+            {
+              "id": "7986ad85-de1e-496b-b82c-9d3d562ccb2b",
+              "name": "openai_api_key",
+              "value": "REDACTED_OPENAI_API_KEY",
+              "type": "string"
+            },
+            {
+              "id": "5484e705-d564-406d-af7f-beabe382571e",
+              "name": "eleven_labs_api_key",
+              "value": "LINK_VOZ=https://elevenlabs.io/app/voice-library?voiceId=GDzHdQOi6jjf8zaXhCYD ID_VOZ=GDzHdQOi6jjf8zaXhCYD api_key=sk_d06b9008b3341a8b302635232407e43156d84cb4488644f1",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1216,
+        352
+      ],
+      "id": "13daaf6e-1745-4b73-974d-a752b5bf685c",
+      "name": "Info"
+    },
+    {
+      "parameters": {
+        "content": "## Listar vozes do ElevenLabs\n\nExiste um community node do ElevenLabs, mas só funciona para vozes em inglês. Como as requisições são simples, é fácil usar o HTTP request.\n\nVoz sugerida: [Keren](https://elevenlabs.io/app/voice-library?voiceId=33B4UnXyTNbgLmdEDh5P)\n\n#### Configurações\n- Speed: 1.10\n- Stability: 35%\n- Similarity: 44%\n\n\n[![ElevenLabs](https://framerusercontent.com/images/YU6MnXR7ZjWNRjlYzx2Hrpcx0.png)](https://try.elevenlabs.io/9k5l5hagxkel)\n\n## [Clique aqui para criar sua conta gratuita no ElevenLabs](https://try.elevenlabs.io/9k5l5hagxkel)",
+        "height": 480,
+        "width": 460,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5184,
+        688
+      ],
+      "id": "fc88b117-b474-4bc8-bb01-f5de61ee8fc3",
+      "name": "Sticky Note21"
+    },
+    {
+      "parameters": {
+        "content": "## 1. Secretária",
+        "height": 80,
+        "width": 540,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        16
+      ],
+      "id": "bca0227b-4c8b-4afc-b4fe-77ceab497af4",
+      "name": "Sticky Note30"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/GDzHdQOi6jjf8zaXhCYD",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "output_format",
+              "value": "mp3_44100_32"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "hola"
+            },
+            {
+              "name": "model_id",
+              "value": "eleven_flash_v2_5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5424,
+        864
+      ],
+      "id": "7274a5c5-f669-44c0-9f37-0996d0706981",
+      "name": "Testar credencial - ElevenLabs",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "D1G90XkNCrT7ZwyF",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        6576,
+        240
+      ],
+      "id": "63bd3806-89fe-4c62-b326-642ada8657a5",
+      "name": "Gatilho diário"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Agora são {{ $now.format('FFFF') }}.",
+        "options": {
+          "systemMessage": "=Agora são {{ $now.format('FFFF') }}.\n\nVocê é um agente especializado em **efetuar operacoes de mercado** para a empresa. Sua função principal é:\n\n1. **Listar os eventos** agendados para o próximo dia no Google Calendar.\n2. **Obter o telefone** na descrição de cada evento.\n3. **Enviar uma mensagem de confirmação** usando a ferramenta “Enviar opções no WhatsApp”, perguntando se o usuario confirma a operacao ou prefere reagendar.\n4. **Inclua na mensagem**:\n  - Nome do usuario\n  - Nome do profissional\n  - Data e hora da operacao\n\n## IMPORTANTE\n- Você **não recebe respostas** diretamente; o retorno do usuario é tratado por outro agente.\n- Use a ferramenta \"Refletir1\" antes e depois de realizar operações complexas, para ter certeza de que deu tudo certo.\n- SEMPRE QUE ENVIAR UMA MENSAGEM PARA O usuario, **USE A FERRAMENTA \"Salvar_memoria\"**. ISSO É MUITO IMPORTANTE, NÃO FAÇA ERRADO POR FAVOR.\n\n\n## MERCADOS E CATEGORIAS\n\nSegue o nome dos mercados, suas categorias, e o ID da agenda que deve ser usado nas ferramentas Google Calendar\n\n**MUITO IMPORTANTE!! O ID DA AGENDA INCLUI O \"@group.calendar.google.com\". NÃO OMITA AO UTILIZAR AS FERRAMENTAS**\n\n- Lula vencerá Eleições Presidenciais em 2026 - Politica -  Geral (de38776ef7eebcdb809b1cf7aa0ae570df6821d3124ee545feea10d661fdb605@group.calendar.google.com)\n- Bitcoin ultrapassará $100.000 em 2026? - crypto - Geral (03b766006a515bd40d736bbf7664757f9932ceeac3a393986f43b88ee3c57ce5@group.calendar.google.com)\n- Acordo de paz formal na Ucrânia em 2026? - mundo - Geral (c_ebce2058c0b75e881585b90539f6ded839de178d4bb64e1aa9e4f6468d6954a6@group.calendar.google.com)\n- Vacina universal contra o câncer aprovada em 2026? - saude - Geral (905ee1e00e49c3355057da4d3d216c1fb4b4e950256a2c2e4d6247e45c881ada@group.calendar.google.com)\n- Flamengo será Campeão Brasileiro 2026? - Esportes -Geral\n(cf7fbb2643f5482a318feda1ec42adf97543c73ac7c57c7734bc17a8603fe9dd@group.calendar.google.com)\n- o mundo termina em 2026 - Entretenimento -  Geral\n(48ccd55ce4b6aedbdbae638326e52b5a1f5683efa71fde9c84fcd9f08d413ad4@group.calendar.google.com)\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        7008,
+        240
+      ],
+      "id": "2aa99f4f-f6cc-4f22-bbaa-85874ead3335",
+      "name": "Assistente de confirmação"
+    },
+    {
+      "parameters": {
+        "content": "# Assistente de confirmação de agendamentos \n",
+        "height": 500,
+        "width": 1060,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6480,
+        160
+      ],
+      "id": "4edb101f-f30f-429e-8dab-e2c9ed1aeeed",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use essa ferramenta para enviar as informações de agendamento no WhatsApp.\n\nO telefone deve ser formatado com apenas números, incluindo o código do país.\n\nExemplo: \"551112345678\"",
+        "method": "POST",
+        "url": "={{ $('Info1').item.json.url_evolution }}/message/sendText/{{ $('Info1').item.json.instancia }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "evolutionApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{telefone}\",\n  \"text\": \"{mensagem}\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        7264,
+        480
+      ],
+      "id": "4773072d-dbbf-4f22-ada0-d216dad0e1dc",
+      "name": "Enviar informacoes agendamento1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "VU19aHrZd0LSqdGM",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=assistente_confirmacao",
+        "tableName": "n8n_historico_mensagens_futurus"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        6848,
+        480
+      ],
+      "id": "d521621b-90db-4604-93b0-1847bca383bc",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "T38bLsCXoDcCU53w",
+          "name": "POSTGRES-b7g.app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-04-17",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        6704,
+        512
+      ],
+      "id": "f9ef241a-b8ed-4ad6-bf6f-85f5d720a11e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "P11DUZlm8S9igqW7",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Notas sobre a ferramenta \"Salvar memoria\"\n\nPor padrão, no N8N não existe uma forma direta de compartilhar memória entre agentes diferentes.\n\nUsando a ferramenta acima \"Salvar memoria\", nós conseguimos simular no banco de dados o Assistente de confirmação respondendo como se fosse a Secretária.\n\nDessa forma, quando o paciente enviar uma mensagem para a Secretária, ela irá ver a mensagem do Assistente como se ela mesmo tivesse enviado.\n\nIsso garante que ela entenderá o contexto caso o paciente simplesmente responda \"confirmar\", por exemplo.",
+        "height": 240,
+        "width": 1060,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6480,
+        688
+      ],
+      "id": "07b8ba5c-2b21-49c7-82ab-b1e57093fd0f",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Salva a informação de agendamento enviada, para que a secretária saiba que foi enviada.",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_historico_mensagens_futurus",
+          "mode": "list",
+          "cachedResultName": "n8n_historico_mensagens_futurus"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $fromAI('telefone', 'Telefone do paciente, formatado com apenas números, incluindo código do país. Ex.: \"551112345678\"', 'string') }}",
+            "message": "={ \"type\": \"ai\", \"content\": \"{{ $fromAI('message', 'A mesma mensagem enviada para o paciente.', 'string') }}\" }"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        6976,
+        480
+      ],
+      "id": "d5720f27-ef0a-4ee0-9181-dfb646051634",
+      "name": "Salvar memoria",
+      "credentials": {
+        "postgres": {
+          "id": "T38bLsCXoDcCU53w",
+          "name": "POSTGRES-b7g.app"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "=https://editor.b7g.app/mcp/futurus-765080bea169/sse",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        7120,
+        480
+      ],
+      "id": "7eae5b52-e318-47f4-b7d8-288d81e124ed",
+      "name": "MCP Google Calendar."
+    },
+    {
+      "parameters": {
+        "description": "Use a ferramenta para refletir sobre algo. Ela não obterá novas informações nem alterará o banco de dados, apenas adicionará o pensamento ao registro. Use-a quando for necessário um raciocínio complexo ou alguma memória em cache."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        7408,
+        480
+      ],
+      "id": "e3d7a1d1-8705-4873-837d-43339998943b",
+      "name": "Refletir1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "731eef50-51cd-4328-8eda-177d937d519b",
+              "name": "instancia",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "60cd2050-f950-4409-bd3c-79f7c29d20f0",
+              "name": "url_evolution",
+              "value": "https://evo.b7g.app",
+              "type": "string"
+            },
+            {
+              "id": "96cf1cfd-5604-4a21-900a-990cac0d9a0d",
+              "name": "url_n8n",
+              "value": "https://n8n.b7g.app",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6800,
+        240
+      ],
+      "id": "be94aa87-a420-4cae-8882-c9ae1309347c",
+      "name": "Info1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        3808,
+        528
+      ],
+      "id": "cedbc884-d98b-4eb5-971d-fe22b41bfb61",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7OGyiSRlf48f3L3G",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        5072,
+        560
+      ],
+      "id": "0bc75046-6415-44df-a621-c942d840fd1e",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "7OGyiSRlf48f3L3G",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        5408,
+        368
+      ],
+      "id": "51c04cea-ff66-4484-b11a-cd52323d6d25",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "7OGyiSRlf48f3L3G",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        6512,
+        528
+      ],
+      "id": "9d11a806-2237-4ddf-8347-1498ecd0cc86",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "7OGyiSRlf48f3L3G",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Mensagem chegando?": {
+      "main": [
+        [
+          {
+            "node": "Tipo de mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem recebida": {
+      "main": [
+        [
+          {
+            "node": "Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem encavalada?": {
+      "main": [
+        [
+          {
+            "node": "Limpar fila de mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar mensagens": {
+      "main": [
+        [
+          {
+            "node": "Mensagem encavalada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concatenar mensagens": {
+      "main": [
+        [
+          {
+            "node": "Secretária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpar fila de mensagens": {
+      "main": [
+        [
+          {
+            "node": "Marcar como lidas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar": {
+      "main": [
+        [
+          {
+            "node": "Buscar mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de mensagem": {
+      "main": [
+        [
+          {
+            "node": "Enfileirar mensagem.",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download áudio": {
+      "main": [
+        [
+          {
+            "node": "Converter base64 para áudio.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcrever áudio": {
+      "main": [
+        [
+          {
+            "node": "Marcar como lida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Digitando async": {
+      "main": [
+        [
+          {
+            "node": "Concatenar mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gravando async": {
+      "main": [
+        [
+          {
+            "node": "Set mensagem.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resetar status": {
+      "main": [
+        []
+      ]
+    },
+    "Resetar status1": {
+      "main": [
+        []
+      ]
+    },
+    "Converter áudio para base64": {
+      "main": [
+        [
+          {
+            "node": "Responder mensagem áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar como lida": {
+      "main": [
+        [
+          {
+            "node": "Gravando async",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar como lidas": {
+      "main": [
+        [
+          {
+            "node": "Digitando async",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar arquivos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar e enviar arquivo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Secretária": {
+      "main": [
+        [
+          {
+            "node": "Tipo de mensagem1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar áudio": {
+      "main": [
+        [
+          {
+            "node": "Converter áudio para base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar SSML": {
+      "main": [
+        [
+          {
+            "node": "Gerar áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de mensagem1": {
+      "main": [
+        [
+          {
+            "node": "Formatar texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formatar SSML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar texto": {
+      "main": [
+        [
+          {
+            "node": "Responder mensagem texto.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar alerta de cancelamento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refletir": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalar humano": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reagir mensagem": {
+      "ai_tool": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter base64 para áudio.": {
+      "main": [
+        [
+          {
+            "node": "Transcrever áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enfileirar mensagem.": {
+      "main": [
+        [
+          {
+            "node": "Esperar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set mensagem.": {
+      "main": [
+        [
+          {
+            "node": "Secretária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info": {
+      "main": [
+        [
+          {
+            "node": "Mensagem chegando?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gatilho diário": {
+      "main": [
+        [
+          {
+            "node": "Info1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar informacoes agendamento1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Salvar memoria": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Google Calendar.": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refletir1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info1": {
+      "main": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Secretária",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Formatar texto",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Formatar SSML",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Assistente de confirmação",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "0be0a819-f79c-489f-86a7-958ad4224e89",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a4b03526fb8f96a771a0d22efb306192170d3f3f49453bcde6003f24d0eac2f5"
+  },
+  "id": "BvSKgPtTAEY1Ygav",
+  "tags": []
+}

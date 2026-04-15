@@ -1,0 +1,2699 @@
+{
+  "address": "6tb9fNKNxfEfzAPda2NScrq9RpxBJqPWQWiqWtnQm3oY",
+  "metadata": {
+    "name": "prediction",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_liquidity",
+      "docs": [
+        "Add liquidity (SOL) to a market in Prepare status"
+      ],
+      "discriminator": [
+        181,
+        157,
+        89,
+        67,
+        143,
+        182,
+        52,
+        72
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_authority",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "admin_close_market",
+      "docs": [
+        "Admin-only: manually close a market with a specified result",
+        "Used for subjective markets or emergency resolution"
+      ],
+      "discriminator": [
+        5,
+        222,
+        194,
+        36,
+        226,
+        243,
+        136,
+        71
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "market_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "market_id",
+          "type": "string"
+        },
+        {
+          "name": "result",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "claim",
+      "docs": [
+        "Claim winnings from a resolved market",
+        "Winners receive proportional share of the FUT pool"
+      ],
+      "discriminator": [
+        62,
+        198,
+        214,
+        193,
+        213,
+        159,
+        108,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fut_mint",
+          "writable": true
+        },
+        {
+          "name": "user_fut_account",
+          "docs": [
+            "User's FUT token account to receive winnings"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fut_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "market_fut_account",
+          "docs": [
+            "Market's FUT token account holding the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fut_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "market_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_position",
+          "docs": [
+            "User position tracking their bets"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  112,
+                  111,
+                  115,
+                  105,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_winning_token_account",
+          "docs": [
+            "User's winning token account (Yes or No token)"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "winning_token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "winning_token_mint",
+          "docs": [
+            "The winning token mint (token_a for Yes, token_b for No)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "associated_token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "market_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "create_bet",
+      "docs": [
+        "Place a bet on a market by buying Yes or No tokens with FUT"
+      ],
+      "discriminator": [
+        197,
+        42,
+        153,
+        2,
+        59,
+        63,
+        143,
+        246
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fut_mint",
+          "writable": true
+        },
+        {
+          "name": "user_fut_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fut_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "market_fut_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fut_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "fee_authority_fut_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "fee_authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fut_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true
+        },
+        {
+          "name": "token_mint",
+          "docs": [
+            "CHECK reward YES/NO token mint"
+          ],
+          "writable": true
+        },
+        {
+          "name": "pda_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "fee_authority",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_position",
+          "docs": [
+            "User position account: tracks bets per user per market"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  112,
+                  111,
+                  115,
+                  105,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "associated_token_program"
+        },
+        {
+          "name": "token_metadata_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "BettingParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_res",
+      "docs": [
+        "Query the oracle for the current price feed (legacy — use resolve_market for resolution)"
+      ],
+      "discriminator": [
+        31,
+        216,
+        159,
+        150,
+        195,
+        87,
+        242,
+        137
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "feed"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_market",
+      "docs": [
+        "Create a new prediction market with Yes/No token mints"
+      ],
+      "discriminator": [
+        33,
+        253,
+        15,
+        116,
+        89,
+        25,
+        127,
+        236
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_authority",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "params.market_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "global_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "feed"
+        },
+        {
+          "name": "metadata_a",
+          "writable": true
+        },
+        {
+          "name": "metadata_b",
+          "writable": true
+        },
+        {
+          "name": "token_mint_a",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  97,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_mint_b",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  98,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program"
+        },
+        {
+          "name": "token_metadata_program"
+        },
+        {
+          "name": "rent"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "MarketParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "docs": [
+        "Initialize the global state with fee settings and admin configuration"
+      ],
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "GlobalParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "mint_token",
+      "docs": [
+        "Mint Yes/No tokens to the market's PDA token accounts"
+      ],
+      "discriminator": [
+        172,
+        137,
+        183,
+        14,
+        207,
+        110,
+        234,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "pda_token_a_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint_a"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "pda_token_b_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_mint_b"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_authority",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "market_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "metadata_a",
+          "writable": true
+        },
+        {
+          "name": "metadata_b",
+          "writable": true
+        },
+        {
+          "name": "token_mint_a",
+          "writable": true
+        },
+        {
+          "name": "token_mint_b",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program"
+        },
+        {
+          "name": "token_metadata_program"
+        },
+        {
+          "name": "rent"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "market_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "resolve",
+      "docs": [
+        "Resolve a market using Switchboard oracle data (admin only)",
+        "Checks that resolution_date has passed, reads oracle, determines winner"
+      ],
+      "discriminator": [
+        246,
+        150,
+        236,
+        206,
+        108,
+        63,
+        58,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "global",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  101,
+                  101,
+                  100
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "feed"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Global",
+      "discriminator": [
+        167,
+        232,
+        232,
+        177,
+        200,
+        108,
+        114,
+        127
+      ]
+    },
+    {
+      "name": "Market",
+      "discriminator": [
+        219,
+        190,
+        213,
+        55,
+        0,
+        227,
+        198,
+        154
+      ]
+    },
+    {
+      "name": "UserPosition",
+      "discriminator": [
+        251,
+        248,
+        209,
+        245,
+        83,
+        234,
+        17,
+        27
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "BettingEvent",
+      "discriminator": [
+        135,
+        24,
+        236,
+        238,
+        30,
+        3,
+        38,
+        85
+      ]
+    },
+    {
+      "name": "GlobalInitialized",
+      "discriminator": [
+        142,
+        186,
+        188,
+        168,
+        64,
+        228,
+        8,
+        20
+      ]
+    },
+    {
+      "name": "LiquidityWithdrawn",
+      "discriminator": [
+        240,
+        120,
+        73,
+        139,
+        154,
+        31,
+        218,
+        68
+      ]
+    },
+    {
+      "name": "MarketCreated",
+      "discriminator": [
+        88,
+        184,
+        130,
+        231,
+        226,
+        84,
+        6,
+        58
+      ]
+    },
+    {
+      "name": "MarketResolved",
+      "discriminator": [
+        89,
+        67,
+        230,
+        95,
+        143,
+        106,
+        199,
+        202
+      ]
+    },
+    {
+      "name": "MarketStatusUpdated",
+      "discriminator": [
+        142,
+        245,
+        212,
+        171,
+        133,
+        72,
+        219,
+        195
+      ]
+    },
+    {
+      "name": "OracleResUpdated",
+      "discriminator": [
+        49,
+        16,
+        89,
+        52,
+        40,
+        113,
+        213,
+        215
+      ]
+    },
+    {
+      "name": "PositionCreated",
+      "discriminator": [
+        63,
+        226,
+        54,
+        63,
+        141,
+        22,
+        31,
+        221
+      ]
+    },
+    {
+      "name": "WinningsClaimed",
+      "discriminator": [
+        187,
+        184,
+        29,
+        196,
+        54,
+        117,
+        70,
+        150
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidSwitchboardAccount",
+      "msg": "Not a valid Switchboard account"
+    },
+    {
+      "code": 6001,
+      "name": "StaleFeed",
+      "msg": "Switchboard feed has not been updated in 5 minutes"
+    },
+    {
+      "code": 6002,
+      "name": "ConfidenceIntervalExceeded",
+      "msg": "Switchboard feed exceeded provided confidence interval"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidFundAmount",
+      "msg": "Invalid fund amount"
+    },
+    {
+      "code": 6004,
+      "name": "FutPriceBelowUnlockPrice",
+      "msg": "Current FUT price is not above Escrow unlock price."
+    },
+    {
+      "code": 6005,
+      "name": "ArithmeticError",
+      "msg": "Arithmetic error"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidCreator",
+      "msg": "Invalid creator"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidFeeAuthority",
+      "msg": "Invalid fee authority"
+    },
+    {
+      "code": 6008,
+      "name": "NotPreparing",
+      "msg": "Not preparing status"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidMarket",
+      "msg": "Invalid market"
+    },
+    {
+      "code": 6010,
+      "name": "MarketNotActive",
+      "msg": "Market is not active"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidAdmin",
+      "msg": "Invalid Admin"
+    },
+    {
+      "code": 6012,
+      "name": "MarketNotResolved",
+      "msg": "Market is not resolved yet"
+    },
+    {
+      "code": 6013,
+      "name": "NoWinningPosition",
+      "msg": "User has no winning position"
+    },
+    {
+      "code": 6014,
+      "name": "AlreadyClaimed",
+      "msg": "Winnings already claimed"
+    },
+    {
+      "code": 6015,
+      "name": "MarketAlreadyResolved",
+      "msg": "Market is already resolved"
+    },
+    {
+      "code": 6016,
+      "name": "ResolutionDateNotReached",
+      "msg": "Market resolution date not reached"
+    },
+    {
+      "code": 6017,
+      "name": "InsufficientMarketBalance",
+      "msg": "Insufficient market balance"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidTokenMint",
+      "msg": "Invalid token mint for this market"
+    },
+    {
+      "code": 6019,
+      "name": "PositionAlreadyExists",
+      "msg": "User position already exists"
+    },
+    {
+      "code": 6020,
+      "name": "InsufficientTokenBalance",
+      "msg": "Insufficient token balance"
+    },
+    {
+      "code": 6021,
+      "name": "MarketNotFinished",
+      "msg": "Market is not in finished state"
+    }
+  ],
+  "types": [
+    {
+      "name": "BettingEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_yes",
+            "type": "bool"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "fut_cost",
+            "type": "u64"
+          },
+          {
+            "name": "token_a_price",
+            "type": "u64"
+          },
+          {
+            "name": "token_b_price",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BettingParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "is_yes",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Global",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator_fee_amount",
+            "type": "u64"
+          },
+          {
+            "name": "decimal",
+            "type": "u8"
+          },
+          {
+            "name": "market_count",
+            "type": "u64"
+          },
+          {
+            "name": "betting_fee_percentage",
+            "type": "f64"
+          },
+          {
+            "name": "fund_fee_percentage",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "global_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator_fee_amount",
+            "type": "u64"
+          },
+          {
+            "name": "market_count",
+            "type": "u64"
+          },
+          {
+            "name": "decimal",
+            "type": "u8"
+          },
+          {
+            "name": "fund_fee_percentage",
+            "type": "f64"
+          },
+          {
+            "name": "betting_fee_percentage",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fee_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator_fee_amount",
+            "type": "u64"
+          },
+          {
+            "name": "market_count",
+            "type": "u64"
+          },
+          {
+            "name": "decimal",
+            "type": "u8"
+          },
+          {
+            "name": "betting_fee_percentage",
+            "type": "f64"
+          },
+          {
+            "name": "fund_fee_percentage",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LiquidityWithdrawn",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Market",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "feed",
+            "type": "pubkey"
+          },
+          {
+            "name": "value",
+            "type": "f64"
+          },
+          {
+            "name": "quest",
+            "type": "i64"
+          },
+          {
+            "name": "range",
+            "type": "u8"
+          },
+          {
+            "name": "token_a",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_b",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_a_amount",
+            "type": "u64"
+          },
+          {
+            "name": "token_b_amount",
+            "type": "u64"
+          },
+          {
+            "name": "token_price_a",
+            "type": "u64"
+          },
+          {
+            "name": "token_price_b",
+            "type": "u64"
+          },
+          {
+            "name": "yes_amount",
+            "type": "u16"
+          },
+          {
+            "name": "no_amount",
+            "type": "u16"
+          },
+          {
+            "name": "total_reserve",
+            "type": "u64"
+          },
+          {
+            "name": "resolution_date",
+            "type": "i64"
+          },
+          {
+            "name": "market_status",
+            "type": {
+              "defined": {
+                "name": "MarketStatus"
+              }
+            }
+          },
+          {
+            "name": "result",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "total_fut_deposited",
+            "docs": [
+              "Total FUT tokens deposited into the market via betting"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_yes_sold",
+            "docs": [
+              "Total number of Yes tokens sold to users"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_no_sold",
+            "docs": [
+              "Total number of No tokens sold to users"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "value",
+            "type": "f64"
+          },
+          {
+            "name": "range",
+            "type": "u8"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "feed",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_a",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_b",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_status",
+            "type": {
+              "defined": {
+                "name": "MarketStatus"
+              }
+            }
+          },
+          {
+            "name": "token_a_amount",
+            "type": "u64"
+          },
+          {
+            "name": "token_b_amount",
+            "type": "u64"
+          },
+          {
+            "name": "token_price_a",
+            "type": "u64"
+          },
+          {
+            "name": "token_price_b",
+            "type": "u64"
+          },
+          {
+            "name": "total_reserve",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "quest",
+            "type": "i64"
+          },
+          {
+            "name": "value",
+            "type": "f64"
+          },
+          {
+            "name": "range",
+            "type": "u8"
+          },
+          {
+            "name": "date",
+            "type": "i64"
+          },
+          {
+            "name": "token_amount",
+            "type": "u64"
+          },
+          {
+            "name": "token_price",
+            "type": "u64"
+          },
+          {
+            "name": "market_id",
+            "type": "string"
+          },
+          {
+            "name": "name_a",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "name_b",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "symbol_a",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "symbol_b",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "url_a",
+            "type": {
+              "option": "string"
+            }
+          },
+          {
+            "name": "url_b",
+            "type": {
+              "option": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketResolved",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "result",
+            "type": "bool"
+          },
+          {
+            "name": "oracle_value",
+            "type": "f64"
+          },
+          {
+            "name": "market_value",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Prepare"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Finished"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketStatusUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_status",
+            "type": {
+              "defined": {
+                "name": "MarketStatus"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleResUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "oracle_res",
+            "type": "f64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_yes",
+            "type": "bool"
+          },
+          {
+            "name": "token_amount",
+            "type": "u64"
+          },
+          {
+            "name": "fut_paid",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserPosition",
+      "docs": [
+        "Tracks an individual user's position in a specific market"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "docs": [
+              "The user who holds this position"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "market",
+            "docs": [
+              "The market this position belongs to"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "yes_amount",
+            "docs": [
+              "Total Yes tokens purchased"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "no_amount",
+            "docs": [
+              "Total No tokens purchased"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "yes_fut_paid",
+            "docs": [
+              "Total FUT paid for Yes tokens"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "no_fut_paid",
+            "docs": [
+              "Total FUT paid for No tokens"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "claimed",
+            "docs": [
+              "Whether winnings have been claimed"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for PDA derivation"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WinningsClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "is_yes",
+            "type": "bool"
+          }
+        ]
+      }
+    }
+  ]
+}

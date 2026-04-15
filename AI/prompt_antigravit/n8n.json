@@ -1,0 +1,182 @@
+{
+  "name": "Anigravity + n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "graciasporelapoyo",
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "id": "bd91de57-b164-4a51-a24c-752e84e70d54",
+      "name": "Webhook",
+      "webhookId": "b03eed95-d610-4c4f-89dc-b25ce7e9afd6"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xrxCV1uzTPUJ7ZJODi7kcIS2zSh_y4_h_mo6YCSiE5Q",
+          "mode": "list",
+          "cachedResultName": "pruebabbdd",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xrxCV1uzTPUJ7ZJODi7kcIS2zSh_y4_h_mo6YCSiE5Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xrxCV1uzTPUJ7ZJODi7kcIS2zSh_y4_h_mo6YCSiE5Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $json.body.nombre }}",
+            "Email": "={{ $json.body.email }}",
+            "Telefono": "={{ $json.body.telefono }}",
+            "Mensaje": "={{ $json.body.mensaje }}",
+            "Medio": "={{ $json.body.source }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Medio",
+              "displayName": "Medio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [224, 0],
+      "id": "c26af2bd-3b9c-4821-8635-c24dc34e36e2",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HvbXK5FSg4Q7SIlF",
+          "name": "Automatizado Agency - Alvaro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.retellai.com/v2/create-phone-call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer clave_api"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from_number\": \"numer_Telefono\",\n  \"to_number\": \"{{ $json.Telefono }}\",\n  \"call_type\": \"phone_call\",\n  \"retell_llm_dynamic_variables\": {\n    \"nombre\": \"{{ $json.Nombre }}\"\n  },\n  \"override_agent_id\": \"agent_d6caf427dd76f2dbc887332527\"\n}\n",
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [432, 0],
+      "id": "51e8f0e0-aef9-4570-b46b-d28750b5de28",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {
+
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "9e97f9d8-c780-40a2-8bdf-f4801f830ee3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "739a70d334e276bc547879543d0028cf0690392dbaf1f0fe8666c83fbf6b4726"
+  },
+  "id": "NfM5zK4LmXKvTqduRtW4H",
+  "tags": []
+}

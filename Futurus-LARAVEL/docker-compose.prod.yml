@@ -1,0 +1,52 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: futurus-app-prod
+    restart: always
+    ports:
+      - "4444:80"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=${APP_URL:-http://localhost:4444}
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    depends_on:
+      - db
+    networks:
+      - futurus-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: mariadb:10.6
+    container_name: futurus-db-prod
+    restart: always
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - futurus-db-prod-data:/var/lib/mysql
+      - ./SQL:/docker-entrypoint-initdb.d
+    networks:
+      - futurus-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  futurus-network:
+    driver: bridge
+
+volumes:
+  futurus-db-prod-data:

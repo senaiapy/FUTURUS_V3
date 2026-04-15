@@ -1,0 +1,752 @@
+{
+  "name": "ToolsGoogleMapsLocationStrapi",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "231b6f6a-7270-46bf-a735-740bff7815d1",
+              "name": "Google_api_key",
+              "value": "={{ $json.key }}",
+              "type": "string"
+            },
+            {
+              "id": "99095f8d-0e63-40f6-b212-d293131be505",
+              "name": "base_location",
+              "value": "={{ $json.base_location }}",
+              "type": "string"
+            },
+            {
+              "id": "a37b209f-db4f-410a-8a61-36dea887f617",
+              "name": "city",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "6a509ec8-8a08-4ed4-9e5e-aa7fa6a20822",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "0ae0313c-b094-4aaa-b1a7-521332b9b25d",
+              "name": "function",
+              "value": "={{ $json.function }}",
+              "type": "string"
+            },
+            {
+              "id": "36e0a264-c9f3-4dff-ab3c-c80e698a0405",
+              "name": "lat",
+              "value": "={{ $json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "dca4c733-eed3-4304-b03e-f4065606ec9a",
+              "name": "long",
+              "value": "={{ $json.long }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        160
+      ],
+      "id": "86fe3dfc-73f4-4aee-a68d-a67089ce3bd6",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $('SetResponse').last()?.json?.response\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        -176
+      ],
+      "id": "bea58647-6b74-4b4f-ac90-902f1cace6f7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\nconst items = $input.all()[0]?.json?.results || []\n\n//console.log('items->',items) \n\nitems.forEach(item => {\n\n//console.log('item->',item) \n  \nif (item.geometry && item.geometry.location) {\n  \n            const {lat, lng} = item.geometry.location;\n            const formatted_address = item?.formatted_address\n\n            // Adiciona o resultado formatado ao array de saída\n            output.push({\n                json: {lat:lat, long:lng,formatted_address} // Cada item contém um objeto `json`\n            });\n        }\n})\n\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        80
+      ],
+      "id": "9d74f46a-d556-4c87-a4a4-4e964b274b77",
+      "name": "Code1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/geocode/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $json.Google_api_key }}"
+            },
+            {
+              "name": "address",
+              "value": "={{ $json.address }}+'-'+{{ $json.city }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        -160
+      ],
+      "id": "69247879-3669-4214-b6bc-f135f8aea108",
+      "name": "GoogleMaps_Address-HTTP Request",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2e7ae981-d9de-43f9-a35e-a2be8d2a5c10",
+              "leftValue": "={{ $json.lat }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "18aca563-2174-498e-8629-ad4e86f7fc2e",
+              "leftValue": "={{ $json.long }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "id": "b2de0361-e6c4-4678-8c09-d0dce9af552e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/distancematrix/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{$('Config').item.json.Google_api_key }}"
+            },
+            {
+              "name": "destinations",
+              "value": "={{ $json.lat }},{{ $json.long }}"
+            },
+            {
+              "name": "origins",
+              "value": "={{ $('Config').item.json.base_location }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        432,
+        -176
+      ],
+      "id": "850d2371-1b2f-4406-bd2b-e557f034f7f8",
+      "name": "Google_Distance_Matrix"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6b65215-2ba3-4f14-b1c1-6e8a900fcf11",
+              "name": "response",
+              "value": "=Endereço econtrado:\n{{ $json.destination_addresses[0] }}\n\nDistância até o estabelecimento (em Km)):\n{{ $json.rows[0].elements[0].distance.text }}\n\nCoordenadas:\nlatitude: {{ $('Code1').item.json.lat }}\nlongitude: {{ $('Code1').item.json.long }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        -176
+      ],
+      "id": "d7a97706-8fec-4843-ab9f-9ec08f6fcb4a",
+      "name": "SetResponse"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6b65215-2ba3-4f14-b1c1-6e8a900fcf11",
+              "name": "response",
+              "value": "=Endereço  econtrado:\n\n- Endereço desconhecido\n\nDistância até o estabelecimento (em Km)):\n- Não é possível determinar a distância\n\nErro:\n\nCoordenadas geográficas não localizadas para o endereço informado.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        112
+      ],
+      "id": "8fa134fa-69e3-4d89-bc3e-422c6d57deb6",
+      "name": "SetResponse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $('SetResponse').last()?.json?.response\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        208
+      ],
+      "id": "d196e2c6-a935-474c-bd8a-5e98eff86416",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "address"
+            },
+            {
+              "name": "city"
+            },
+            {
+              "name": "key"
+            },
+            {
+              "name": "base_location"
+            },
+            {
+              "name": "function"
+            },
+            {
+              "name": "lat"
+            },
+            {
+              "name": "long"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        -128
+      ],
+      "id": "18226c13-d28f-4a9c-8b15-fa70dd733856",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "address",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d22647f5-402b-4ce4-ae8f-70f520ee83c4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "86e380c2-f4ae-45ed-aad6-2d5a4bca5b9c",
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "location",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -128,
+        160
+      ],
+      "id": "de82d7c1-a9f5-408e-957a-d814ed69f48a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/geocode/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $json.Google_api_key }}"
+            },
+            {
+              "name": "latlng",
+              "value": "={{ $json.lat }},{{ $json.long  }}"
+            },
+            {
+              "name": "result_type",
+              "value": "street_address"
+            },
+            {
+              "name": "location_type_222",
+              "value": "ROOFTOP"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        272
+      ],
+      "id": "ae8bf012-7592-42d5-bf7e-7bd8d3abad1f",
+      "name": "GoogleMaps_Address-HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6b65215-2ba3-4f14-b1c1-6e8a900fcf11",
+              "name": "response",
+              "value": "={{ $json.error.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        288
+      ],
+      "id": "c9f9db6c-f3a7-40be-be65-f2b4e14a1a0b",
+      "name": "SetResponse2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este código extrai o 'formatted_address' de cada resultado do Google Maps\nconst input = $input.first().json; // Obtém o primeiro item de entrada\nconst results = input.results || []; // Garante que 'results' seja um array\n\n// Mapeia cada resultado para um novo objeto contendo apenas o 'formatted_address'\nreturn results.map(result => {\n  return {\n    json: {\n      formatted_address: result.formatted_address\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        512
+      ],
+      "id": "d28ba069-77c5-4fe1-94a3-f5d8e11c9795",
+      "name": "Code3",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8343d164-f57d-4781-a5a0-0271ecd2bfa1",
+              "name": "lat",
+              "value": "={{ $('Config').item.json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "4dda1f99-33d1-46b4-afbf-e7b6e5289f7c",
+              "name": "long",
+              "value": "={{ $('Config').item.json.long }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        512
+      ],
+      "id": "8834a6bd-73af-47b9-a828-3c7d009b9796",
+      "name": "SetLatLong"
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/distancematrix/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{$('Config').item.json.Google_api_key }}"
+            },
+            {
+              "name": "destinations",
+              "value": "={{ $json.lat }},{{ $json.long }}"
+            },
+            {
+              "name": "origins",
+              "value": "={{ $('Config').item.json.base_location }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        576,
+        512
+      ],
+      "id": "2f9aad03-95a4-496a-a433-c64bbdc3dfb3",
+      "name": "Google_Distance_Matrix1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6b65215-2ba3-4f14-b1c1-6e8a900fcf11",
+              "name": "response",
+              "value": "=Endereço econtrado:\n{{ $json.destination_addresses[0] }}\n\nDistância até o estabelecimento (em Km)):\n{{ $json.rows[0].elements[0].distance.text }}\n\nCoordenadas:\nlatitude: {{ $('SetLatLong').item.json.lat }}\nlongitude: {{ $('SetLatLong').item.json.long }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        512
+      ],
+      "id": "847c9112-aa51-4f00-9c2d-63ee68f77d62",
+      "name": "SetResponse3"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $('SetResponse3').last()?.json?.response\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        512
+      ],
+      "id": "c777ed2b-47ac-4b02-b515-4de753567116",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsGoogleMapsLocationStrapi\n## Esta função busca o endereço do clieente no Google Maps\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -176
+      ],
+      "id": "bf026d4c-c6fa-4f24-82e2-4bc299323819",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "address": "Rua Fidalma  Martins de Carvalho,880-Bloco 6, Apartamento 103 - Jóquei",
+          "city": "Teresina - Piauí",
+          "key": "REDACTED_GOOGLE_API_KEY",
+          "base_location": "-5.08921,-42.8016",
+          "function": "address",
+          "lat": "-5.0795382",
+          "long": "-42.7947352"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GoogleMaps_Address-HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google_Distance_Matrix",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetResponse1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Distance_Matrix": {
+      "main": [
+        [
+          {
+            "node": "SetResponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetResponse": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetResponse1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "GoogleMaps_Address-HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GoogleMaps_Address-HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GoogleMaps_Address-HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetResponse2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetResponse2": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "SetLatLong",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetLatLong": {
+      "main": [
+        [
+          {
+            "node": "Google_Distance_Matrix1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Distance_Matrix1": {
+      "main": [
+        [
+          {
+            "node": "SetResponse3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetResponse3": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d9566149-67fc-40d9-b2f6-6546924838eb",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "11mhKqxxzcbNYsj8",
+  "tags": []
+}

@@ -1,0 +1,495 @@
+{
+  "name": "ToolsProductsDataTableToRag",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a214c93-1813-4819-9a3b-786293229922",
+              "name": "file_name",
+              "value": "product_restaurant_list",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1008,
+        176
+      ],
+      "id": "0ea8a2f6-dd36-410c-970b-489f67e3e0f5",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsProductsDataTableToRag\n## Esta função importa a tabela products para RAG Hibrido do Supabase\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Config\n## Utilize o NÓ 'config' para configurar as URLS e tabelas do STRAPI onde os dados serão armazenados\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1300,
+        "width": 772
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -16
+      ],
+      "id": "b8e049df-753a-4ea3-8520-b1e37537119e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        544
+      ],
+      "id": "68784456-f768-4eae-8a7d-6d34cea6b320",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "# Supabase RAG HÍBRIDO - Loader\n",
+        "height": 1176,
+        "width": 2432,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        64
+      ],
+      "id": "e33b947c-7e33-41f1-ad3c-3605419c2bb2",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('JoinArray').first().json.all_text }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_name",
+                "value": "={{ $('Config').first().json.file_name }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        5040,
+        528
+      ],
+      "id": "702a17ad-7298-43c3-8b1f-3a0f490b1802",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {
+          "splitCode": "markdown"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        5200,
+        784
+      ],
+      "id": "5a099c76-776f-4ac9-9093-0799a3952082",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        4896,
+        240
+      ],
+      "id": "ebb830cc-8349-46b9-b1ac-c7bfc85fa7f0",
+      "name": "Supabase Vector Store/Hybrid",
+      "credentials": {
+        "supabaseApi": {
+          "id": "zrj3SsVZZzQyaL9r",
+          "name": "Supabase/Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4688,
+        800
+      ],
+      "id": "7cb200c7-d82c-49b2-9056-c4a6312c9460",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "pjvFZYwfl4qpYDxb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "markdown"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3536,
+        912
+      ],
+      "id": "2c100758-641b-4fd9-86b5-4ee6037cf914",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ad71912-63a8-415e-80f7-a39f25ab006d",
+              "name": "all_text",
+              "value": "={{ $json.markdown.join() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3936,
+        240
+      ],
+      "id": "5d3629c0-1248-4c16-af14-374a5d94e6e8",
+      "name": "JoinArray"
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8N - Gerador de Catálogo Markdown para Restaurante\n\nconst CONFIG = {\n  tituloH1: '🍽️ Cardápio Completo',\n  nomeRestaurante: 'Delícias do Brasil',\n  template: 'padrao', // 'padrao', 'compacto', 'premium', 'minimalista'\n  incluirImagens: true,\n  incluirIndice: true,\n  incluirEstatisticas: true,\n  agruparPorCategoria: true,\n  \n  // OPÇÕES DE LAYOUT\n  layoutImagem: 'destaque', // 'destaque', 'lateral', 'compacta', 'sem-imagem'\n  mostrarPrecoDestaque: true,\n  mostrarInativos: false, // Mostrar produtos com active: false\n  \n  // EMOJIS POR CATEGORIA (personalizável)\n  emojisPorCategoria: {\n    'Entradas': '🥗',\n    'Pratos Principais': '🍖',\n    'Massas': '🍝',\n    'Pizzas': '🍕',\n    'Saladas': '🥗',\n    'Sobremesas': '🍰',\n    'Bebidas': '🥤',\n    'Bebidas Especiais': '🍹',\n    'Sucos': '🧃',\n    'Cafés': '☕',\n    'default': '🍴'\n  }\n};\n\n// ============================================\n// FUNÇÕES UTILITÁRIAS\n// ============================================\n\n// Formata preço para BRL\nfunction formatarPreco(preco) {\n  if (!preco) return 'Preço sob consulta';\n  const num = parseFloat(preco);\n  if (isNaN(num)) return 'Preço sob consulta';\n  return num.toLocaleString('pt-BR', { \n    style: 'currency', \n    currency: 'BRL', \n    minimumFractionDigits: 2,\n    maximumFractionDigits: 2\n  });\n}\n\n// Limpa texto removendo HTML e excesso de quebras\nfunction limparTexto(texto) {\n  if (!texto) return '';\n  return String(texto)\n    .replace(/<[^>]*>/g, '')\n    .replace(/\\n{3,}/g, '\\n\\n')\n    .trim();\n}\n\n// Primeira letra maiúscula\nfunction capitalizar(str) {\n  if (!str) return '';\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n}\n\n// Cria slug para anchors\nfunction slugify(texto) {\n  if (!texto) return '';\n  return texto.toLowerCase()\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/\\s+/g, '-')\n    .replace(/-+/g, '-')\n    .replace(/^-|-$/g, '');\n}\n\n// Extrai informações da descrição (calorias, alergênicos, etc)\nfunction extrairInfoDescricao(descricao) {\n  if (!descricao) return { principal: '', calorias: null, extras: [] };\n  \n  const texto = limparTexto(descricao);\n  const partes = texto.split(',').map(p => p.trim());\n  \n  let principal = '';\n  let calorias = null;\n  const extras = [];\n  \n  partes.forEach(parte => {\n    if (parte.match(/\\d+\\s*(cal|kcal|calorias)/i)) {\n      calorias = parte;\n    } else if (principal === '') {\n      principal = parte;\n    } else {\n      extras.push(parte);\n    }\n  });\n  \n  return { principal, calorias, extras };\n}\n\n// Obtém emoji para categoria\nfunction getEmojiCategoria(categoria) {\n  if (!categoria) return CONFIG.emojisPorCategoria.default;\n  \n  // Busca exata\n  if (CONFIG.emojisPorCategoria[categoria]) {\n    return CONFIG.emojisPorCategoria[categoria];\n  }\n  \n  // Busca parcial (case-insensitive)\n  const categoriaLower = categoria.toLowerCase();\n  for (const [key, emoji] of Object.entries(CONFIG.emojisPorCategoria)) {\n    if (key.toLowerCase().includes(categoriaLower) || \n        categoriaLower.includes(key.toLowerCase())) {\n      return emoji;\n    }\n  }\n  \n  return CONFIG.emojisPorCategoria.default;\n}\n\n// ============================================\n// VALIDAÇÃO DE PRODUTOS\n// ============================================\n\nfunction validarProduto(produto, index) {\n  const erros = [];\n  \n  if (!produto.name || produto.name.trim() === '') {\n    erros.push(`Produto #${index + 1}: campo 'name' obrigatório`);\n  }\n  \n  if (!produto.price && produto.price !== 0) {\n    erros.push(`Produto #${index + 1}: campo 'price' obrigatório`);\n  }\n  \n  if (produto.price && isNaN(parseFloat(produto.price))) {\n    erros.push(`Produto #${index + 1}: 'price' deve ser um número`);\n  }\n  \n  return erros;\n}\n\nfunction validarTodosProdutos(produtos) {\n  const todosErros = [];\n  \n  produtos.forEach((produto, index) => {\n    const erros = validarProduto(produto, index);\n    todosErros.push(...erros);\n  });\n  \n  return todosErros;\n}\n\n// ============================================\n// GERAÇÃO DE IMAGENS\n// ============================================\n\nfunction gerarImagemProduto(produto, layout = CONFIG.layoutImagem) {\n  if (!CONFIG.incluirImagens || !produto.image_url) {\n    return '';\n  }\n  \n  const alt = limparTexto(produto.name) || 'Produto';\n  const imgMarkdown = `![${alt}](${produto.image_url})`;\n  \n  switch (layout) {\n    case 'destaque':\n      // Imagem em destaque (bloco próprio)\n      return `${imgMarkdown}\\n\\n`;\n      \n    case 'lateral':\n      // Imagem + info na mesma linha (tabela)\n      return 'lateral'; // Será tratado no template\n      \n    case 'compacta':\n      // Imagem pequena inline\n      return `${imgMarkdown} `;\n      \n    case 'sem-imagem':\n    default:\n      return '';\n  }\n}\n\n// ============================================\n// TEMPLATES DE PRODUTO\n// ============================================\n\nfunction templatePadrao(produto, index, categoriaSlug) {\n  const slug = slugify(produto.name || 'produto');\n  const info = extrairInfoDescricao(produto.description);\n  const img = gerarImagemProduto(produto, CONFIG.layoutImagem);\n  \n  let md = '';\n  \n  // Título do produto\n  md += `### ${limparTexto(produto.name)} {#produto-${produto.id || index}-${slug}}\\n\\n`;\n  \n  // Imagem (se layout não for lateral)\n  if (img && img !== 'lateral') {\n    md += img;\n  }\n  \n  // Layout lateral (tabela)\n  if (img === 'lateral' && produto.image_url) {\n    md += `| | |\\n`;\n    md += `|---|---|\\n`;\n    md += `| ![${limparTexto(produto.name)}](${produto.image_url}) | `;\n    md += `**${formatarPreco(produto.price)}**<br><br>`;\n    if (info.principal) md += `${info.principal}<br>`;\n    if (info.calorias) md += `*${info.calorias}*<br>`;\n    if (info.extras.length > 0) md += `${info.extras.join(' • ')}`;\n    md += ` |\\n\\n`;\n    \n    if (!CONFIG.mostrarInativos && produto.active === false) {\n      md += `> ⚠️ *Produto temporariamente indisponível*\\n\\n`;\n    }\n    \n    return md;\n  }\n  \n  // Preço em destaque\n  if (CONFIG.mostrarPrecoDestaque) {\n    md += `**💰 ${formatarPreco(produto.price)}**\\n\\n`;\n  }\n  \n  // Descrição principal\n  if (info.principal) {\n    md += `${info.principal}\\n\\n`;\n  }\n  \n  // Informações extras\n  const extras = [];\n  if (info.calorias) extras.push(info.calorias);\n  if (info.extras.length > 0) extras.push(...info.extras);\n  \n  if (extras.length > 0) {\n    md += `*${extras.join(' • ')}*\\n\\n`;\n  }\n  \n  // Status de disponibilidade\n  if (!CONFIG.mostrarInativos && produto.active === false) {\n    md += `> ⚠️ *Produto temporariamente indisponível*\\n\\n`;\n  }\n  \n  // ID para referência\n  if (produto.id) {\n    md += `*Ref: #${produto.id}*\\n\\n`;\n  }\n  \n  return md;\n}\n\nfunction templateCompacto(produto, index, categoriaSlug) {\n  const slug = slugify(produto.name || 'produto');\n  const info = extrairInfoDescricao(produto.description);\n  \n  let md = '';\n  \n  // Linha única com todas as informações\n  md += `**${limparTexto(produto.name)}** • ${formatarPreco(produto.price)}`;\n  \n  if (info.calorias) {\n    md += ` • ${info.calorias}`;\n  }\n  \n  if (produto.image_url && CONFIG.incluirImagens) {\n    md += ` • [Ver foto](${produto.image_url})`;\n  }\n  \n  if (!CONFIG.mostrarInativos && produto.active === false) {\n    md += ` ⚠️`;\n  }\n  \n  md += `\\n\\n`;\n  \n  return md;\n}\n\nfunction templatePremium(produto, index, categoriaSlug) {\n  const slug = slugify(produto.name || 'produto');\n  const info = extrairInfoDescricao(produto.description);\n  const img = gerarImagemProduto(produto, 'destaque');\n  \n  let md = '';\n  \n  md += `---\\n\\n`;\n  \n  // Título destacado\n  md += `## ${limparTexto(produto.name)} {#produto-${produto.id || index}-${slug}}\\n\\n`;\n  \n  // Imagem em destaque\n  if (img) {\n    md += img;\n  }\n  \n  // Blockquote com informações principais\n  md += `> ### 💰 ${formatarPreco(produto.price)}\\n`;\n  \n  if (info.principal) {\n    md += `> \\n> ${info.principal}\\n`;\n  }\n  \n  if (info.calorias) {\n    md += `> \\n> 📊 **${info.calorias}**\\n`;\n  }\n  \n  if (info.extras.length > 0) {\n    md += `> \\n> 📝 *${info.extras.join(' • ')}*\\n`;\n  }\n  \n  md += `\\n`;\n  \n  // Status\n  if (!CONFIG.mostrarInativos && produto.active === false) {\n    md += `⚠️ **Produto temporariamente indisponível**\\n\\n`;\n  }\n  \n  if (produto.id) {\n    md += `*Referência: #${produto.id}*\\n\\n`;\n  }\n  \n  return md;\n}\n\nfunction templateMinimalista(produto, index, categoriaSlug) {\n  const info = extrairInfoDescricao(produto.description);\n  \n  let md = '';\n  \n  md += `**${limparTexto(produto.name)}**  \\n`;\n  md += `${formatarPreco(produto.price)}`;\n  \n  if (info.calorias) {\n    md += ` • ${info.calorias}`;\n  }\n  \n  if (!CONFIG.mostrarInativos && produto.active === false) {\n    md += ` ⚠️`;\n  }\n  \n  md += `\\n\\n`;\n  \n  return md;\n}\n\n// Seleciona template baseado na config\nfunction gerarProduto(produto, index, categoriaSlug) {\n  // Filtra produtos inativos se configurado\n  if (!CONFIG.mostrarInativos && produto.active === false) {\n    return CONFIG.template === 'compacto' || CONFIG.template === 'minimalista' \n      ? '' \n      : templatePadrao(produto, index, categoriaSlug);\n  }\n  \n  switch (CONFIG.template) {\n    case 'compacto':\n      return templateCompacto(produto, index, categoriaSlug);\n    case 'premium':\n      return templatePremium(produto, index, categoriaSlug);\n    case 'minimalista':\n      return templateMinimalista(produto, index, categoriaSlug);\n    default:\n      return templatePadrao(produto, index, categoriaSlug);\n  }\n}\n\n// ============================================\n// AGRUPAMENTO POR CATEGORIA\n// ============================================\n\nfunction agruparPorCategoria(produtos) {\n  const grupos = {};\n  \n  produtos.forEach(produto => {\n    const categoria = produto.category || 'Outros';\n    if (!grupos[categoria]) {\n      grupos[categoria] = [];\n    }\n    grupos[categoria].push(produto);\n  });\n  \n  return grupos;\n}\n\n// ============================================\n// ESTATÍSTICAS\n// ============================================\n\nfunction calcularEstatisticas(produtos) {\n  let comImagem = 0;\n  let ativos = 0;\n  let inativos = 0;\n  const precos = [];\n  const categorias = new Set();\n  \n  produtos.forEach(produto => {\n    if (produto.image_url) comImagem++;\n    if (produto.active === true) ativos++;\n    if (produto.active === false) inativos++;\n    if (produto.category) categorias.add(produto.category);\n    \n    const preco = parseFloat(produto.price);\n    if (!isNaN(preco)) precos.push(preco);\n  });\n  \n  let precoMedio = 0, precoMin = 0, precoMax = 0;\n  if (precos.length > 0) {\n    precoMedio = precos.reduce((a, b) => a + b, 0) / precos.length;\n    precoMin = Math.min(...precos);\n    precoMax = Math.max(...precos);\n  }\n  \n  return {\n    total: produtos.length,\n    ativos,\n    inativos,\n    comImagem,\n    semImagem: produtos.length - comImagem,\n    percentualComImagem: produtos.length > 0 ? Math.round((comImagem / produtos.length) * 100) : 0,\n    totalCategorias: categorias.size,\n    categorias: Array.from(categorias).sort(),\n    precoMedio,\n    precoMin,\n    precoMax,\n    temPrecos: precos.length > 0\n  };\n}\n\n// ============================================\n// GERAÇÃO DO CATÁLOGO\n// ============================================\n\nfunction gerarCatalogo(produtos) {\n  const blocos = [];\n  const stats = calcularEstatisticas(produtos);\n  \n  // Cabeçalho\n  blocos.push(`# ${CONFIG.tituloH1}`);\n  \n  if (CONFIG.nomeRestaurante) {\n    blocos.push(`### ${CONFIG.nomeRestaurante}\\n`);\n  }\n  \n  blocos.push(`*Gerado em: ${new Date().toLocaleString('pt-BR', { \n    dateStyle: 'long', \n    timeStyle: 'short' \n  })}*\\n`);\n  \n  // Estatísticas\n  if (CONFIG.incluirEstatisticas) {\n    blocos.push(`## 📊 Resumo do Cardápio\\n`);\n    blocos.push(`- **Total de produtos:** ${stats.total}`);\n    blocos.push(`- **Produtos ativos:** ${stats.ativos}`);\n    if (stats.inativos > 0) {\n      blocos.push(`- **Produtos inativos:** ${stats.inativos}`);\n    }\n    blocos.push(`- **Categorias:** ${stats.totalCategorias}`);\n    blocos.push(`- **Com imagem:** ${stats.comImagem} (${stats.percentualComImagem}%)`);\n    \n    if (stats.temPrecos) {\n      blocos.push(`- **Faixa de preço:** ${formatarPreco(stats.precoMin)} a ${formatarPreco(stats.precoMax)}`);\n      blocos.push(`- **Preço médio:** ${formatarPreco(stats.precoMedio)}`);\n    }\n    \n    blocos.push('');\n  }\n  \n  blocos.push(`---\\n`);\n  \n  // Geração por categoria ou lista única\n  if (CONFIG.agruparPorCategoria) {\n    const grupos = agruparPorCategoria(produtos);\n    const categoriasOrdenadas = Object.keys(grupos).sort();\n    \n    // Índice de categorias\n    if (CONFIG.incluirIndice && CONFIG.template !== 'minimalista') {\n      blocos.push(`## 📑 Índice por Categoria\\n`);\n      categoriasOrdenadas.forEach(categoria => {\n        const slug = slugify(categoria);\n        const emoji = getEmojiCategoria(categoria);\n        const qtd = grupos[categoria].length;\n        blocos.push(`- [${emoji} ${categoria}](#categoria-${slug}) (${qtd} ${qtd === 1 ? 'item' : 'itens'})`);\n      });\n      blocos.push(`\\n---\\n`);\n    }\n    \n    // Gera produtos por categoria\n    categoriasOrdenadas.forEach((categoria, catIndex) => {\n      const slug = slugify(categoria);\n      const emoji = getEmojiCategoria(categoria);\n      const produtosCategoria = grupos[categoria];\n      \n      blocos.push(`## ${emoji} ${categoria} {#categoria-${slug}}\\n`);\n      \n      const produtosMd = produtosCategoria\n        .map((produto, i) => gerarProduto(produto, i, slug))\n        .filter(md => md !== ''); // Remove vazios (inativos filtrados)\n      \n      blocos.push(produtosMd.join(''));\n      \n      if (catIndex < categoriasOrdenadas.length - 1) {\n        blocos.push(`---\\n`);\n      }\n    });\n    \n  } else {\n    // Lista única sem agrupamento\n    if (CONFIG.incluirIndice && CONFIG.template !== 'minimalista') {\n      blocos.push(`## 📑 Índice de Produtos\\n`);\n      produtos.forEach((produto, i) => {\n        const slug = slugify(produto.name || 'produto');\n        blocos.push(`${i + 1}. [${limparTexto(produto.name)}](#produto-${produto.id || i}-${slug}) - ${formatarPreco(produto.price)}`);\n      });\n      blocos.push(`\\n---\\n`);\n    }\n    \n    blocos.push(`## 🍽️ Todos os Produtos\\n`);\n    \n    const produtosMd = produtos\n      .map((produto, i) => gerarProduto(produto, i, 'geral'))\n      .filter(md => md !== '');\n    \n    blocos.push(produtosMd.join(''));\n  }\n  \n  // Footer\n  blocos.push(`\\n---\\n`);\n  blocos.push(`*${stats.total} ${stats.total === 1 ? 'produto' : 'produtos'} • `);\n  blocos.push(`${stats.totalCategorias} ${stats.totalCategorias === 1 ? 'categoria' : 'categorias'} • `);\n  blocos.push(`Template: ${CONFIG.template} • `);\n  blocos.push(`Layout: ${CONFIG.layoutImagem}*`);\n  \n  return blocos.join('\\n');\n}\n\n// ============================================\n// EXECUÇÃO PRINCIPAL\n// ============================================\n\ntry {\n  const items = $input.all();\n  \n  if (!items || items.length === 0) {\n    throw new Error('❌ Nenhum produto recebido no input');\n  }\n  \n  const produtos = items.map(item => item.json);\n  \n  console.log(`✅ ${produtos.length} produtos recebidos`);\n  \n  // Validação\n  const erros = validarTodosProdutos(produtos);\n  if (erros.length > 0) {\n    console.warn('⚠️ AVISOS DE VALIDAÇÃO:');\n    erros.forEach(erro => console.warn(`  - ${erro}`));\n  }\n  \n  // Debug primeiro produto\n  if (produtos.length > 0) {\n    console.log('\\n🔍 PRIMEIRO PRODUTO:');\n    console.log('  name:', produtos[0].name);\n    console.log('  price:', produtos[0].price);\n    console.log('  category:', produtos[0].category);\n    console.log('  image_url:', produtos[0].image_url ? 'SIM' : 'NÃO');\n    console.log('  active:', produtos[0].active);\n  }\n  \n  // Gera catálogo\n  const markdown = gerarCatalogo(produtos);\n  const stats = calcularEstatisticas(produtos);\n  \n  console.log(`\\n✅ Catálogo gerado com sucesso!`);\n  console.log(`📊 Estatísticas:`);\n  console.log(`  - ${stats.total} produtos (${stats.ativos} ativos, ${stats.inativos} inativos)`);\n  console.log(`  - ${stats.totalCategorias} categorias`);\n  console.log(`  - ${stats.comImagem} produtos com imagem (${stats.percentualComImagem}%)`);\n  if (stats.temPrecos) {\n    console.log(`  - Preço médio: ${formatarPreco(stats.precoMedio)}`);\n  }\n  console.log(`  - Template: ${CONFIG.template}`);\n  console.log(`  - Layout: ${CONFIG.layoutImagem}`);\n  \n  return {\n    json: {\n      markdown: markdown,\n      metadata: {\n        total_produtos: stats.total,\n        produtos_ativos: stats.ativos,\n        produtos_inativos: stats.inativos,\n        com_imagem: stats.comImagem,\n        sem_imagem: stats.semImagem,\n        percentual_com_imagem: stats.percentualComImagem,\n        total_categorias: stats.totalCategorias,\n        categorias: stats.categorias,\n        preco_medio: stats.precoMedio,\n        preco_minimo: stats.precoMin,\n        preco_maximo: stats.precoMax,\n        data_geracao: new Date().toISOString(),\n        template_usado: CONFIG.template,\n        layout_imagem: CONFIG.layoutImagem,\n        agrupado_por_categoria: CONFIG.agruparPorCategoria\n      }\n    }\n  };\n  \n} catch (error) {\n  console.error('❌ ERRO:', error.message);\n  console.error('Stack:', error.stack);\n  \n  return {\n    json: {\n      error: true,\n      message: error.message,\n      stack: error.stack,\n      markdown: `# ⚠️ Erro ao Gerar Catálogo\\n\\n**Mensagem:** ${error.message}\\n\\n\\`\\`\\`\\n${error.stack}\\n\\`\\`\\``\n    }\n  };\n}\n\n/* \n===============================================\n📚 GUIA DE USO - GERADOR DE CATÁLOGO RESTAURANTE\n===============================================\n\n🎨 TEMPLATES DISPONÍVEIS:\n--------------------------\nCONFIG.template = 'padrao'      → Completo com descrições e detalhes\nCONFIG.template = 'compacto'    → Linha única por produto\nCONFIG.template = 'premium'     → Layout luxo com blockquotes\nCONFIG.template = 'minimalista' → Mínimo de informações\n\n🖼️ LAYOUTS DE IMAGEM:\n----------------------\nCONFIG.layoutImagem = 'destaque'    → Imagem em bloco próprio\nCONFIG.layoutImagem = 'lateral'     → Imagem ao lado (tabela)\nCONFIG.layoutImagem = 'compacta'    → Imagem pequena inline\nCONFIG.layoutImagem = 'sem-imagem'  → Não exibe imagens\n\n⚙️ CONFIGURAÇÕES PRINCIPAIS:\n----------------------------\n- tituloH1: Título do catálogo\n- nomeRestaurante: Nome do estabelecimento\n- incluirImagens: true/false\n- incluirIndice: true/false\n- incluirEstatisticas: true/false\n- agruparPorCategoria: true/false\n- mostrarPrecoDestaque: true/false\n- mostrarInativos: true/false\n\n🎯 CAMPOS ESPERADOS NO JSON:\n-----------------------------\nOBRIGATÓRIOS:\n- name: string (nome do produto)\n- price: number/string (preço)\n\nOPCIONAIS:\n- description: string (descrição, calorias, etc)\n- category: string (categoria do produto)\n- image_url: string (URL da imagem)\n- active: boolean (disponibilidade)\n- id: number (identificador único)\n- createdAt: string (data criação)\n- updatedAt: string (data atualização)\n\n📊 SAÍDA DO CÓDIGO:\n-------------------\n{\n  markdown: \"# Catálogo...\",\n  metadata: {\n    total_produtos: 215,\n    produtos_ativos: 200,\n    com_imagem: 150,\n    categorias: [\"Entradas\", \"Pratos\", ...],\n    preco_medio: 45.50,\n    ...\n  }\n}\n\n✅ VALIDAÇÕES AUTOMÁTICAS:\n--------------------------\n- Verifica campos obrigatórios (name, price)\n- Valida formato de preço\n- Filtra produtos inativos (se configurado)\n- Trata descrições com múltiplos formatos\n\n🎨 EMOJIS POR CATEGORIA:\n------------------------\nPersonalize no CONFIG.emojisPorCategoria:\n{\n  'Entradas': '🥗',\n  'Pratos Principais': '🍖',\n  'Pizzas': '🍕',\n  'Sobremesas': '🍰',\n  'Bebidas': '🥤'\n}\n\n💡 DICAS DE USO:\n----------------\n1. Comece com template 'padrao' para ver todas as opções\n2. Use 'compacto' para cardápios muito grandes\n3. Use 'premium' para menus de alta gastronomia\n4. Combine layoutImagem='lateral' com template='padrao' para visual tipo \"cardápio de restaurante\"\n5. Desative agruparPorCategoria para ordem cronológica\n\n🔧 TROUBLESHOOTING:\n-------------------\n- Nenhum produto aparece? Verifique campo 'active'\n- Imagens não aparecem? Verifique CONFIG.incluirImagens e image_url válidas\n- Categorias erradas? Verifique campo 'category' nos produtos\n- Preços estranhos? Certifique-se que 'price' é número válido\n\n===============================================\n*/"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        176
+      ],
+      "id": "cc94450f-beb6-49a7-8283-3fdda2b19234",
+      "name": "ConvertToMarkdown"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_name=eq.{{ $('Config').first().json.file_name }}"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        176
+      ],
+      "id": "fe28d750-6e28-4040-82e4-02843e16f926",
+      "name": "DeleteFilesSupabase",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "zrj3SsVZZzQyaL9r",
+          "name": "Supabase/Cloud"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1dc909bd-8b90-4525-9296-f80f3f46cfe9",
+              "name": "products",
+              "value": "={{ $('GetAllProduts').all().map(item => item.json) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        176
+      ],
+      "id": "a128af2c-bf65-4f22-a8b2-45bf7a80f236",
+      "name": "BlockList",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        560,
+        176
+      ],
+      "id": "7f4b107a-8d94-46d6-bab0-2bed8748c3ce",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "az3ikzvy6HHxrPFh",
+          "mode": "list",
+          "cachedResultName": "products",
+          "cachedResultUrl": "/projects/MVcPcyktkixVU3iw/datatables/az3ikzvy6HHxrPFh"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "active",
+              "condition": "isTrue"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        176
+      ],
+      "id": "120f96dd-05a6-4c81-a05a-04e91cd252b7",
+      "name": "GetAllProduts"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "products",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        176
+      ],
+      "id": "c1015aab-6f51-4dc8-89b9-569b6fcfd54a",
+      "name": "Split Out"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-11-01T16:05:14.964-04:00",
+          "Readable date": "November 1st 2025, 4:05:14 pm",
+          "Readable time": "4:05:14 pm",
+          "Day of week": "Saturday",
+          "Year": "2025",
+          "Month": "November",
+          "Day of month": "01",
+          "Hour": "16",
+          "Minute": "05",
+          "Second": "14",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "GetAllProduts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store/Hybrid",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store/Hybrid",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "JoinArray",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JoinArray": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store/Hybrid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ConvertToMarkdown": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeleteFilesSupabase": {
+      "main": [
+        [
+          {
+            "node": "BlockList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BlockList": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetAllProduts": {
+      "main": [
+        [
+          {
+            "node": "DeleteFilesSupabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "ConvertToMarkdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "02294186-5e81-413e-bc1d-2c74f36d23d8",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "q3YmJLfvXqmSihat",
+  "tags": []
+}

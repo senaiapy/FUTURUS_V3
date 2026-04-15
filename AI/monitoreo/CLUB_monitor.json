@@ -1,0 +1,581 @@
+{
+  "name": "CLUB_monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -480,
+        -64
+      ],
+      "id": "6d97a345-f1f3-4628-b60b-7beb498e6f13",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.evolution_api_url }}/message/sendText/{{ $json.evolution_api_instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.evolution_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4eb7c8ee-99ce-4605-9969-adb106da91f2",
+      "name": "Evolution API - HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9c00627-84a9-49a9-bc7e-d923a5918346",
+              "name": "output",
+              "value": "=SERVIDOR futurus.us FUERA DE SERVICIO",
+              "type": "string"
+            },
+            {
+              "id": "1e57eb87-d78f-424b-ab84-7738ce384405",
+              "name": "evolution_api_url",
+              "value": "https://evo.yoenvio.de",
+              "type": "string"
+            },
+            {
+              "id": "44fd293f-0a32-4499-90fc-bffca5bb524b",
+              "name": "evolution_api_key",
+              "value": "FD7EC608CD42-4F99-94C4-B513A64C8D1C",
+              "type": "string"
+            },
+            {
+              "id": "8fd329d8-2237-4ad3-a496-ee49b5042fc5",
+              "name": "evolution_api_instance",
+              "value": "clinicaintegral",
+              "type": "string"
+            },
+            {
+              "id": "0e34f673-b6dc-4748-89d2-a178dfe91853",
+              "name": "phone",
+              "value": "=595993547294",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "d7b3ef18-361c-4457-a24a-d6bcb7f637d9",
+      "name": "SetConfig"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64fdf1e4-047e-4c07-99a8-3a6a709c926e",
+              "leftValue": "={{ $json.products }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -176,
+        160
+      ],
+      "id": "150376fc-1210-44df-bc08-919e2213667d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://api.futurus.us/api/products?search=givenchy&page=1&limit=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -192,
+        -64
+      ],
+      "id": "11b91971-6318-4293-8f6d-b760fe52d418",
+      "name": "Gerar_CHECKOUT",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.evolution_api_url }}/message/sendText/{{ $json.evolution_api_instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.evolution_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "668851cb-c796-4122-a2c8-5e6fa18326bb",
+      "name": "Evolution API - HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9c00627-84a9-49a9-bc7e-d923a5918346",
+              "name": "output",
+              "value": "=SERVIDOR server.futurus.uk FUERA DE SERVICIO",
+              "type": "string"
+            },
+            {
+              "id": "1e57eb87-d78f-424b-ab84-7738ce384405",
+              "name": "evolution_api_url",
+              "value": "https://evo.yoenvio.de",
+              "type": "string"
+            },
+            {
+              "id": "44fd293f-0a32-4499-90fc-bffca5bb524b",
+              "name": "evolution_api_key",
+              "value": "FD7EC608CD42-4F99-94C4-B513A64C8D1C",
+              "type": "string"
+            },
+            {
+              "id": "8fd329d8-2237-4ad3-a496-ee49b5042fc5",
+              "name": "evolution_api_instance",
+              "value": "clinicaintegral",
+              "type": "string"
+            },
+            {
+              "id": "0e34f673-b6dc-4748-89d2-a178dfe91853",
+              "name": "phone",
+              "value": "=595993547294",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        160
+      ],
+      "id": "d45769a9-8caf-49da-9fdb-37455b7588d5",
+      "name": "SetConfig1"
+    },
+    {
+      "parameters": {
+        "url": "https://server.futurus.uk/api/v0/futurus",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16,
+        288
+      ],
+      "id": "0386ba1e-bb60-4245-b5e9-bcec36c13183",
+      "name": "Gerar_CHECKOUT1",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64fdf1e4-047e-4c07-99a8-3a6a709c926e",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        288
+      ],
+      "id": "f117c4ab-957c-468a-9c5b-cea3d2b28e9d",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.evolution_api_url }}/message/sendText/{{ $json.evolution_api_instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.evolution_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cca568fc-e8a2-4d19-bc86-839ca1b16f3e",
+      "name": "Evolution API - HTTP Request2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9c00627-84a9-49a9-bc7e-d923a5918346",
+              "name": "output",
+              "value": "=SERVIDOR futurus.us FUERA DE SERVICIO",
+              "type": "string"
+            },
+            {
+              "id": "1e57eb87-d78f-424b-ab84-7738ce384405",
+              "name": "evolution_api_url",
+              "value": "https://evo.yoenvio.de",
+              "type": "string"
+            },
+            {
+              "id": "44fd293f-0a32-4499-90fc-bffca5bb524b",
+              "name": "evolution_api_key",
+              "value": "FD7EC608CD42-4F99-94C4-B513A64C8D1C",
+              "type": "string"
+            },
+            {
+              "id": "8fd329d8-2237-4ad3-a496-ee49b5042fc5",
+              "name": "evolution_api_instance",
+              "value": "clinicaintegral",
+              "type": "string"
+            },
+            {
+              "id": "0e34f673-b6dc-4748-89d2-a178dfe91853",
+              "name": "phone",
+              "value": "=595993547294",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        416
+      ],
+      "id": "06d915e5-ba3b-4194-94e4-01247a99cd62",
+      "name": "SetConfig2"
+    },
+    {
+      "parameters": {
+        "url": "https://api.futurus.us/api/products?search=givenchy&page=1&limit=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        16,
+        544
+      ],
+      "id": "18c93b49-21e7-46c9-b6ae-d030e76151ca",
+      "name": "Gerar_CHECKOUT2",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64fdf1e4-047e-4c07-99a8-3a6a709c926e",
+              "leftValue": "={{ $json.products }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        544
+      ],
+      "id": "b43b2c80-225c-4279-a50f-0f03194dc684",
+      "name": "If2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gerar_CHECKOUT": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "SetConfig",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gerar_CHECKOUT",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gerar_CHECKOUT1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gerar_CHECKOUT2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetConfig": {
+      "main": [
+        [
+          {
+            "node": "Evolution API - HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetConfig1": {
+      "main": [
+        [
+          {
+            "node": "Evolution API - HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar_CHECKOUT1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "SetConfig1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetConfig2": {
+      "main": [
+        [
+          {
+            "node": "Evolution API - HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar_CHECKOUT2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "SetConfig2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1dcee88f-d75b-4820-9dcd-735589b39426",
+  "meta": {
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "hka2ujVh8k1WIWfl",
+  "tags": []
+}

@@ -1,0 +1,53 @@
+###############################################################################
+#  docker-compose.dev.yml — Development Mode (Solana Devnet)
+#
+#  No local Solana validator needed — connects to Devnet directly.
+#  Start with:  ./setup-dev.sh      (devnet/dev)
+#               ./setup.sh          (production/mainnet)
+###############################################################################
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=prediction-market
+
+  backend:
+    build:
+      context: ./prediction-market-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    environment:
+      - PORT=8080
+      - DB_URL=mongodb://mongodb:27017/prediction-market
+      - PASSKEY=dev-passkey
+      - FUTANA_RPC_URL=https://api.devnet.solana.com
+      - FUTANA_CLUSTER=devnet
+      - FUT_MINT=FHcFVMktPV8YgiKPHA5xnbzaEugQ8py7FYZrG8CXRave
+    depends_on:
+      mongodb:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./prediction-market-frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8082
+        - NEXT_PUBLIC_FUTANA_RPC_URL=https://api.devnet.solana.com
+        - NEXT_PUBLIC_FUT_MINT=FHcFVMktPV8YgiKPHA5xnbzaEugQ8py7FYZrG8CXRave
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8082
+      - NEXT_PUBLIC_FUTANA_RPC_URL=https://api.devnet.solana.com
+      - NEXT_PUBLIC_FUT_MINT=FHcFVMktPV8YgiKPHA5xnbzaEugQ8py7FYZrG8CXRave
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:

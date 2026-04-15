@@ -1,0 +1,38 @@
+{
+  "name": "create-pyfoundation-app",
+  "version": "1.7.1",
+  "description": "Pyfoundation expo starter cli",
+  "homepage": "https://github.com/pyfoundation/react-native-template-pyfoundation",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pyfoundation/react-native-template-pyfoundation.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "bin": {
+    "create-pyfoundation-app": "index.js"
+  },
+  "files": [
+    "index.js",
+    "utils.js",
+    "clone-repo.js",
+    "setup-project.js"
+  ],
+  "dependencies": {
+    "consola": "^3.2.3",
+    "fs-extra": "^10.1.0"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "template",
+    "react-native-starter",
+    "expo-starter",
+    "react-native-boilerplate",
+    "expo-boilerplate",
+    "cli",
+    "pyfoundation"
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "name": "Futurus_WebhookMercadoPagoPix",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d82478e5-a0d5-4ad1-bbb1-05a61974aa88",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "72bf8e23-6fde-4737-af41-e60981650575",
+      "name": "Webhook",
+      "webhookId": "d82478e5-a0d5-4ad1-bbb1-05a61974aa88"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "=purchase_futurus"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        528,
+        0
+      ],
+      "id": "8e964306-5674-45ca-bf97-8d235a0f3d0b",
+      "name": "Supabase",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        0
+      ],
+      "id": "7f33353a-b4e6-4df9-b5f2-35d6afe417a0",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhook.empreendedorserial.com",
+            "user-agent": "restclient-node/4.15.3",
+            "content-length": "175",
+            "accept": "*/*",
+            "accept-encoding": "*",
+            "content-type": "application/json",
+            "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkFwcCIsImFjIjoiOTg5NTg2IiwiYXAiOiI5NjA2MzYwOTQiLCJ0eCI6IjQ0NmMyMjYzZWM1N2Q3YzYiLCJ0ciI6ImQxN2RkMWFiYWE3ODliMmM5MWZiOTk0ZjU1MThmZjQ5IiwicHIiOjAuNTY3MDg5LCJzYSI6ZmFsc2UsInRpIjoxNzQzODAwNzY4ODI3LCJ0ayI6IjE3MDk3MDcifX0=",
+            "traceparent": "00-d17dd1abaa789b2c91fb994f5518ff49-004725e91e685277-00",
+            "tracestate": "1709707@nr=0-0-989586-960636094-004725e91e685277-446c2263ec57d7c6-0-0.567089-1743800768827",
+            "x-forwarded-for": "10.0.0.2",
+            "x-forwarded-host": "webhook.empreendedorserial.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "77b315702bc9",
+            "x-real-ip": "10.0.0.2",
+            "x-request-id": "29a0bd12-0d08-46a6-b8e7-a431f3f80418",
+            "x-rest-pool-name": "/services/webhooks.js",
+            "x-retry": "0",
+            "x-signature": "ts=1743800768826,v1=48ebf282786b0cf5b8aa6a83e9220bc816073c9e3bf19cd5dc1879c8f3357097",
+            "x-socket-timeout": "22000"
+          },
+          "params": {},
+          "query": {
+            "data.id": "123456",
+            "type": "payment"
+          },
+          "body": {
+            "action": "payment.updated",
+            "api_version": "v1",
+            "data": {
+              "id": "123456"
+            },
+            "date_created": "2021-11-01T02:02:02Z",
+            "id": "123456",
+            "live_mode": false,
+            "type": "payment",
+            "user_id": 7162200
+          },
+          "webhookUrl": "https://webhook.empreendedorserial.com/webhook/046592de-c500-45f4-9d07-9d425558a161",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "aed9477a-bc6a-4316-9e70-caa052496f4f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "nogU1vi9MEJtb8sB",
+  "tags": [
+    {
+      "updatedAt": "2025-10-09T14:04:54.663Z",
+      "createdAt": "2025-10-09T14:04:54.663Z",
+      "id": "mQimZDErbk2F6Rjo",
+      "name": "ecommerce-mcp"
+    }
+  ]
+}

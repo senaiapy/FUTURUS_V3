@@ -1,0 +1,30 @@
+{
+  "globalShortcut": "Alt+Ctrl+Space",
+  "mcpServers": {
+    "n8n-workflows Docs": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://gitmcp.io/Zie619/n8n-workflows"
+      ]
+    },
+    "context7 Docs": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://gitmcp.io/upstash/context7"
+      ]
+    },
+    "n8n-mcp": {
+      "command": "npx",
+      "args": ["n8n-mcp"],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "https://sparoyoutube.app.n8n.cloud",
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNDAyNWM4Zi0wN2I1LTQ1NGItYjYxMS00ZGY2NWUyMzk1MTAiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzU0NDI2MTQxLCJleHAiOjE3NTY5NTQ4MDB9.ObcgtVxjqg6ah30j-slhnq49eW1_e4fqzQQXkKoYUnY"
+      }
+    }
+  }
+}

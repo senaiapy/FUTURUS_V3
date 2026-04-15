@@ -1,0 +1,32 @@
+{
+  "name": "Futurus Coin",
+  "symbol": "FUT",
+  "description": "The Prediction Market Token.",
+  "image": "https://peach-worthy-eel-144.mypinata.cloud/ipfs/bafkreifqtz6pm3hx2mau2c66aqojzw7bkgwlscup7cqqcs62ziz2exorju",
+  "external_url": "https://mytoken.io",
+  "attributes": [
+    {
+      "trait_type": "Category",
+      "value": "Utility"
+    },
+    {
+      "trait_type": "Network",
+      "value": "Solana Devnet"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://peach-worthy-eel-144.mypinata.cloud/ipfs/bafkreifqtz6pm3hx2mau2c66aqojzw7bkgwlscup7cqqcs62ziz2exorju",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "7uN9vEy1qgb5ebZYYEALabZyaLU4BCEKp2V2jVn84wnF",
+        "share": 100
+      }
+    ]
+  }
+}

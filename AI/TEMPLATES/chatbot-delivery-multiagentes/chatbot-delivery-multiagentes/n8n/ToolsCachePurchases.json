@@ -1,0 +1,341 @@
+{
+  "name": "ToolsCachePurchases",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "function"
+            },
+            {
+              "name": "data"
+            },
+            {
+              "name": "phone"
+            },
+            {
+              "name": "key"
+            },
+            {
+              "name": "timeout"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -544,
+        -32
+      ],
+      "id": "998b9f97-9d59-435e-86f0-92c91d64e6ac",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a369eb32-ea33-4ec3-a851-1a81b5471fe2",
+              "name": "function",
+              "value": "={{ $json.function }}",
+              "type": "string"
+            },
+            {
+              "id": "0bffcffb-61f6-4a8f-83e9-17ec17e05548",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "4e8e4e01-a7f3-47e7-9dd0-3a4add20b882",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "56a78db7-5295-4658-bc74-0f9982f388cd",
+              "name": "timeout",
+              "value": "={{ $json.timeout }}",
+              "type": "string"
+            },
+            {
+              "id": "7214387c-1879-47f1-ad38-dd780e5c25ce",
+              "name": "key",
+              "value": "={{ $json.key }}",
+              "type": "string"
+            },
+            {
+              "id": "b83ae9b3-b9a6-4006-a83c-313e6eea5720",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        -32
+      ],
+      "id": "998e7fd0-ceb5-4eaf-aa70-9d0760e510ae",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "save",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7b0a4726-7461-4108-8d70-93b35972475c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9c1ff037-0f03-431e-a955-6e40b50995dc",
+                    "leftValue": "={{ $json.function }}",
+                    "rightValue": "get",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -128,
+        -32
+      ],
+      "id": "73fd79dd-89b1-4f49-96e1-280fb99bb1e2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.last().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        -16
+      ],
+      "id": "d6c82fdf-54c5-4499-95fb-c6a3e017b631",
+      "name": "Code1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        -16
+      ],
+      "id": "4e6b282a-341d-4474-8fe8-9d1a29202853",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $json.key }}-{{ $('Config').first().json.phone }}",
+        "value": "={{ $json.data }}",
+        "expire": true,
+        "ttl": "={{ $json.timeout }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -192
+      ],
+      "id": "a75203a7-91d4-4f6e-94b4-3df850c79d4a",
+      "name": "AddPurchase",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "nykWCN1X7vu4SQ2N",
+          "name": "Redis account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "data",
+        "key": "={{ $json.key }}-{{ $('Config').first().json.phone }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        80,
+        128
+      ],
+      "id": "03a47300-eceb-41b0-adb3-c3ce9e9c7030",
+      "name": "getPurchase",
+      "credentials": {
+        "redis": {
+          "id": "nykWCN1X7vu4SQ2N",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsCachePurchases\n## Esta função salva no REDIS o pedido do cliente\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 532,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1616,
+        -256
+      ],
+      "id": "1770ef0f-c859-4623-9f7b-9be21189301c",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "function": "save",
+          "data": "",
+          "phone": "558681612061",
+          "key": "purchase",
+          "timeout": "3600"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "AddPurchase",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "getPurchase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AddPurchase": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getPurchase": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3e451930-112c-43eb-a164-b0c169625e14",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "ESrLvE8uPgHatHEK",
+  "tags": []
+}

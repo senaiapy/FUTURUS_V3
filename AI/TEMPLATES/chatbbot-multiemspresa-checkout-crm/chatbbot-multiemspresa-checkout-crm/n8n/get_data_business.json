@@ -1,0 +1,411 @@
+{
+  "name": "get_data_business",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "instancia"
+            },
+            {
+              "name": "url_stripe"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        128
+      ],
+      "id": "8171fd19-958a-4109-a337-c108184073b6",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').item.json.url_stripe }}/{{ $('Config').item.json.table }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cnpj",
+              "value": "={{ $json.instancia }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16,
+        320
+      ],
+      "id": "a2a3ecf6-6957-492d-86c7-a08e6a252bae",
+      "name": "FindBusiness",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.url_stripe }}/configs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "active",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "01f621d9-ccff-4e78-9f04-690fc2864ef3",
+      "name": "FindConfig",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14cb9383-ec85-44f5-a4ad-32f12622a75e",
+              "name": "url_stripe",
+              "value": "={{ $json.url_stripe }}",
+              "type": "string"
+            },
+            {
+              "id": "b846167d-5368-4b66-8b8b-d33bb239fb63",
+              "name": "instancia",
+              "value": "={{ $json.instancia }}",
+              "type": "string"
+            },
+            {
+              "id": "6dd16ed3-426e-45d4-bfd6-bbb717700135",
+              "name": "table",
+              "value": "businesses",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        128
+      ],
+      "id": "3019cae2-893e-4227-8b2b-b46acf6f7ad8",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.last().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        48
+      ],
+      "id": "577cba76-a6fc-450c-bf9f-20842cbb2ccd",
+      "name": "Code1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        512,
+        48
+      ],
+      "id": "91d445cc-a46b-4630-8ae4-a9e2bd1fcee5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        448
+      ],
+      "id": "1cde8ea4-82b6-49cc-933a-a6f0d862921c",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e8ff9b0-dd87-4b5a-b2db-e7ae30c0e45c",
+              "name": "error",
+              "value": "={{ $json.error.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        352
+      ],
+      "id": "7cec0f2a-fa86-46c2-8bec-38ab698f8aa7",
+      "name": "setErro"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e8ff9b0-dd87-4b5a-b2db-e7ae30c0e45c",
+              "name": "error",
+              "value": "={{ $json.error.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        480
+      ],
+      "id": "f3b53b61-8762-4788-b02a-fdf4210d672d",
+      "name": "setErro1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response':JSON.stringify($input.all().map(x =>x.json))\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        448
+      ],
+      "id": "198d6217-a5ef-46e3-90da-c9cf9faa914e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e476abb9-7fea-4f5c-8c58-92d96806d68d",
+              "name": "prompt_out",
+              "value": "={{ $('FindBusiness').first().json.prompt || $('FindConfig').first().json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "dfcd7c77-e096-4659-b8b9-34262bde0333",
+              "name": "name",
+              "value": "={{ $('FindBusiness').first().json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c9716d05-e653-4e32-8282-6bf88d205a0c",
+              "name": "address",
+              "value": "={{ $('FindBusiness').first().json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "0b02ab1c-60b0-46c6-91f7-0c686cca8a6e",
+              "name": "description",
+              "value": "={{ $('FindBusiness').first().json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "53696f1d-a495-4525-bfe7-b741a75d579c",
+              "name": "email",
+              "value": "={{ $('FindBusiness').first().json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "45bb9520-64c1-40a8-b0ef-db476f24d5c7",
+              "name": "website",
+              "value": "={{ $('FindBusiness').first().json.website }}",
+              "type": "string"
+            },
+            {
+              "id": "494d88dc-6a28-4e23-b781-dfd6bec9b8db",
+              "name": "id",
+              "value": "={{ $('FindBusiness').first().json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "64519c5d-9275-4f53-be44-6d313bc5ccb8",
+              "name": "phone",
+              "value": "={{ $('FindBusiness').first().json.phone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        48
+      ],
+      "id": "4da777da-d411-4c40-9123-fd5492bb75e5",
+      "name": "SetOut"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "url_stripe": "http://strapi.empreendedorserial.com:1337",
+          "instancia": "41267744000154"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "FindBusiness",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FindConfig",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FindConfig": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "setErro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "SetOut",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FindBusiness": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "setErro1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setErro1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "setErro": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetOut": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b227193d-50a3-42ce-8866-542a2cbb52e5",
+  "meta": {
+    "instanceId": "e590f4139d93469d1739d22ad320a43d021129fe97f155fd64fd3f5b4a29c49b"
+  },
+  "id": "Et6UD3EceVuw3SH2",
+  "tags": []
+}

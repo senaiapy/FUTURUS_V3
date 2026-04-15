@@ -1,0 +1,16 @@
+# futurus.net.br
+# futurus.com.br
+# futurus.com.br
+# futurus.com.br
+# futurus.com.br
+# futurus.com.br
+# FUTURUS_V2
+# FUTURUS_V3
+# FUTURUS_V3
+# FUTURUS_V3
+# FUTURUS_V3
+# FUTURUS_V3
+# SENAIA_V3
+# SENAIA_V3
+# FUTURUS_V3
+# FUTURUS_V3

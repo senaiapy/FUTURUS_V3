@@ -1,0 +1,32 @@
+{
+  "name": "BlockExplorer Token",
+  "symbol": "BEX",
+  "description": "The official utility token of the BlockExplorer project — empowering open blockchain education and exploration.",
+  "image": "https://storacha.network/ipfs/bafybeidtk2ycaglsbr2ebauzwa44d5oblv5dkgnwwfht2e5xgts5z6dfxm",
+  "external_url": "https://blockexplorer.io",
+  "attributes": [
+    {
+      "trait_type": "Category",
+      "value": "Utility"
+    },
+    {
+      "trait_type": "Network",
+      "value": "Solana Mainnet"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://storacha.network/ipfs/bafybeidtk2ycaglsbr2ebauzwa44d5oblv5dkgnwwfht2e5xgts5z6dfxm",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "HFGYNfJpKsAoChF6kPrESXD2RFQa9jcsgQAf4hicDpAQ",
+        "share": 100
+      }
+    ]
+  }
+}

@@ -1,0 +1,741 @@
+{
+  "name": "Futurus_mcp-server-ecommerce",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "futurus-ecommerce-5381fba22b01"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "42fd764d-dd4f-4a19-803d-f18222e6cfeb",
+      "name": "MCP Server Trigger",
+      "webhookId": "319abebf-4e2a-4583-aced-5381fba22b01"
+    },
+    {
+      "parameters": {
+        "name": "find_customer",
+        "description": "Função que busca o cliente pelo numero do celular",
+        "workflowId": {
+          "__rl": true,
+          "value": "S72HNXmYMpCzO9pi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/S72HNXmYMpCzO9pi",
+          "cachedResultName": "Futurus_CustomerEcommerceSupabaseCep"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "get_or_create",
+            "phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('phone', `Telefone do Cliente`, 'string') }}",
+            "cliente_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cliente_name', `Nome do Cliente`, 'string') }}",
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `Email do Cliente`, 'string') }}",
+            "street_number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('street_number', `Numero da Casa  do Cliente`, 'string') }}",
+            "complemento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('complemento', `Endereco do cliente`, 'string') }}",
+            "city": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('city', `Cidade do Cliente`, 'string') }}",
+            "uf": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('uf', `Departamento do Cliente`, 'string') }}",
+            "bairro": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('bairro', `Bairro do Cliente`, 'string') }}",
+            "street_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('street_name', `Rua do Cliente`, 'string') }}",
+            "address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('address', `Endereco completo do Cliente`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cliente_name",
+              "displayName": "cliente_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "street_number",
+              "displayName": "street_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "complemento",
+              "displayName": "complemento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uf",
+              "displayName": "uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "bairro",
+              "displayName": "bairro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "street_name",
+              "displayName": "street_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        -240,
+        224
+      ],
+      "id": "999ef4f7-2e6b-4bee-9709-06a58312c0c8",
+      "name": "find_customer"
+    },
+    {
+      "parameters": {
+        "name": "update_customer",
+        "description": "Função que atualiza  os dados do cliente pelo numero do celular",
+        "workflowId": {
+          "__rl": true,
+          "value": "S72HNXmYMpCzO9pi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/S72HNXmYMpCzO9pi",
+          "cachedResultName": "Futurus_CustomerEcommerceSupabaseCep"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "update",
+            "phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('phone', `Telefone do Cliente`, 'string') }}",
+            "cliente_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cliente_name', `Nome do Cliente`, 'string') }}",
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `email do Cliente`, 'string') }}",
+            "street_number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('street_number', `Rua do Cliente`, 'string') }}",
+            "address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('address', `Endereco do Cliente`, 'string') }}",
+            "street_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('street_name', `Nome da Rua do Cliente`, 'string') }}",
+            "bairro": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('bairro', `Bairro do cliente`, 'string') }}",
+            "uf": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('uf', `Departamento do Cliente`, 'string') }}",
+            "city": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('city', `Cidade do Cliente`, 'string') }}",
+            "complemento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('complemento', `Endereco do Cliente`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cliente_name",
+              "displayName": "cliente_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "street_number",
+              "displayName": "street_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "complemento",
+              "displayName": "complemento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uf",
+              "displayName": "uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "bairro",
+              "displayName": "bairro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "street_name",
+              "displayName": "street_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        224
+      ],
+      "id": "6b283dbe-6221-4b9b-b90b-8d47f4c760b2",
+      "name": "update_customer"
+    },
+    {
+      "parameters": {
+        "name": "fiind_address_customer",
+        "description": "Função que localiza o endereço do cliente pelo CEP do endereço",
+        "workflowId": {
+          "__rl": true,
+          "value": "S72HNXmYMpCzO9pi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/S72HNXmYMpCzO9pi",
+          "cachedResultName": "Futurus_CustomerEcommerceSupabaseCep"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "function": "find_cep",
+            "phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('phone', ``, 'string') }}",
+            "cliente_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cliente_name', ``, 'string') }}",
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', ``, 'string') }}",
+            "street_number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('street_number', ``, 'string') }}",
+            "complemento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('complemento', ``, 'string') }}",
+            "cep": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cep', `Codigo Postal do Cliente`, 'string') }}",
+            "city": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('city', ``, 'string') }}",
+            "uf": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('uf', ``, 'string') }}",
+            "bairro": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('bairro', ``, 'string') }}",
+            "street_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('street_name', ``, 'string') }}",
+            "address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('address', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "function",
+              "displayName": "function",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cliente_name",
+              "displayName": "cliente_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "street_number",
+              "displayName": "street_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "complemento",
+              "displayName": "complemento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cpf",
+              "displayName": "cpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "long",
+              "displayName": "long",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "uf",
+              "displayName": "uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "bairro",
+              "displayName": "bairro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "street_name",
+              "displayName": "street_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        224
+      ],
+      "id": "8b747948-bc39-459d-91b9-42d18bf7f67e",
+      "name": "fiind_address_customer"
+    },
+    {
+      "parameters": {
+        "name": "make_invoice_qrcode",
+        "description": "Função que cria o qrcode do pix de pagamento no mercado pago e registra a invoice do pedido",
+        "workflowId": {
+          "__rl": true,
+          "value": "javADxxCnqhavLAt",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/javADxxCnqhavLAt",
+          "cachedResultName": "Futurus_ToolsMCPMercadoPagoQrcodePix-export"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('phone', `Telefone do cliente`, 'string') }}",
+            "invoice": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('invoice', `Descrição dos produtos, quantidade e valor total da compra`, 'string') }}",
+            "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('value', `Valor total do pedido de compra dos produtos`, 'number') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "invoice",
+              "displayName": "invoice",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "value",
+              "displayName": "value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        384,
+        240
+      ],
+      "id": "c9bdd4d4-c5c9-45c8-a4ee-7d15a8978e40",
+      "name": "make_invoice_qrcode"
+    },
+    {
+      "parameters": {
+        "name": "search_products",
+        "description": "Função que busca os produtos disponíveis na loja",
+        "workflowId": {
+          "__rl": true,
+          "value": "SVWaYMCaH1NSatJQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/SVWaYMCaH1NSatJQ",
+          "cachedResultName": "Futurus_ToolsGetProducts"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "search": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('search', `Nome do produto que o cliente deseja ver`, 'string') }}"
+          },
+          "matchingColumns": [
+            "search"
+          ],
+          "schema": [
+            {
+              "id": "search",
+              "displayName": "search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        240
+      ],
+      "id": "a42ec743-44fa-40be-b7cc-5bb8cb9454e3",
+      "name": "search_products"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "find_customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fiind_address_customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make_invoice_qrcode": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_products": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0d0b5dc2-13f0-4a01-8f22-c2e7f9f9bcc1",
+  "meta": {
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "VLBCt5GAfQ1Tdl5e",
+  "tags": [
+    {
+      "updatedAt": "2025-10-09T14:04:54.663Z",
+      "createdAt": "2025-10-09T14:04:54.663Z",
+      "id": "mQimZDErbk2F6Rjo",
+      "name": "ecommerce-mcp"
+    }
+  ]
+}

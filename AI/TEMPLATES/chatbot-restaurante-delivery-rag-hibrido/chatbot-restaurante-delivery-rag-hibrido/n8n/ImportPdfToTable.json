@@ -1,0 +1,406 @@
+{
+  "name": "ImportPdfToTable",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b911968-e031-4606-9bb3-4777d9aa30e1",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f5f4a0a2-28cf-49b2-bfb5-ec76e2255c57",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "content": "\n# ImportPdfToTable\n## Esta função tranforma um PDF com produtos em um baco de dados no DATATABLES do n8n\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Config\n## Utilize o NÓ 'config' para configurar as URLS e tabelas do STRAPI onde os dados serão armazenados\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1300,
+        "width": 772
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        -144
+      ],
+      "id": "dd75bb0f-7210-4f01-8f6e-6484d2185a5e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "UploadPDF",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": "pdf,csv",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        0
+      ],
+      "id": "2bca8aa9-1d75-4570-bc64-1f912154169c",
+      "name": "On form submission",
+      "webhookId": "f4ee3ccf-5339-47c1-b7f1-f72639c20104"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        544,
+        0
+      ],
+      "id": "980bfc89-5b2c-49ee-be85-a6189be83bed",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $json.content }}"
+            },
+            {
+              "role": "system",
+              "content": "Leia o markdown inteiro e crie um json com  a lista de todos os produtos contidos no pdf com as colunas: name, price, description, category"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "object",
+              "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"restaurante\": { \"type\": \"string\" },\n    \"produtos\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"name\": { \"type\": \"string\" },\n          \"price\": { \"type\": \"number\" },\n          \"description\": { \"type\": \"string\" },\n          \"category\": { \"type\": \"string\" }\n        },\n        \"required\": [\"name\", \"price\", \"description\", \"category\"],\n        \"additionalProperties\": false\n      }\n    }\n  },\n  \"required\": [\"restaurante\", \"produtos\"],\n  \"additionalProperties\": false\n}",
+              "description": "json com a lista de produtos do restaurante"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        0
+      ],
+      "id": "fbeb0833-2bd3-4d94-9732-0c815f5ca99d",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "pjvFZYwfl4qpYDxb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1177b304-d33c-4b16-a442-d82ff0fb5c5a",
+              "name": "products",
+              "value": "={{ $json.output.first().content.first().text.produtos || [] }}",
+              "type": "array"
+            },
+            {
+              "id": "934ec3a2-4223-43e0-983a-6bbac62cb25b",
+              "name": "title",
+              "value": "={{ $json.output[0].content[0].text.restaurante }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2208,
+        0
+      ],
+      "id": "493b49ec-e209-44fe-904a-486ecf6c9d52",
+      "name": "SetData"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "az3ikzvy6HHxrPFh",
+          "mode": "list",
+          "cachedResultName": "products",
+          "cachedResultUrl": "/projects/MVcPcyktkixVU3iw/datatables/az3ikzvy6HHxrPFh"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "name",
+              "keyValue": "={{ $json.name }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "active": true,
+            "name": "={{ $json.name }}",
+            "price": "={{ $json.price }}",
+            "description": "={{ $json.description }}",
+            "category": "={{ $json.category }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "active",
+              "displayName": "active",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "image_url",
+              "displayName": "image_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        0
+      ],
+      "id": "4cf7e404-1760-4203-9b56-8d0490410fe0",
+      "name": "Upsert row(s)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "products",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        0
+      ],
+      "id": "e079cc5c-963f-44c5-833a-41fbaa2f326b",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém o texto de entrada\nconst text = $input.item.json.text;\n\n// Valida se existe texto\nif (!text || typeof text !== 'string') {\n  throw new Error('Campo \"text\" não encontrado ou inválido na entrada');\n}\n\n// Calcula o tamanho de cada bloco\nconst totalLength = text.length;\nconst blockSize = Math.ceil(totalLength / 3);\n\n// Divide o texto em 3 blocos\nconst blocks = [];\nfor (let i = 0; i < 3; i++) {\n  const start = i * blockSize;\n  const end = Math.min(start + blockSize, totalLength);\n  blocks.push(text.substring(start, end));\n}\n\n// Retorna os 3 blocos como itens separados\nreturn [\n  {\n    json: {\n      blockNumber: 1,\n      content: blocks[0],\n      totalBlocks: 3,\n      blockSize: blocks[0].length,\n      originalSize: totalLength\n    }\n  },\n  {\n    json: {\n      blockNumber: 2,\n      content: blocks[1],\n      totalBlocks: 3,\n      blockSize: blocks[1].length,\n      originalSize: totalLength\n    }\n  },\n  {\n    json: {\n      blockNumber: 3,\n      content: blocks[2],\n      totalBlocks: 3,\n      blockSize: blocks[2].length,\n      originalSize: totalLength\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "9d231d47-0fe3-443c-b6f2-47b7a1d2f1d0",
+      "name": "SplitText"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "85777943-a6c7-4fd8-8e94-57bdcc505942",
+      "name": "Split Out1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "SplitText",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "SetData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetData": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Upsert row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SplitText": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "97416f32-41ca-4545-8ee1-4671debff04e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "6cHLc1D0euaBMyRD",
+  "tags": []
+}

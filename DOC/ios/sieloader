@@ -1,0 +1,35 @@
+1. SDK e Versão do Sistema
+
+    Requisito Mínimo: A partir de abril de 2026, todos os novos apps e atualizações enviados para a App Store Connect devem ser criados com o SDK do iOS 26 ou posterior.
+
+    Betas: As versões beta do iOS 26.4 já estão disponíveis e são as que trazem os ajustes finais para as APIs de distribuição regional.
+
+2. O que você já pode implementar (via APIs existentes)
+
+A Apple está adaptando o framework que já existe para a Europa (DMA) para o contexto brasileiro. As principais APIs que você deve estudar na documentação global da Apple (que serão habilitadas para contas de desenvolvedor do Brasil) são:
+
+    MarketplaceKit: Este é o framework principal se você pretende criar sua própria loja de aplicativos ou distribuir seu app em uma loja de terceiros.
+
+    External Purchase Router API: Utilizada para exibir o "link-out" (o botão que leva o usuário para pagar no seu site). O acordo com o CADE exige que esse link seja exibido de forma neutra, sem avisos "assustadores" que degradem a experiência.
+
+    StoreKit External Purchase Entitlement: Você precisará solicitar essa permissão (Entitlement) no portal do desenvolvedor para habilitar pagamentos via Pix ou outros meios externos dentro do app.
+
+3. Taxas Confirmadas (TCC CADE)
+
+Para o seu planejamento financeiro (especialmente se estiver usando Next.js/Tailwind para interfaces de pagamento externas):
+
+    Comissão da App Store: Reduzida para 15% (ou 10% no Small Business Program) se você usar links externos.
+
+    Taxa de Tecnologia Principal (Core Technology Fee): 5% para apps distribuídos em lojas de terceiros (aplicável após 1 milhão de instalações anuais).
+
+    Apple Pay: Taxa de 5% se você optar por usar o processamento da Apple em um fluxo de marketplace.
+
+4. Próximos Passos Recomendados
+
+    Acesse o Apple Developer Portal: Procure pela seção "Alternative Distribution" que, devido ao prazo de 105 dias do CADE, deve começar a exibir as opções para o território brasileiro entre o final de março e o início de abril.
+
+    Ajuste de Fluxo de UI: Como você trabalha com React Native e Next.js, comece a desenhar os fluxos de "Checkout Externo". A regra brasileira exige que o método alternativo seja exibido "lado a lado" com a opção da Apple, garantindo paridade.
+
+    Segurança e Notarização: Lembre-se que, mesmo fora da App Store, seu binário precisará passar pela Notarização da Apple (verificação automatizada de malware).
+
+Dica: Fique atento ao portal Apple Developer News na última semana de março, pois é quando a documentação técnica traduzida e as chaves de autorização específicas para o Brasil costumam ser liberadas para cumprir o prazo legal de 7 de abril.

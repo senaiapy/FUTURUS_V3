@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnp.*
+.yarn/
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Prisma
+*.db
+*.db-journal
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+Thumbs.db
+
+# Database & SQL
+*.sql
+#LARAVEL/SQL/
+#LARAVEL/backups/
+
+# Config files with secrets
+Futurus-LARAVEL/assets/admin/push_config.json
+Futurus-NEXTJS/frontend/public/admin/push_config.json
+Futurus-LARAVEL/MOBILE 
+Futururus*
+
+.agent/

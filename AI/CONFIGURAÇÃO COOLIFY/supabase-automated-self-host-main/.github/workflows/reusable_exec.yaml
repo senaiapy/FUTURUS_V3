@@ -1,0 +1,168 @@
+on:
+  workflow_call:
+    inputs:
+      runs_on:
+        type: string
+        required: true
+      with_authelia:
+        type: boolean
+        required: false
+        default: false
+      with_authelia_and_redis:
+        type: boolean
+        required: false
+        default: false
+      artifact_name:
+        type: string
+        required: true
+      repo:
+        type: string
+        required: true
+      proxy:
+        type: string
+        required: false
+        default: caddy
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  reusable_build:
+    timeout-minutes: 20
+    runs-on: ${{ inputs.runs_on }}
+    env:
+      CI: true
+      ARTIFACT: ${{ inputs.artifact_name }}
+      REPO: ${{ inputs.repo }}
+      PROXY: ${{ inputs.proxy }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: execute setup script
+        # after checkout, pwd is the root of the repo thats why cd ../
+        # When executing script with sudo, by default sudo doesn't pass env vars to script. -E flag solves that
+        run: |
+          set -ex
+          mv setup.sh ../setup.sh
+          cd ../
+          chmod +x setup.sh
+          params=()
+          with_authelia=${{inputs.with_authelia}}
+          with_authelia_and_redis=${{inputs.with_authelia_and_redis}}
+
+          [[ "$with_authelia" == true || "$with_authelia_and_redis" == true ]] && params+=(--with-authelia)
+          [[ "$PROXY" == "nginx" ]] && params+=(--proxy nginx)
+
+          WITH_REDIS="$with_authelia_and_redis" sudo -E ./setup.sh "${params[@]}"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install psql
+        run: sudo apt install -y postgresql-client
+
+        # https://stackoverflow.com/a/57969570/18954618
+      - name: set env vars
+        run: |
+          set -e
+
+          envVars=(SUPABASE_PUBLIC_URL POOLER_TENANT_ID POSTGRES_PASSWORD PROXY_AUTH_USERNAME SERVICE_ROLE_KEY)
+
+          for var in "${envVars[@]}"; do
+              echo "$var=$(node --env-file docker/.env -e "console.log(process.env.$var)")" >>"$GITHUB_ENV"
+          done
+
+      - name: Update /etc/hosts
+        run: |
+          set -ex
+          pip install --quiet tldextract
+          host="$(tldextract --json "$SUPABASE_PUBLIC_URL" | jq -r .fqdn)"
+          sudo echo "127.0.0.1 $host" | sudo tee -a /etc/hosts
+
+      - name: Test containers
+        run: |
+          set -euo pipefail
+          cd docker
+          yq -i '.services.supavisor.environment.RLIMIT_NOFILE=1024' docker-compose.yml
+          docker compose up -d --quiet-pull --wait
+
+      - name: Setup db
+        run: |
+          set -e
+          # https://github.com/supabase/supabase/issues/29892#issuecomment-2419319879
+          PGPASSWORD="$POSTGRES_PASSWORD" \
+            psql -h localhost -d postgres -U postgres."$POOLER_TENANT_ID" -f ./test/todos.sql
+
+      # when using nginx proxy, the image first generates http certs and then start nginx
+      # and it takes some time, to generate the certs.
+      # curl is not present inside the image, that's why can't do this via docker healthcheck
+      - name: Healthcheck if nginx
+        if: inputs.proxy == 'nginx'
+        run: |
+          set -e
+          retries=10
+
+          authParams=()
+          if [ -n "$PROXY_AUTH_USERNAME" ]; then authParams+=(-u "$PROXY_AUTH_USERNAME:password");fi
+
+          for ((i = 0; i < "$retries"; i++)); do
+            if curl -kL --fail "${authParams[@]}" "$SUPABASE_PUBLIC_URL" > /dev/null; then
+              break
+            else
+              if [ "$i" -eq "$(("$retries" - 1))" ]; then exit 1; fi
+              sleep 30
+            fi
+          done
+
+      - name: Run tests
+        run: |
+          set -ex
+          # envs set inside set env vars step
+          cd test && npm ci && npm run test -- run
+
+      - name: Reset db & Test containers with minio storage
+        run: |
+          set -ex
+          cd docker && docker compose down -t0
+          sudo rm -r volumes/db/data volumes/storage
+          # https://github.com/docker/compose/issues/10596#issuecomment-2864307501
+          docker compose -f docker-compose.yml -f docker-compose.s3.yml up -d --quiet-pull --wait || exit $(docker compose ps -q | xargs docker inspect -f '{{.State.ExitCode}}' | grep -v '^0' | wc -l)
+
+      - name: Setup db
+        run: |
+          set -e
+
+          PGPASSWORD="$POSTGRES_PASSWORD" \
+            psql -h localhost -d postgres -U postgres."$POOLER_TENANT_ID" -f ./test/todos.sql
+
+      - name: Run tests
+        run: |
+          set -ex
+          # envs set inside set env vars step
+          cd test && npm run test -- run
+
+      - name: Generate tar
+        run: |
+          set -ex
+          cd docker
+          docker compose kill &> /dev/null
+          cd ../../
+          sudo tar --exclude "$REPO/docker/volumes/db/data" \
+          --exclude "$REPO/docker/volumes/caddy/caddy_data" \
+          --exclude "$REPO/docker/volumes/caddy/caddy_config" \
+          --exclude "$REPO/docker/volumes/nginx/letsencrypt" \
+          --exclude "$REPO/docker/volumes/storage" \
+          --exclude "$REPO/test" \
+          --exclude "$REPO/.git" \
+          -czvf ~/"$ARTIFACT".tar.gz "$REPO" > /dev/null
+
+      - name: Upload generated tarball
+        uses: actions/upload-artifact@v4
+        # action cannot detect "$ARTIFACT" env var
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ~/${{ inputs.artifact_name }}.tar.gz
+          retention-days: 5
+          if-no-files-found: error

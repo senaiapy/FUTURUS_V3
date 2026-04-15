@@ -1,0 +1,157 @@
+{
+  "name": "Futurus_ToolsGetProducts",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return { \n'response':JSON.stringify($input.all().map(x =>x.json))\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        64
+      ],
+      "id": "8ece0a31-dde2-41b0-a628-296c8c7d83fe",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        432,
+        80
+      ],
+      "id": "76d296e7-cb0b-4408-a3c8-6c85c72b3dd9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction convertToDirectDownload(url) {\n    // Verifica se a URL pertence ao domínio do Google Drive\n    if (!url.includes(\"drive.google.com\")) {\n        return url; // Se não for do Google Drive, retorna a URL original\n    }\n\n    // Tenta extrair o file ID da URL usando regex\n    const match = url.match(/https:\\/\\/drive\\.google\\.com\\/file\\/d\\/([^/]+)\\/view/);\n    if (match && match[1]) {\n        const fileId = match[1];\n        return `https://drive.google.com/uc?id=${fileId}&export=download`;\n    } else {\n        throw new Error(\"URL do Google Drive inválida. Certifique-se de que está no formato correto.\");\n    }\n}\n\nfor (const item of $input.all()) {\n  // Modifica o campo Link_Book, se existir\n  if (item.json.foto) {\n    //const originalLinkBook = convertToDirectDownload(item.json.foto);\n    const originalLinkBook = item.json.foto;\n    // Adiciona o argumento ao final da URL, garantindo o separador correto\n    item.json.foto = originalLinkBook.includes('?') \n      ? `${originalLinkBook}&tipo=image` \n      : `${originalLinkBook}?tipo=image`;\n  }\n\n  // Modifica o campo Link_Video, se existir\n  if (item.json.video) {\n    const originalLinkVideo = convertToDirectDownload(item.json.video);\n\n    // Adiciona o argumento ao final da URL, garantindo o separador correto\n    item.json.video = originalLinkVideo.includes('?') \n      ? `${originalLinkVideo}&tipo=video` \n      : `${originalLinkVideo}?tipo=video`;\n  }\n}\n\nreturn $input.all();\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        192
+      ],
+      "id": "a9c5d1ec-b4a1-4ed4-babb-c66a1a1a7674",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "products_futurus",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "lt",
+              "keyValue": "600"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        64,
+        272
+      ],
+      "id": "92799bb6-273d-4bf0-b388-5038a3e2d678",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "KG8g1bIogD51xhXX",
+          "name": "Supabase YOENVIO.DE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "search"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "23330967-db2a-460b-9e77-6895218f07b6",
+      "name": "Start"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d1f3c9ba-6331-448e-9323-7d20f9d4bcdc",
+  "meta": {
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "SVWaYMCaH1NSatJQ",
+  "tags": []
+}

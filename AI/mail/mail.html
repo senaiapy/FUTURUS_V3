@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Futurus -Confirmación del Nuevo Pedido</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .header {
+            background-color: #007bff; /* Example Club Blue */
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .detail-table th, .detail-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .detail-table th {
+            width: 35%;
+            font-weight: bold;
+            color: #555555;
+        }
+        .total-box {
+            background-color: #555555;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            border: 1px solid #cce0ff;
+        }
+        .item-list {
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .item-list h3 {
+            padding: 10px;
+            margin: 0;
+            background-color: #555555;
+            border-bottom: 1px solid #ddd;
+        }
+        .item-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .item-list li {
+            padding: 10px;
+            border-bottom: 1px dotted #eee;
+        }
+        .item-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>✅ Futurus - Checkout Confirmación</h1>
+    </divó
+    <div class="content">
+        
+        <p>CHECKOUT DE  **Futurus**:</p>
+
+        <table class="detail-table">
+            <tr>
+                <th>Invoice / Pedido No.</th>
+                <td>**{{$json.invoice}}**</td>
+            </tr>
+           
+    
+            <tr>
+                <th>Cliente Phone</th>
+                <td>{{$json.phone}}</td>
+            </tr>
+        </table>
+
+        <div class="item-list">
+            <h3>🛒 Total de Itens Pedidos </h3>
+            <td>
+                {{ $('Gerar_CHECKOUT').item.json.order.notes }}
+             
+            </td>
+        </div>
+        
+        <div class="total-box">
+            <span>TOTAL DO PEDIDO:</span>
+            <span style="color: #d9534f; margin-left: 10px;">**{{ $json.value }}**</span>
+        </div>
+
+        <p style="margin-top: 30px;">If you have any questions regarding your order, please reply to this email.</p>
+        <p>Best regards,<br>The Futurus Team</p>
+    </div>
+</div>
+
+</body>
+</html>
+

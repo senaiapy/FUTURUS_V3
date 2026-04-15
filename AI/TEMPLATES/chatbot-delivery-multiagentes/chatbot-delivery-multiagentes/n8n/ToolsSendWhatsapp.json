@@ -1,0 +1,231 @@
+{
+  "name": "ToolsSendWhatsapp",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.evolution_api_url }}/message/sendText/{{ $json.evolution_api_instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.evolution_api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cc4b45ee-a52b-4f61-9b38-2a305018b127",
+      "name": "Evolution API - HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        -48
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "84c558d0-84db-4ca3-91e6-b1d2f7cee2a7",
+              "name": "evolution_api_url",
+              "value": "={{ $json.evolution_api_url }}",
+              "type": "string"
+            },
+            {
+              "id": "6bd91ace-5be1-4488-b7a7-d6df4e248c0d",
+              "name": "evolution_api_instance",
+              "value": "={{ $json.evolution_api_instance }}",
+              "type": "string"
+            },
+            {
+              "id": "57075094-e509-446e-8316-baa9a2833c85",
+              "name": "evolution_api_key",
+              "value": "={{ $json.evolution_api_key }}",
+              "type": "string"
+            },
+            {
+              "id": "8b85fccf-8060-435e-9dd5-fca0424d87f4",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "c5c7188e-e8cc-481c-ab38-5ce0fa8d0aae",
+              "name": "text",
+              "value": "={{ $json.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -848,
+        -48
+      ],
+      "id": "8d04b0cf-3720-4409-b015-098471603325",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': \"Mensagem envia ao restaurante\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -80
+      ],
+      "id": "6b0996f1-ffa6-4f54-b09f-715e24ffaa0b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "phone"
+            },
+            {
+              "name": "evolution_api_url"
+            },
+            {
+              "name": "evolution_api_instance"
+            },
+            {
+              "name": "message"
+            },
+            {
+              "name": "evolution_api_key"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1136,
+        -48
+      ],
+      "id": "9d9ea5e4-1c11-4bcb-adf4-9dd74f0711b7",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.first().json.error.message\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        160
+      ],
+      "id": "d162dd9e-2d11-4a98-8602-5f382781b8ab",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsSendWhatsapp\n## Esta função envia uma mensagem por Whatsapp\n\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2128,
+        -160
+      ],
+      "id": "153d55ad-d087-4d81-9984-d10cee615105",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "phone": "5586981612061",
+          "evolution_api_url": "https://evolutionapi2.zapoferta.com.br",
+          "evolution_api_instance": "EmpreendedorSerial",
+          "message": "Cliente: André Alencar, 558681612061\nEndereço: Av. Raul Lopes 880, Poty Premier, sala 1101\nProdutos:\nPedido de teste\n### Total - 0,00",
+          "evolution_api_key": "E9DC8E652711-406C-B4AF-8C35267A51C5"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Evolution API - HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Evolution API - HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "73df2983-41be-461c-b2bb-36a32ec51002",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "gRdLWTSg2l7cimyM",
+  "tags": []
+}

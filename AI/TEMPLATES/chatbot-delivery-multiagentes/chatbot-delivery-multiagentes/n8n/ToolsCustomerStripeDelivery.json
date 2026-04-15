@@ -1,0 +1,992 @@
+{
+  "name": "ToolsCustomerStripeDelivery",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Config').first().json.function }}",
+                    "rightValue": "get_or_create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2ba71c7e-932a-48d6-9e98-fe922c9122af"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "61ad9fb3-58ca-48f7-9cf0-d52c39400446",
+                    "leftValue": "={{ $('Config').first().json.function }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "40cbf966-b03f-4376-9af5-60733c67af73",
+                    "leftValue": "={{ $('Config').first().json.function }}",
+                    "rightValue": "find_cep",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1744,
+        -912
+      ],
+      "id": "459fc3f2-87a6-48df-9502-f703da611e95",
+      "name": "Switch",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8a011e5f-4fa4-4788-a027-4e8a5e3ec3ef",
+              "leftValue": "={{ $('FindCustomer').first().json?.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2608,
+        -896
+      ],
+      "id": "d0498863-63da-4c29-8f62-c927e3a8680c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response':$input.first().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4272,
+        -192
+      ],
+      "id": "69310cf9-9215-46c2-bb3a-e44fe90bbcd2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "numberInputs": 7
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4288,
+        -864
+      ],
+      "id": "d79e12c0-02cd-4f11-a3f6-7ee58a246b9c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through input items\nconst output = $input.all().map(item => {\n  // Objeto 1 e Objeto 2\n\n  const object1 = $(\"FindCustomer\").first().json; // Primeiro objeto \n  const object2 = $(\"Config\").first().json // Segundo objeto\n  // Validar que os objetos existem\n  if (!object1 || !object2) {\n    throw new Error('Os campos \"object1\" e \"object2\" são obrigatórios nos dados de entrada.');\n  }\n\n  // Misturar os objetos, sobrepondo os valores do segundo objeto, caso não estejam em branco\n  const mergedObject = { ...object1 }; // Começa com os valores do objeto 1\n\n  for (const [key, value] of Object.entries(object2)) {\n    // Sobrescreve o valor apenas se não estiver vazio\n    if (value !== null && value !== undefined && value !== '') {\n      mergedObject[key] = value;\n    }\n  }\n\n  // Retornar o novo objeto combinado\n  return { json: { mergedObject } };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        -352
+      ],
+      "id": "1b7aab81-1c75-4268-b96b-d6ebcd051f2c",
+      "name": "MergeData",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1dbcca50-6942-4456-92b2-9175d0416950",
+              "leftValue": "={{ $('FindCustomer').last().json.isEmpty() }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1824,
+        -368
+      ],
+      "id": "6dd59a0f-d78b-4c09-b413-428710ba00af",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2208,
+        -896
+      ],
+      "id": "948c46d9-1903-406a-aa10-aed2e423ff29",
+      "name": "Merge1",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://viacep.com.br/ws/{{ $('Config').item.json.cep }}/json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1792,
+        0
+      ],
+      "id": "c02c80c7-e555-46b1-9746-903aa6b79521",
+      "name": "ConsultaCep",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { \n'response': $input.last().json\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4272,
+        0
+      ],
+      "id": "7f1daadc-5017-4e2f-9f06-fcc7d5468278",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d85ea53c-6018-4697-afc9-57f0c87f2750",
+              "leftValue": "={{ $json.cep }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        0
+      ],
+      "id": "2dbe39ce-468a-469e-a17b-e69334d0563a",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4373703-63d9-433c-baff-3911c4ee98ba",
+              "name": "message",
+              "value": "CEP não localizado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3408,
+        0
+      ],
+      "id": "42ff18da-3928-431e-8a87-5e117b643b00",
+      "name": "SetMessageZipCode2"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "function"
+            },
+            {
+              "name": "phone"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "email"
+            },
+            {
+              "name": "url_strapi"
+            },
+            {
+              "name": "resumo_chat"
+            },
+            {
+              "name": "neighborhood"
+            },
+            {
+              "name": "lat"
+            },
+            {
+              "name": "long"
+            },
+            {
+              "name": "cep"
+            },
+            {
+              "name": "address"
+            },
+            {
+              "name": "distance"
+            },
+            {
+              "name": "cpf"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        -896
+      ],
+      "id": "ad974e70-8d4d-455f-b00c-7a8896ea1f5c",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "332b1821-9580-4cfd-a520-1f8189e9d764",
+              "name": "function",
+              "value": "={{ $json.function || 'get_or_create' }}",
+              "type": "string"
+            },
+            {
+              "id": "2e31c66f-31b8-4800-9154-e5365bcbfdec",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "a7de30b6-1398-4812-a589-68eb0aa9d604",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "bed1554c-d83b-4a11-b9aa-e59e2a63cbb9",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "347e2a56-3ed4-4247-87de-3a32103bcc45",
+              "name": "resumo_chat",
+              "value": "={{ $json.resumo_chat }}",
+              "type": "string"
+            },
+            {
+              "id": "96f589b9-9d9f-4b8a-9e46-aed3a771f728",
+              "name": "table_name",
+              "value": "=customers",
+              "type": "string"
+            },
+            {
+              "id": "b8a4ee9d-9342-4b1a-9df2-d7c8576b8c97",
+              "name": "table_purchase",
+              "value": "purchases",
+              "type": "string"
+            },
+            {
+              "id": "7ff00a13-53cc-42d7-9ab4-2970d9a38463",
+              "name": "app",
+              "value": "delivery-pix",
+              "type": "string"
+            },
+            {
+              "id": "7a702f86-8b3c-4825-a733-8de25b275a42",
+              "name": "url_strapi",
+              "value": "={{ $json.url_strapi }}",
+              "type": "string"
+            },
+            {
+              "id": "4493cc3b-fd81-40c0-9496-278d4fd4e77b",
+              "name": "long",
+              "value": "={{ $json.long }}",
+              "type": "string"
+            },
+            {
+              "id": "e490fff4-e909-438d-a77b-fbee8b974427",
+              "name": "lat",
+              "value": "={{ $json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "0340681b-c740-418e-a393-ffa923a26970",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "0f6ed83c-233a-41f7-98a7-5dfb0b463775",
+              "name": "neighborhood",
+              "value": "={{ $json.neighborhood }}",
+              "type": "string"
+            },
+            {
+              "id": "7c13ac00-6a82-4ee4-8ab8-4c2bb7ea0528",
+              "name": "cep",
+              "value": "={{ $json.cep }}",
+              "type": "string"
+            },
+            {
+              "id": "712d7638-4c44-4a8f-88e8-97e1c2652c16",
+              "name": "cpf",
+              "value": "={{ $json.cpf }}",
+              "type": "string"
+            },
+            {
+              "id": "0e98429b-74bc-4ddf-9630-99511ab2ebae",
+              "name": "distance",
+              "value": "={{ $json.distance}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -896
+      ],
+      "id": "5d259dfe-4e84-4bd4-abec-8e0e700d03ca",
+      "name": "Config",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a6a8c8e4-dd0b-419f-ba52-979289a79c7a",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2624,
+        -544
+      ],
+      "id": "e2b6c05b-6c02-4af9-b833-91bbe073a2bc",
+      "name": "SetError"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Config').first().json.url_strapi }}/{{ $('Config').first().json.table_name }}/{{ $json.mergedObject.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"name\":\"{{ $('Start').first().json.name }}\",\n\"phone\":\"{{ $('Start').first().json.phone }}\",\n\"cpf\":\"{{ $json.mergedObject.cpf }}\",\n\"cep\":\"{{ $json.mergedObject.cep }}\",\n\"address\":\"{{ $json.mergedObject.address }}\",\n\"email\":\"{{ $json.mergedObject.email }}\",\n\"neighborhood\":\"{{ $json.mergedObject.neighborhood }}\",\n\"lat\":\"{{ $json.mergedObject.lat }}\",\n\"long\":\"{{ $json.mergedObject.long }}\",\n\"distance\":\"{{ $json.mergedObject.distance }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        -368
+      ],
+      "id": "3f4c7495-a36c-4ce6-bfdd-2061979293b4",
+      "name": "UpdateCustomer",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd4a20b6-7405-4eef-9ea1-e5680006b10d",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2640,
+        -144
+      ],
+      "id": "6bcb1d46-238c-482b-8570-01f9dede64d6",
+      "name": "setError"
+    },
+    {
+      "parameters": {
+        "content": "\n# ToolsCustomerStripeDelivery\n## Esta função atualiza os dados do cliente, busca o cliente e encontra do CEP do endereço do cliente.\n\n# Variável FUNCTION:\n## De acordo com o valor desta variável o fluxo realiza funções diferente: UPDATE, GE_OR_CREATE,FIND_CEP\n\n# Nomes do Fluxos\n## Renomeie todos o fluxos para o nomes sugeridos para não se perder\n\n# Config\n## Utilize o NÓ 'config' para configurar as URLS e tabelas do STRAPI onde os dados serão armazenados\n\n# Comunidade\n## Participe para resolver problemas e tirar dúvidas:\n## https://comunidade.aalencar.com.br",
+        "height": 1140,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -1040
+      ],
+      "id": "8dd48f08-628b-4a76-aa69-8d91abedb8e4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a72c0f72-c7c1-4460-b2cc-7b35f061e567",
+              "name": "purchases",
+              "value": "={{ $('Split Out').all() }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2992,
+        -1152
+      ],
+      "id": "a36c9013-32ff-45e0-a33b-9e804c2f9170",
+      "name": "SetSchedulings"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3504,
+        -1056
+      ],
+      "id": "2532dfd2-482f-4eb2-a1f2-c239f3a710bd",
+      "name": "Merge3",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.url_strapi }}/{{ $('Config').first().json.table_purchase }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "customer.id",
+              "value": "={{ $('FindCustomer').item.json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2192,
+        -1152
+      ],
+      "id": "2f00e28b-b68b-47e5-a85f-6dc287644ff2",
+      "name": "ListPurchases",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_strapi }}/{{ $json.table_name }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $json.phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        -896
+      ],
+      "id": "971b3ded-1fb6-4d6b-bb5c-df0e96e34dc9",
+      "name": "FindCustomer",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id,valor_total,paid,qrcode,pix_code, created_at, updated_at, resumo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        -1152
+      ],
+      "id": "fec883a2-351b-48ca-a83b-02f3d6d5795c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.url_strapi }}/{{ $('Config').first().json.table_name }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"name\":\"{{ $('Start').item.json.name }}\",\n\"phone\":\"{{ $('Start').item.json.phone }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2624,
+        -736
+      ],
+      "id": "fc1d5f3b-f823-42dc-a9a0-be49027f7eca",
+      "name": "CreateCustomer",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "function": "update",
+          "phone": "558681612061",
+          "name": "João da Silva",
+          "email": "",
+          "url_strapi": "http://strapi.empreendedorserial.com:1337",
+          "resumo_chat": null,
+          "neighborhood": "Jóquei",
+          "lat": "-5.0779555",
+          "long": "-42.7965678",
+          "cep": "64048-065",
+          "address": "Avenida Raul Lopes, sala 1101 - 11 andar, Bairro Jóquei, Teresina, Piauí, CEP 64048-065",
+          "distance": null,
+          "cpf": null
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ListPurchases",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ConsultaCep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CreateCustomer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MergeData": {
+      "main": [
+        [
+          {
+            "node": "UpdateCustomer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "MergeData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ConsultaCep": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ],
+        [
+          {
+            "node": "SetMessageZipCode2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetMessageZipCode2": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "FindCustomer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "UpdateCustomer": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ],
+        [
+          {
+            "node": "setError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "SetSchedulings": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ListPurchases": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FindCustomer": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "SetSchedulings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CreateCustomer": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "SetError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9c067355-e9b2-47b9-b137-b7ec695951c9",
+  "meta": {
+    "instanceId": "59bfd9b2878ae97fc4f65e50592e74846e660bb5668c77f819b05b989e354c62"
+  },
+  "id": "sQcFoad1EPfmbK2r",
+  "tags": [
+    {
+      "createdAt": "2025-07-11T22:15:28.691Z",
+      "updatedAt": "2025-07-11T22:15:28.691Z",
+      "id": "yq74IW51LJvad3eR",
+      "name": "agendamento-strapi"
+    }
+  ]
+}

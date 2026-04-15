@@ -1,0 +1,85 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: futurus-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-galo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-galo}
+      POSTGRES_DB: ${DB_DATABASE:-futurus_fullstack}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - futurus-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: futurus-backend
+    restart: always
+    command: npm run start:dev
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - backend_uploads:/app/uploads
+      - ../Futurus-LARAVEL/assets/verify:/app/laravel_verify
+    environment:
+      DATABASE_URL: postgresql://${DB_USERNAME:-galo}:${DB_PASSWORD:-galo}@db:5432/${DB_DATABASE:-futurus_fullstack}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-super-secret-key}
+      PORT: 3001
+    depends_on:
+      - db
+    networks:
+      - futurus-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
+    container_name: futurus-frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
+      INTERNAL_API_URL: http://backend:3001/api
+      NEXTAUTH_SECRET: super-secret-nextauth-key
+      AUTH_SECRET: super-secret-nextauth-key
+      AUTH_TRUST_HOST: "true"
+      NEXTAUTH_URL: http://localhost:${FRONTEND_PORT:-3000}
+    depends_on:
+      - backend
+    networks:
+      - futurus-network
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
+    container_name: futurus-admin
+    restart: always
+    ports:
+      - "${ADMIN_PORT:-3002}:3002"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
+    depends_on:
+      - backend
+    networks:
+      - futurus-network
+
+networks:
+  futurus-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  backend_uploads:

@@ -1,0 +1,1133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  firstname          String?   @db.VarChar(40)
+  lastname           String?   @db.VarChar(40)
+  username           String    @unique @db.VarChar(40)
+  email              String    @unique @db.VarChar(40)
+  image              String?   @db.VarChar(255)
+  dialCode           String?   @db.VarChar(40)
+  mobile             String?   @db.VarChar(40)
+  refBy              Int       @default(0)
+  balance            Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  password           String    @db.VarChar(255)
+  countryName        String?   @db.VarChar(255)
+  countryCode        String?   @db.VarChar(40)
+  city               String?   @db.VarChar(255)
+  state              String?   @db.VarChar(255)
+  zip                String?   @db.VarChar(255)
+  address            String?   @db.Text
+  status             Int       @default(1) // 0: banned, 1: active
+  kycData            String?   @db.Text
+  kycRejectionReason String?   @db.VarChar(255)
+  kv                 Int       @default(0) // 0: KYC Unverified, 2: KYC pending, 1: KYC verified
+  ev                 Int       @default(0) // 0: email unverified, 1: email verified
+  sv                 Int       @default(0) // 0: mobile unverified, 1: mobile verified
+  profileComplete    Boolean   @default(false)
+  verCode            String?   @db.VarChar(40)
+  verCodeSendAt      DateTime?
+  ts                 Int       @default(0) // 2fa off/on
+  tv                 Int       @default(1) // 2fa unverified/verified
+  tsc                 String?   @db.VarChar(255)
+  twoFactorRecoveryCodes String? @db.Text
+  banReason          String?   @db.VarChar(255)
+  rememberToken      String?   @db.VarChar(255)
+  provider           String?   @db.VarChar(40)
+  providerId         String?   @db.VarChar(255)
+  cpf                String?   @db.VarChar(20)
+  totalSharesBought  Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  totalProfit        Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  successRate        Decimal   @default(0.00) @db.Decimal(5, 2)
+  walletAddress      String?   @db.VarChar(255) // For crypto deposits
+  investedAmount     Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  winningAmount      Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  referralCommissions Decimal @default(0.00000000) @db.Decimal(28, 8)
+  coinBalance        Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  referralCode       String?   @unique @db.VarChar(40)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  purchases           Purchase[]
+  transactions        Transaction[]
+  deposits            Deposit[]
+  withdrawals         Withdrawal[]
+  logins              UserLogin[]
+  comments            Comment[]
+  bookmarks           MarketBookmark[]
+  dummyField          String?             @db.VarChar(10)
+  notifications       AdminNotification[]
+  userNotifications   UserNotification[]
+  supportTickets      SupportTicket[]
+  personalAccessTokens PersonalAccessToken[]
+  userTasks           UserTask[]
+  coinTransactions    CoinTransaction[]
+  referredReferrals   Referral[]          @relation("Referrer")
+  referredByReferrals Referral[]          @relation("Referred")
+  cookieConsents      CookieConsent[]
+  adminPermission     AdminPermission?
+
+  // Group Relations
+  createdGroups       Group[]             @relation("GroupCreator")
+  groupMemberships    GroupMember[]       @relation("GroupMember")
+
+  // Blockchain Relations
+  solanaWallet        SolanaWallet?
+  preferredMode       String              @default("CASH") @db.VarChar(10) // "CASH" or "SOLANA"
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  slug      String?  @unique @db.VarChar(255)
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subCategories SubCategory[]
+  markets       Market[]
+}
+
+model SubCategory {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar(255)
+  categoryId Int
+  status     Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category Category @relation(fields: [categoryId], references: [id])
+}
+
+model Market {
+  id            Int       @id @default(autoincrement())
+  categoryId    Int
+  subcategoryId Int?      @default(0)
+  question      String?   @db.VarChar(255)
+  slug          String?   @unique @db.Text
+  type          Int       @default(1) // 1 = single, 2= multy
+  volume        Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  yesShare      Decimal   @default(0.00) @db.Decimal(5, 2)
+  noShare       Decimal   @default(0.00) @db.Decimal(5, 2)
+  image         String?   @db.VarChar(255)
+  status        Int       @default(1)
+  isPaid        Boolean   @default(false)
+  description   String?   @db.Text
+  isLock        Boolean   @default(false)
+  isTrending    Boolean   @default(false)
+  startDate     DateTime?
+  endDate       DateTime?
+  profitLoss    Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  category  Category         @relation(fields: [categoryId], references: [id])
+  options   MarketOption[]
+  purchases Purchase[]
+  comments  Comment[]
+  trends    MarketTrend[]
+  bookmarks MarketBookmark[]
+  groups    Group[]
+
+  // Blockchain Relations
+  blockchainMarket BlockchainMarket?
+}
+
+model MarketOption {
+  id             Int      @id @default(autoincrement())
+  marketId       Int
+  question       String?  @db.VarChar(255)
+  image          String?  @db.VarChar(255)
+  initialYesPool Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  initialNoPool  Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  yesPool        Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  noPool         Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  commission     Decimal  @default(0.00) @db.Decimal(5, 2)
+  chance         Decimal  @default(0.00) @db.Decimal(5, 2)
+  status         Int      @default(1)
+  isWinner       Boolean?
+  winnerOutcome  String?  @db.VarChar(40)
+  isLock         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  market    Market        @relation(fields: [marketId], references: [id])
+  purchases Purchase[]
+  trends    MarketTrend[]
+}
+
+model Purchase {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  marketId          Int
+  marketOptionId    Int
+  type              String    @db.VarChar(40)
+  totalShare        Decimal   @default(0.00) @db.Decimal(28, 2)
+  pricePerShare     Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  amount            Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  profit            Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  winAmount         Decimal   @default(0.00000000) @db.Decimal(28, 8)
+  status            Int       @default(1)
+  isPaid            Boolean   @default(false)
+  win               Boolean?
+  trx               String    @db.VarChar(40)
+  payoutProcessedAt DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id])
+  market       Market       @relation(fields: [marketId], references: [id])
+  marketOption MarketOption @relation(fields: [marketOptionId], references: [id])
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  amount      Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  charge      Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  postBalance Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  trxType     String?  @db.VarChar(40)
+  trx         String?  @db.VarChar(40)
+  details     String?  @db.VarChar(255)
+  remark      String?  @db.VarChar(40)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Deposit {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  methodCode     Int
+  amount         Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  methodCurrency String?  @db.VarChar(40)
+  charge         Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  rate           Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  finalAmount    Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  detail         String?  @db.Text
+  btcAmount      String?  @db.VarChar(255)
+  btcWallet      String?  @db.VarChar(255)
+  trx            String?  @db.VarChar(40)
+  paymentTry     Int      @default(0)
+  status         Int      @default(0) // 1=>success, 2=>pending, 3=>cancel
+  fromApi        Boolean  @default(false)
+  isWeb          Boolean  @default(false)
+  adminFeedback  String?  @db.Text
+  successUrl     String?  @db.VarChar(255)
+  failedUrl      String?  @db.VarChar(255)
+  lastCron       Int?     @default(0)
+  pixCode        String?  @db.Text      // PIX code for Brazilian payment
+  pixQrCode      String?  @db.Text      // PIX QR code URL
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Withdrawal {
+  id                  Int      @id @default(autoincrement())
+  methodId            Int
+  userId              Int
+  amount              Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  currency            String?  @db.VarChar(40)
+  rate                Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  charge              Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  trx                 String?  @db.VarChar(40)
+  finalAmount         Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  afterCharge         Decimal  @default(0.00000000) @db.Decimal(28, 8)
+  withdrawInformation String?  @db.Text
+  status              Int      @default(0) // 1=>success, 2=>pending, 3=>cancel
+  adminFeedback       String?  @db.Text
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UserLogin {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  userIp      String?  @db.VarChar(40)
+  city        String?  @db.VarChar(40)
+  country     String?  @db.VarChar(40)
+  countryCode String?  @db.VarChar(40)
+  longitude   String?  @db.VarChar(40)
+  latitude    String?  @db.VarChar(40)
+  browser     String?  @db.VarChar(40)
+  os          String?  @db.VarChar(40)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  marketId     Int
+  parentId     Int?     @default(0)
+  comment      String   @db.Text
+  likesCount   Int      @default(0)
+  repliesCount Int      @default(0)
+  isReported   Boolean  @default(false)
+  status       Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  market Market @relation(fields: [marketId], references: [id])
+}
+
+model MarketBookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  marketId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  market Market @relation(fields: [marketId], references: [id])
+}
+
+model MarketTrend {
+  id             Int      @id @default(autoincrement())
+  marketId       Int
+  marketOptionId Int
+  chance         Decimal  @default(0.00) @db.Decimal(5, 2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  market Market       @relation(fields: [marketId], references: [id])
+  option MarketOption @relation(fields: [marketOptionId], references: [id])
+}
+
+model AdminNotification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @default(0)
+  type      String?  @db.VarChar(100)
+  title     String?  @db.VarChar(255)
+  message   String?  @db.Text
+  isRead    Boolean  @default(false)
+  clickUrl  String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UserNotification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  type      String?  @db.VarChar(100)
+  title     String?  @db.VarChar(255)
+  message   String?  @db.Text
+  data      String?  @db.Text // JSON data for linking to groups, markets, etc.
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_notifications")
+  @@index([userId])
+  @@index([isRead])
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  username  String   @unique @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  image     String?  @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  ts        Int      @default(0) // 2fa off/on
+  tv        Int      @default(1) // 2fa unverified/verified
+  tsc        String?  @db.VarChar(255)
+  twoFactorRecoveryCodes String? @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupportTicket {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  ticket    String   @db.VarChar(40)
+  subject   String?  @db.VarChar(255)
+  status    Int      @default(0) // 0: Open, 1: Answered, 2: Replied, 3: Closed
+  priority  Int      @default(1) // 1: Low, 2: Medium, 3: High
+  lastReply DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User             @relation(fields: [userId], references: [id])
+  conversations SupportMessage[]
+}
+
+model SupportMessage {
+  id        Int      @id @default(autoincrement())
+  ticketId  Int
+  adminId   Int?
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ticket             SupportTicket       @relation(fields: [ticketId], references: [id])
+  supportAttachments SupportAttachment[]
+}
+
+model GeneralSetting {
+  id                   Int      @id @default(autoincrement())
+  siteName             String?  @db.VarChar(255)
+  logoUrl              String?  @db.VarChar(255)
+  contactEmail         String?  @db.VarChar(255)
+  contactPhone         String?  @db.VarChar(40)
+  contactAddress       String?  @db.Text
+  curText              String?  @db.VarChar(40)
+  curSym               String?  @db.VarChar(40)
+  emailFrom            String?  @db.VarChar(255)
+  emailTemplate        String?  @db.Text
+  smsBody              String?  @db.Text
+  baseColor            String?  @db.VarChar(40)
+  secondaryColor       String?  @db.VarChar(40)
+  ev                   Int      @default(0) // email verification 0: off, 1: on
+  en                   Int      @default(0) // email notification
+  sv                   Int      @default(0) // sms verification
+  sn                   Int      @default(0) // sms notification
+  pn                   Int      @default(0) // push notification
+  forceSsl             Int      @default(0)
+  maintenanceMode      Int      @default(0)
+  maintenanceMessage   String?  @db.Text
+  securePassword       Int      @default(0)
+  agree                Int      @default(0)
+  registration         Int      @default(0) // 0: off, 1: on
+  activeTemplate       String?  @db.VarChar(40)
+  systemCustomized     Int      @default(0)
+  socialiteCredentials String?  @db.Text
+  kycVerification      Int      @default(0)
+  refCommissionCount   Int      @default(0)
+  inAppPurchase        Int      @default(0)
+  inAppPurchaseConfig  String?  @db.Text
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+// ========== Password Reset ==========
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  email     String?  @db.VarChar(40)
+  token     String?  @db.VarChar(40)
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+}
+
+model AdminPasswordReset {
+  id        Int      @id @default(autoincrement())
+  email     String?  @db.VarChar(40)
+  token     String?  @db.VarChar(40)
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+}
+
+// ========== Comments Extended ==========
+model CommentLike {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, commentId])
+}
+
+model CommentReport {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  reason    String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== Payment Gateways ==========
+model Gateway {
+  id                  Int      @id @default(autoincrement())
+  formId              Int      @default(0)
+  code                Int      @unique @default(0)
+  name                String?  @db.VarChar(40)
+  alias               String?  @db.VarChar(40)
+  status              Int      @default(1) // 1=active
+  gatewayParameters   String?  @db.Text
+  supportedCurrencies String?  @db.Text
+  crypto              Int      @default(0)
+  extra               String?  @db.Text
+  description         String?  @db.Text
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  currencies GatewayCurrency[]
+}
+
+model GatewayCurrency {
+  id               Int      @id @default(autoincrement())
+  name             String?  @db.VarChar(40)
+  currency         String?  @db.VarChar(40)
+  symbol           String?  @db.VarChar(40)
+  methodCode       Int      @unique @default(0)
+  gatewayAlias     String?  @db.VarChar(40)
+  minAmount        Decimal  @default(0) @db.Decimal(28, 8)
+  maxAmount        Decimal  @default(0) @db.Decimal(28, 8)
+  percentCharge    Decimal  @default(0) @db.Decimal(5, 2)
+  fixedCharge      Decimal  @default(0) @db.Decimal(28, 8)
+  rate             Decimal  @default(0) @db.Decimal(28, 8)
+  image            String?  @db.VarChar(255)
+  gatewayParameter String?  @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  gateway Gateway @relation(fields: [methodCode], references: [code])
+}
+
+// ========== Language Management ==========
+model Language {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(40)
+  code      String?  @unique @db.VarChar(40)
+  isDefault Int      @default(0)
+  image     String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== Withdrawal Methods ==========
+model WithdrawMethod {
+  id            Int      @id @default(autoincrement())
+  formId        Int      @default(0)
+  name          String?  @db.VarChar(40)
+  minLimit      Decimal  @default(0) @db.Decimal(28, 8)
+  maxLimit      Decimal  @default(0) @db.Decimal(28, 8)
+  fixedCharge   Decimal  @default(0) @db.Decimal(28, 8)
+  rate          Decimal  @default(0) @db.Decimal(28, 8)
+  percentCharge Decimal  @default(0) @db.Decimal(5, 2)
+  currency      String?  @db.VarChar(40)
+  description   String?  @db.Text
+  status        Int      @default(1)
+  userdata      String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ========== Extensions / Plugins ==========
+model Extension {
+  id          Int      @id @default(autoincrement())
+  act         String?  @db.VarChar(40)
+  name        String?  @db.VarChar(40)
+  description String?  @db.Text
+  image       String?  @db.VarChar(255)
+  script      String?  @db.Text
+  shortcode   String?  @db.Text
+  support     String?  @db.VarChar(40)
+  status      Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ========== CMS / Frontend ==========
+model Frontend {
+  id           Int      @id @default(autoincrement())
+  dataKeys     String?  @db.VarChar(40)
+  dataValues   String?  @db.Text
+  templateName String?  @db.VarChar(40)
+  slug         String?  @db.VarChar(255)
+  seo          String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Page {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  slug      String?  @unique @db.VarChar(255)
+  tempname  String?  @db.VarChar(255)
+  sections  String?  @db.Text
+  seos      String?  @db.Text
+  isDefault Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== Notifications ==========
+model NotificationTemplate {
+  id          Int      @id @default(autoincrement())
+  act         String?  @db.VarChar(40)
+  name        String?  @db.VarChar(255)
+  subjEmail   String?  @db.VarChar(255)
+  emailBody   String?  @db.Text
+  smsBody     String?  @db.Text
+  pushTitle   String?  @db.VarChar(255)
+  pushBody    String?  @db.Text
+  pushImage   String?  @db.VarChar(255)
+  emailStatus Int      @default(1)
+  smsStatus   Int      @default(1)
+  pushStatus  Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model NotificationLog {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  senderId         Int      @default(0)
+  senderType       String?  @db.VarChar(40)
+  notificationType String?  @db.VarChar(40)
+  title            String?  @db.VarChar(255)
+  message          String?  @db.Text
+  imageUrl         String?  @db.VarChar(255)
+  userRead         Int      @default(0)
+  clickUrl         String?  @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// ========== Subscriber ==========
+model Subscriber {
+  id        Int      @id @default(autoincrement())
+  email     String?  @unique @db.VarChar(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== Referral ==========
+model ReferralSetting {
+  id         Int      @id @default(autoincrement())
+  type       String?  @db.VarChar(40)
+  commission String?  @db.Text
+  status     Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ========== Device Tokens ==========
+model DeviceToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @db.Text
+  isApp     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== Forms ==========
+model Form {
+  id        Int      @id @default(autoincrement())
+  act       String?  @unique @db.VarChar(40)
+  formData  String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== Support Attachments ==========
+model SupportAttachment {
+  id               Int      @id @default(autoincrement())
+  supportMessageId Int
+  attachment       String?  @db.VarChar(255)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  message SupportMessage @relation(fields: [supportMessageId], references: [id])
+}
+
+// ========== Cron System ==========
+model CronJob {
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(40)
+  alias     String?  @db.VarChar(40)
+  url       String?  @db.Text
+  duration  Int      @default(0)
+  isDefault Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CronJobLog {
+  id         Int       @id @default(autoincrement())
+  cronJobId  Int
+  startAt    DateTime?
+  endAt      DateTime?
+  duration   Int       @default(0)
+  error      String?   @db.Text
+  isError    Int       @default(0)
+  isResolved Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model CronSchedule {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(40)
+  cron      String?   @db.VarChar(40)
+  action    String?   @db.VarChar(255)
+  status    Int       @default(1)
+  isPaused  Int       @default(0)
+  lastRunAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ========== BKash Token ==========
+model BkashToken {
+  id           Int      @id @default(autoincrement())
+  appKey       String?  @db.VarChar(255)
+  appSecret    String?  @db.VarChar(255)
+  username     String?  @db.VarChar(255)
+  password     String?  @db.VarChar(255)
+  token        String?  @db.Text
+  refreshToken String?  @db.Text
+  expiresAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// ========== Personal Access Token (for API keys) ==========
+model PersonalAccessToken {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  name       String?  @db.VarChar(255)
+  token      String?  @db.VarChar(255)
+  abilities  String?  @db.Text
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ========== Update Log ==========
+model UpdateLog {
+  id        Int      @id @default(autoincrement())
+  version   String?  @db.VarChar(40)
+  changes   String?  @db.Text
+  status    String?  @db.VarChar(40)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ========== Gamification System ==========
+model GameTask {
+  id          Int      @id @default(autoincrement())
+  name        String?  @db.VarChar(255)
+  description String?  @db.Text
+  type        String?  @db.VarChar(40) // 'DAILY', 'WEEKLY', 'ONE_TIME', 'REFERRAL'
+  coinReward  Decimal  @default(0) @db.Decimal(28, 8)
+  status      Int      @default(1) // 1=active
+  icon        String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userTasks UserTask[]
+}
+
+model UserTask {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  taskId      Int
+  status      String?  @db.VarChar(40) // 'NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'
+  startedAt   DateTime?
+  completedAt DateTime?
+  proofUrl    String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User       @relation(fields: [userId], references: [id])
+  task GameTask   @relation(fields: [taskId], references: [id])
+}
+
+model CoinTransaction {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  amount    Decimal  @default(0) @db.Decimal(28, 8)
+  type      String?  @db.VarChar(40) // 'EARNED', 'SPENT', 'REFUND'
+  source    String?  @db.VarChar(40) // 'TASK_COMPLETION', 'REFERRAL', 'REWARD', etc.
+  reference String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Referral {
+  id            Int      @id @default(autoincrement())
+  referrerId    Int
+  referredId    Int
+  code          String?  @db.VarChar(40)
+  commission    Decimal  @default(0) @db.Decimal(28, 8)
+  status        Int      @default(0) // 0=pending, 1=completed
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  referrer User @relation("Referrer", fields: [referrerId], references: [id])
+  referred User @relation("Referred", fields: [referredId], references: [id])
+}
+
+// ========== Cookie Consent (GDPR Compliance) ==========
+model CookieConsent {
+  id           Int      @id @default(autoincrement())
+  userId       Int?
+  ipAddress    String?  @db.VarChar(45)
+  sessionId    String?  @db.VarChar(255)
+  analytics    Boolean  @default(false)
+  marketing    Boolean  @default(false)
+  functional   Boolean  @default(true)
+  acceptedAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@map("cookie_consents")
+}
+
+// ========== Admin Permissions (User Access Control for Admin Panel) ==========
+model AdminPermission {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  isActive    Boolean  @default(false)  // Master switch - if false, no admin access
+  permissions String?  @db.Text         // JSON: { "route": { access: "lock"|"access", mode: "read"|"read_write" } }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_permissions")
+}
+
+// ========== Blog System ==========
+model Blog {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  description String?  @db.Text
+  content     String?  @db.Text
+  image       String?  @db.VarChar(255)
+  category    String?  @db.VarChar(100)
+  author      String?  @db.VarChar(100)
+  status      Int      @default(1)  // 0: draft, 1: published
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// GROUP SYNDICATES SYSTEM
+// ============================================
+
+model Group {
+  id                  Int       @id @default(autoincrement())
+
+  // Relationships
+  creatorId           Int       @map("creator_id")
+  creator             User      @relation("GroupCreator", fields: [creatorId], references: [id])
+  marketId            Int       @map("market_id")
+  market              Market    @relation(fields: [marketId], references: [id])
+
+  // Basic Info
+  name                String    @db.VarChar(255)
+  description         String?   @db.Text
+  slug                String    @unique @db.VarChar(255)
+  image               String?   @db.VarChar(255)
+
+  // Privacy & Access
+  isPublic            Boolean   @default(true) @map("is_public")
+  inviteCode          String?   @unique @map("invite_code") @db.VarChar(40)
+
+  // Contribution Limits
+  minContribution     Decimal   @default(0) @db.Decimal(28, 8) @map("min_contribution")
+  maxContribution     Decimal?  @db.Decimal(28, 8) @map("max_contribution")
+  maxParticipants     Int?      @map("max_participants")
+
+  // Liquidity
+  targetLiquidity     Decimal   @db.Decimal(28, 8) @map("target_liquidity")
+  currentLiquidity    Decimal   @default(0) @db.Decimal(28, 8) @map("current_liquidity")
+
+  // Manager Fee (optional reward for group creator)
+  managerFeePercent   Decimal   @default(0) @db.Decimal(5, 4) @map("manager_fee_percent")
+
+  // Status: 0=DRAFT, 1=PENDING_APPROVAL, 2=REJECTED, 3=OPEN, 4=LOCKED, 5=VOTING, 6=EXECUTED, 7=RESOLVED, 8=CANCELLED, 9=REFUNDED
+  status              Int       @default(0)
+  adminApproved       Boolean   @default(false) @map("admin_approved")
+  adminApprovedAt     DateTime? @map("admin_approved_at")
+  adminApprovedBy     Int?      @map("admin_approved_by")
+  rejectionReason     String?   @map("rejection_reason") @db.VarChar(255)
+
+  // Betting Decision
+  outcomeSelected     String?   @map("outcome_selected") @db.VarChar(10) // 'YES' or 'NO'
+  decisionMethod      Int       @default(0) @map("decision_method") // 0=MANAGER, 1=VOTING
+
+  // Result Approval
+  resultApprovedAt    DateTime? @map("result_approved_at")
+  resultApprovedBy    Int?      @map("result_approved_by")
+
+  // Timestamps
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  lockedAt            DateTime? @map("locked_at")
+  executedAt          DateTime? @map("executed_at")
+  resolvedAt          DateTime? @map("resolved_at")
+  expiresAt           DateTime? @map("expires_at") // For flash groups
+
+  // Relations
+  members             GroupMember[]
+  orders              GroupOrder[]
+  invitations         GroupInvitation[]
+  transactions        GroupTransaction[]
+  votes               GroupVote[]
+
+  @@map("groups")
+  @@index([creatorId])
+  @@index([marketId])
+  @@index([status])
+  @@index([isPublic])
+}
+
+model GroupMember {
+  id                  Int       @id @default(autoincrement())
+
+  // Relationships
+  groupId             Int       @map("group_id")
+  group               Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId              Int       @map("user_id")
+  user                User      @relation("GroupMember", fields: [userId], references: [id])
+
+  // Contribution
+  contributionAmount  Decimal   @db.Decimal(28, 8) @map("contribution_amount")
+  ownershipPercentage Decimal?  @db.Decimal(7, 6) @map("ownership_percentage")
+
+  // Status: 0=ACTIVE, 1=LEFT, 2=REFUNDED, 3=PAID_OUT
+  status              Int       @default(0)
+
+  // Member's chosen outcome when joining (YES/NO)
+  memberChosenOutcome String?   @map("member_chosen_outcome") @db.VarChar(10)
+
+  // Payout Tracking
+  payoutAmount        Decimal?  @db.Decimal(28, 8) @map("payout_amount")
+  payoutAt            DateTime? @map("payout_at")
+
+  // Timestamps
+  joinedAt            DateTime  @default(now()) @map("joined_at")
+  leftAt              DateTime? @map("left_at")
+
+  // Votes
+  votes               GroupVote[]
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+  @@index([groupId])
+  @@index([userId])
+}
+
+model GroupOrder {
+  id                  Int       @id @default(autoincrement())
+
+  // Relationships
+  groupId             Int       @map("group_id")
+  group               Group     @relation(fields: [groupId], references: [id])
+  marketOptionId      Int?      @map("market_option_id")
+
+  // Order Details
+  outcomeSelected     String    @map("outcome_selected") @db.VarChar(10) // 'YES' or 'NO'
+  orderPrice          Decimal   @db.Decimal(28, 8) @map("order_price")
+  sharesPurchased     Decimal   @db.Decimal(28, 8) @map("shares_purchased")
+  totalCost           Decimal   @db.Decimal(28, 8) @map("total_cost")
+
+  // Status: 0=PENDING, 1=FILLED, 2=PARTIALLY_FILLED, 3=CANCELLED, 4=SETTLED
+  status              Int       @default(0)
+
+  // Resolution
+  payoutPerShare      Decimal?  @db.Decimal(28, 8) @map("payout_per_share")
+  totalPayout         Decimal?  @db.Decimal(28, 8) @map("total_payout")
+
+  // Timestamps
+  createdAt           DateTime  @default(now()) @map("created_at")
+  executedAt          DateTime? @map("executed_at")
+  settledAt           DateTime? @map("settled_at")
+
+  @@map("group_orders")
+  @@index([groupId])
+}
+
+model GroupInvitation {
+  id                  Int       @id @default(autoincrement())
+
+  // Relationships
+  groupId             Int       @map("group_id")
+  group               Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  invitedById         Int       @map("invited_by_id")
+  invitedUserId       Int?      @map("invited_user_id") // If registered user
+
+  // Invitation Details
+  inviteCode          String    @unique @map("invite_code") @db.VarChar(40)
+  phoneNumber         String?   @map("phone_number") @db.VarChar(40) // For WhatsApp
+  email               String?   @db.VarChar(100)
+
+  // Status: 0=PENDING, 1=ACCEPTED, 2=EXPIRED, 3=CANCELLED
+  status              Int       @default(0)
+
+  // Timestamps
+  createdAt           DateTime  @default(now()) @map("created_at")
+  expiresAt           DateTime  @map("expires_at")
+  acceptedAt          DateTime? @map("accepted_at")
+
+  @@map("group_invitations")
+  @@index([groupId])
+  @@index([inviteCode])
+}
+
+model GroupTransaction {
+  id                  Int       @id @default(autoincrement())
+
+  // Relationships
+  groupId             Int       @map("group_id")
+  group               Group     @relation(fields: [groupId], references: [id])
+  userId              Int       @map("user_id")
+
+  // Transaction Details
+  // Type: 0=CONTRIBUTION, 1=WITHDRAWAL, 2=REFUND, 3=PAYOUT, 4=MANAGER_FEE, 5=PLATFORM_FEE
+  type                Int
+  amount              Decimal   @db.Decimal(28, 8)
+  balanceBefore       Decimal   @db.Decimal(28, 8) @map("balance_before")
+  balanceAfter        Decimal   @db.Decimal(28, 8) @map("balance_after")
+
+  // Metadata
+  description         String?   @db.VarChar(255)
+  metadata            String?   @db.Text
+
+  // Timestamps
+  createdAt           DateTime  @default(now()) @map("created_at")
+
+  @@map("group_transactions")
+  @@index([groupId])
+  @@index([userId])
+}
+
+model GroupVote {
+  id                  Int       @id @default(autoincrement())
+
+  // Relationships
+  groupId             Int       @map("group_id")
+  group               Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  memberId            Int       @map("member_id")
+  member              GroupMember @relation(fields: [memberId], references: [id])
+
+  // Vote Details
+  outcomeVoted        String    @map("outcome_voted") @db.VarChar(10) // 'YES' or 'NO'
+  voteWeight          Decimal   @db.Decimal(28, 8) @map("vote_weight") // Based on contribution
+
+  // Timestamps
+  votedAt             DateTime  @default(now()) @map("voted_at")
+
+  @@unique([groupId, memberId])
+  @@map("group_votes")
+  @@index([groupId])
+}
+
+// ============================================
+// BLOCKCHAIN INTEGRATION (Solana)
+// ============================================
+
+model SolanaWallet {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @unique @map("user_id")
+  publicKey       String    @unique @db.VarChar(64)
+  encryptedKey    String?   @db.Text  // Encrypted private key for custodial wallets
+  isCustodial     Boolean   @default(true) @map("is_custodial")
+  futBalance      Decimal   @default(0) @db.Decimal(28, 8) @map("fut_balance")
+  solBalance      Decimal   @default(0) @db.Decimal(28, 8) @map("sol_balance")
+  lastSyncAt      DateTime? @map("last_sync_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions    BlockchainTransaction[]
+
+  @@map("solana_wallets")
+  @@index([publicKey])
+}
+
+model BlockchainMarket {
+  id                  Int       @id @default(autoincrement())
+  marketId            Int       @unique @map("market_id")
+  onChainMarketId     String    @unique @db.VarChar(64) @map("on_chain_market_id") // PDA address
+  tokenMintA          String    @db.VarChar(64) @map("token_mint_a") // YES token mint
+  tokenMintB          String    @db.VarChar(64) @map("token_mint_b") // NO token mint
+  feedPubkey          String?   @db.VarChar(64) @map("feed_pubkey") // Oracle feed
+  totalFutDeposited   Decimal   @default(0) @db.Decimal(28, 8) @map("total_fut_deposited")
+  tokenAAmount        Decimal   @default(0) @db.Decimal(28, 8) @map("token_a_amount") // YES pool
+  tokenBAmount        Decimal   @default(0) @db.Decimal(28, 8) @map("token_b_amount") // NO pool
+  tokenPriceA         Decimal   @default(0) @db.Decimal(28, 8) @map("token_price_a")
+  tokenPriceB         Decimal   @default(0) @db.Decimal(28, 8) @map("token_price_b")
+  status              Int       @default(0) // 0=PENDING, 1=ACTIVE, 2=RESOLVED, 3=CLOSED
+  result              Boolean?  // true=YES won, false=NO won, null=unresolved
+  deployTxHash        String?   @db.VarChar(128) @map("deploy_tx_hash")
+  resolveTxHash       String?   @db.VarChar(128) @map("resolve_tx_hash")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  market              Market    @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  positions           BlockchainPosition[]
+
+  @@map("blockchain_markets")
+  @@index([onChainMarketId])
+  @@index([status])
+}
+
+model BlockchainPosition {
+  id                   Int       @id @default(autoincrement())
+  userId               Int       @map("user_id")
+  blockchainMarketId   Int       @map("blockchain_market_id")
+  onChainPositionPda   String?   @unique @db.VarChar(64) @map("on_chain_position_pda")
+  yesAmount            Decimal   @default(0) @db.Decimal(28, 8) @map("yes_amount") // YES tokens held
+  noAmount             Decimal   @default(0) @db.Decimal(28, 8) @map("no_amount")  // NO tokens held
+  totalInvested        Decimal   @default(0) @db.Decimal(28, 8) @map("total_invested") // FUT invested
+  claimed              Boolean   @default(false)
+  claimTxHash          String?   @db.VarChar(128) @map("claim_tx_hash")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  blockchainMarket     BlockchainMarket @relation(fields: [blockchainMarketId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blockchainMarketId])
+  @@map("blockchain_positions")
+  @@index([userId])
+  @@index([blockchainMarketId])
+}
+
+model BlockchainTransaction {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  solanaWalletId  Int       @map("solana_wallet_id")
+  txHash          String    @unique @db.VarChar(128) @map("tx_hash")
+  txType          String    @db.VarChar(40) @map("tx_type") // DEPOSIT, WITHDRAW, BET, CLAIM, MINT, etc.
+  amount          Decimal   @db.Decimal(28, 8)
+  token           String    @db.VarChar(10) // FUT, SOL, YES, NO
+  marketId        Int?      @map("market_id") // Related market if applicable
+  status          Int       @default(0) // 0=PENDING, 1=CONFIRMED, 2=FAILED
+  errorMessage    String?   @db.Text @map("error_message")
+  confirmedAt     DateTime? @map("confirmed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  solanaWallet    SolanaWallet @relation(fields: [solanaWalletId], references: [id], onDelete: Cascade)
+
+  @@map("blockchain_transactions")
+  @@index([userId])
+  @@index([solanaWalletId])
+  @@index([txType])
+  @@index([status])
+}

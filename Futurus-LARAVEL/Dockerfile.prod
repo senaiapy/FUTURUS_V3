@@ -1,0 +1,125 @@
+FROM php:8.3-apache
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libzip-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libgmp-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl gmp opcache
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Configure OPcache for production
+RUN { \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=4000'; \
+    echo 'opcache.revalidate_freq=0'; \
+    echo 'opcache.fast_shutdown=1'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.validate_timestamps=0'; \
+    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
+
+# PHP production configuration (Pentest Finding #7 - disable error display)
+RUN { \
+    echo 'expose_php = Off'; \
+    echo 'display_errors = Off'; \
+    echo 'display_startup_errors = Off'; \
+    echo 'log_errors = On'; \
+    echo 'error_log = /var/log/php_errors.log'; \
+    echo 'memory_limit = 256M'; \
+    echo 'max_execution_time = 300'; \
+    echo 'post_max_size = 100M'; \
+    echo 'upload_max_filesize = 100M'; \
+    echo 'session.cookie_httponly = 1'; \
+    echo 'session.cookie_secure = 1'; \
+    echo 'session.use_strict_mode = 1'; \
+    } > /usr/local/etc/php/conf.d/production.ini
+
+# Enable Apache modules
+RUN a2enmod rewrite headers deflate expires ssl
+
+# Apache security configuration
+RUN { \
+    echo 'ServerTokens Prod'; \
+    echo 'ServerSignature Off'; \
+    echo 'TraceEnable Off'; \
+    echo 'FileETag None'; \
+    } >> /etc/apache2/apache2.conf
+
+# Apache security headers (Pentest Findings #5, #6, #7)
+RUN { \
+    echo '<IfModule mod_headers.c>'; \
+    echo '    Header always set X-Frame-Options "SAMEORIGIN"'; \
+    echo '    Header always set X-Content-Type-Options "nosniff"'; \
+    echo '    Header always set X-XSS-Protection "1; mode=block"'; \
+    echo '    Header always set Referrer-Policy "strict-origin-when-cross-origin"'; \
+    echo '    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"'; \
+    echo '    Header always unset X-Powered-By'; \
+    echo '    Header always unset Server'; \
+    echo '</IfModule>'; \
+    } > /etc/apache2/conf-available/security-headers.conf \
+    && a2enconf security-headers
+
+# Set DocumentRoot
+ENV APACHE_DOCUMENT_ROOT /var/www/html
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application files
+COPY --chown=www-data:www-data . /var/www/html
+
+# Install Composer dependencies (production only, skip scripts that need DB)
+RUN cd /var/www/html/core && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
+
+# Clear bootstrap cache that may contain dev dependencies (like debugbar)
+RUN rm -f /var/www/html/core/bootstrap/cache/packages.php \
+    && rm -f /var/www/html/core/bootstrap/cache/services.php \
+    && rm -f /var/www/html/core/bootstrap/cache/config.php
+
+# SECURITY: Remove sensitive files and directories (Pentest Finding #1, #3)
+RUN rm -rf /var/www/html/install \
+    && rm -rf /var/www/html/.git \
+    && rm -rf /var/www/html/.github \
+    && rm -f /var/www/html/docker-compose*.yml \
+    && rm -f /var/www/html/Dockerfile* \
+    && rm -f /var/www/html/*.sh \
+    && rm -f /var/www/html/.env.example \
+    && rm -f /var/www/html/core/composer.lock \
+    && rm -f /var/www/html/core/phpunit.xml \
+    && rm -rf /var/www/html/core/tests \
+    && rm -rf /var/www/html/core/storage/logs/*.log \
+    && rm -rf /var/www/html/backups \
+    && rm -rf /var/www/html/.bin \
+    && rm -rf /var/www/html/DOC \
+    && rm -rf /var/www/html/docs
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html/core/storage /var/www/html/core/bootstrap/cache \
+    && chmod -R 775 /var/www/html/core/storage /var/www/html/core/bootstrap/cache \
+    && chmod 640 /var/www/html/core/.env 2>/dev/null || true
+
+# Create empty log file with correct permissions
+RUN touch /var/log/php_errors.log && chown www-data:www-data /var/log/php_errors.log
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]

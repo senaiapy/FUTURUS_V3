@@ -1,0 +1,56 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: futurus-app-dev
+    restart: unless-stopped
+    ports:
+      - "4444:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    depends_on:
+      - db
+    networks:
+      - futurus-network
+
+  db:
+    image: mariadb:10.6
+    container_name: futurus-db-dev
+    restart: unless-stopped
+    ports:
+      - "3308:3306"
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - futurus-db-dev-data:/var/lib/mysql
+      - ./SQL:/docker-entrypoint-initdb.d
+    networks:
+      - futurus-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: futurus-phpmyadmin-dev
+    restart: unless-stopped
+    ports:
+      - "${PMA_PORT}:80"
+    environment:
+      PMA_HOST: db
+      PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - futurus-network
+
+networks:
+  futurus-network:
+    driver: bridge
+
+volumes:
+  futurus-db-dev-data:

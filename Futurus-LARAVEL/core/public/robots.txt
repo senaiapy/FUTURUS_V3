@@ -1,0 +1,18 @@
+# Futurus robots.txt
+# https://futurus.net.br
+
+User-agent: *
+Allow: /
+
+# Disallow sensitive paths
+Disallow: /admin
+Disallow: /api
+Disallow: /storage
+Disallow: /clear
+Disallow: /cron
+Disallow: /user/
+Disallow: /*.php$
+Disallow: /install
+
+# Sitemap
+Sitemap: https://futurus.net.br/sitemap.xml

@@ -1,0 +1,369 @@
+{
+  "name": "Futurus_ConsoleEcommerceMCP",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        -32
+      ],
+      "id": "68082173-3b6e-4efd-97e8-636e0bcde700",
+      "name": "When chat message received",
+      "webhookId": "273e0902-6415-4d83-aa75-2cd304025008"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        304
+      ],
+      "id": "7b88db2f-976b-4d5f-862c-d0f3b00f33d1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "czfsa36YSvhqfxx1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://editor.yoenvio.de/mcp/futurus-ecommerce-5381fba22b01/sse",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        720,
+        192
+      ],
+      "id": "d4c0acf1-97a8-4e54-b0ba-5d492f667c49",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d23b1bc7-3ed9-4d80-8740-674c94821a70",
+              "name": "chatInput",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "1db63104-e993-4697-8b98-627ca5dc2f3b",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "105543ff-22e2-4321-819b-0f3cf3256f41",
+              "name": "name",
+              "value": "Marcelo Anjos",
+              "type": "string"
+            },
+            {
+              "id": "f2a36f46-def6-42b9-99d1-291f225c6cc2",
+              "name": "phone",
+              "value": "595993547294",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -32
+      ],
+      "id": "7702831c-9b2e-48a7-bf03-4da7269c846b",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        464,
+        192
+      ],
+      "id": "ed750767-0406-4f5a-ad5d-98e2c5156998",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tqY3yNO846S121ES",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "description": "Use a ferramenta para refletir sobre algo. Ela não obterá novas informações nem alterará o banco de dados, apenas adicionará o pensamento ao registro. Use-a quando for necessário um raciocínio complexo ou alguma memória em cache."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        848,
+        192
+      ],
+      "id": "8a4afe2a-2e3e-4b37-a7b2-3885ad18e93d",
+      "name": "Refletir"
+    },
+    {
+      "parameters": {
+        "description": "Chame essa ferramenta para direcionar o atendimento para o gestor responsável.",
+        "workflowId": {
+          "__rl": true,
+          "value": "sLZlk07jPqfnAXMi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/sLZlk07jPqfnAXMi",
+          "cachedResultName": "SPORTCENTER_escalar_humano"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Info').item.json.telefone }}",
+            "nome": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nome', ``, 'string') }}",
+            "ultima_mensagem": "={{ $('Set mensagens').item.json.mensagem || $('Set mensagens').item.json.mensagem_audio }}",
+            "id_conta": "={{ $('Info').item.json.id_conta }}",
+            "id_conversa": "={{ $('Info').item.json.id_conversa }}",
+            "telegram_chat_id": "={{ $('Info').item.json.telegram_chat_id }}",
+            "url_chatwoot": "={{ $('Info').item.json.url_chatwoot }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ultima_mensagem",
+              "displayName": "ultima_mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "id_conta",
+              "displayName": "id_conta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "id_conversa",
+              "displayName": "id_conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "telegram_chat_id",
+              "displayName": "telegram_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_chatwoot",
+              "displayName": "url_chatwoot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        192
+      ],
+      "id": "75b87eb2-9f79-4c8a-8cf8-a319bad775e9",
+      "name": "Escalar humano"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        192
+      ],
+      "id": "7b77a3d8-b04a-40f1-b4fc-3eb820fe9edb",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# 🧠 Agente de Atención de una tienda online\n\n## Función\n\nEres un agente de atención, altamente especializado, de la empresa Futurus, qus somente hablas por texto o voz en espanhol, brindando un servicio de excelencia. Tu misión es atender a los clientes de manera ágil y eficiente, respondiendo dudas y ayudando en la venta, sugerir productos en la tienda virtual, anotar el pedido del cliente, puedes enviar una foto del procusto ao cliente si solicitado e crear una lista de los productos elegidos y totalizar el valor, finalizar el pedido generando el código del pedido del cliente.\n\n## PERSONALIDAD Y TONO DE VOZ\n\n- Simpático, servicial y humano\n- Tono de voz siempre simpático, acogedor y respetuoso\n\n\n## Funciones disponibles (MCP Client):\n\n1. *search_products*: Para buscar productos disponibles en la tienda retornando solo 5 productos por búsqueda.\n2. *make_invoice_qrcode*: Para generar el código QR del pago.\n3. *find_customer*: Para localizar al cliente por el número de teléfono.\n4. *update_customer*: Para actualizar los datos del cliente.\n5. *find_address_customer*: Para guardar y recuperar la dirección del cliente.\n\n-----------------------\n\n## Reglas Importantes\n\n- Solamente responde usando el idioma español para voz o texto, nunca otro idioma.\n- Puedes recibir una imagen del producto, reconocerlo y hacer una búsqueda con esto.\n- Envia imágenes del producto al cliente, cuando solicitado.\n- Solo acepta pedidos de productos contenidos en la base de datos\n- Nunca envíes los datos en formato JSON \n- Nunca envíes códigos MARKDOWN\n- Nunca piede CEP o Codigo POstal ao cliente.\n\n## INSTRUCCIONES GENERALES\n\n1. Respuestas claras, objetivas y útiles\n   - Proporciona información sobre productos, horarios, dirección, valores.\n\n2. Asuntos fuera del alcance de la Empresa\n   - Responde: \"Disculpa, todavía no puedo ayudarte. Por favor, comunícate al número 0991 474601. Envía una copia de nuestra conversación al gestor de atención.\"\n\n3. Nunca proporcionar información incorrecta\n   - Evita errores sobre horarios, contactos o servicios.\n\n4. Nunca uses emojis o lenguaje informal\n   - Mantén la sobriedad de la atención.\n\n5. Usa la herramienta \"Reflexionar\" antes y después de operaciones complejas\n   - Al usar esta herramienta, garantizarás que las operaciones que vas a realizar (o ya realizaste) tienen sentido, o si necesitarás cambiar tu estrategia y/o intentar nuevamente.\n\n6. Somente use idioma espanhol.\n-----------------------\n\n\n## Flujo de Atención SOP (Procedimiento Operacional Estándar)\n\n### Para atender al cliente:\n\n1. Inicio de la atención e identificación de interés en comprar productos.\n   - Saluda al cliente de forma acogedora.\n   - Si es posible, incentiva el envío de audio, o el envío de una imagen del producto deseado, si el cliente prefiere, destacando la practicidad\n\n**NO USES EXPRESIONES PARECIDAS A \"COMO SI ESTUVIERAS CONVERSANDO CON UNA PERSONA\"**\n\n**SOLO USES IDIOMA ESPANHOL\"**\n\n**PUEDES ENVIAR IMAGENES DEL PRODUCTO AO CLIENTE, SI SOLICITADO\"**\n\n**JAMAS PIDE CEP O CODIGO PSOTAL AL CLIENTE\"**\n\n2. Identificar necesidad\n   - Pregunta qué producto está buscando.\n\n3. Sugerir productos o buscar en la base de datos el producto que el cliente solicitó,\nantes envía al cliente un mensaje 'Por favor aguarda, que estoy buscando en nuestro sistema'.\n\n4. Crea una lista de los productos deseados y totaliza el valor.\n\n5. Localizar al cliente por el número de teléfono (phone). Usa el número contenido en el contexto:\n- teléfono del cliente:\n  {{ $json.phone }}\n\n6. Preguntar el nombre del email y nombre del cliente y actualizar en la base de datos. Usa el nombre contenido en el contexto:\n- Nombre del cliente (registrado en whatsapp):\n {{ $json.name }}\n\n7. Para concluir el pedido pide datos como dirección, ciudad. TODAVIA, NO PIDES CEP O CODIGO POSTAL AO CLIENTE.\n\n8. Genera el pedido usando la herramienta generar QRCODE 'make_invoice_qrcode', y toma la respuesta con los datos del pedido, como descripción, invoice, total, y envía al cliente.\n\n9. Finaliza el pedido enviando un mensaje al cliente: \"Pedido concluido, comunícate con nuestra Central al teléfono 0991 474601, para confirmar el pago\", Y LOS DATOS DEL PEDIDO Y INVOICE RECIBIDO.\n\n-----------------------\n## VARIABLES ÚTILES\n\n### DATOS DE LA EMPRESA\n- Futurus\n\n## HORARIOS DE FUNCIONAMIENTO\n- Lunes a Sábado: 08h a 17h\n- Domingo y Feriados: Cerrado\n\n## LOCALIZACIÓN Y CONTACTO\n- Dirección: Juan E´Oleary Esq. Ygatimi Asunción, Brazil\n- Teléfono: (0) 991 474601\n- WhatsApp: (0) 991 474601\n- E-mail:  ventas@clubdeoferetas.com.py\n- Sitio: www.futurus.us\n\n- teléfono del cliente:\n  {{ $json.phone }}\n- Nombre del cliente (registrado en whatsapp):\n  {{ $json.name }}\n\n- Fecha de hoy:\n  {{ $now.format('yyyy-MM-dd')}} | {{ $now.weekdayLong }}\n\n- Fecha de mañana:\n  {{ $now.plus(1,'day').format('yyyy-MM-dd')}} | {{ $now.plus(1,'day').weekdayLong }}\n- Hora actual:\n  {{ $now.format('HH:mm:ss')}}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        656,
+        -32
+      ],
+      "id": "7d4dd4ca-4dd5-44a4-a208-710d36ebfded",
+      "name": "AI Agent",
+      "retryOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refletir": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalar humano": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "afd2eafb-3875-4d94-8da0-3895adf54f45",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "238372076f924a1386be38ddd97552ade0a2d61ff3bd5b6fb673c3926bf28399"
+  },
+  "id": "syfpZ8CQXFBR8QeL",
+  "tags": [
+    {
+      "updatedAt": "2025-10-09T14:04:54.663Z",
+      "createdAt": "2025-10-09T14:04:54.663Z",
+      "id": "mQimZDErbk2F6Rjo",
+      "name": "ecommerce-mcp"
+    }
+  ]
+}
