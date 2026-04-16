@@ -20,9 +20,6 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$SCRIPT_DIR/backend/backups"
 COMPOSE_FILE="docker-compose.yml"
-CONTAINER_DB="futurus-db"
-CONTAINER_BACKEND="futurus-backend"
-
 # Load database credentials from .env file if it exists
 if [ -f ".env" ]; then
     set -a
@@ -30,6 +27,11 @@ if [ -f ".env" ]; then
     source .env
     set +a
 fi
+
+# Container names (dynamic from NEXT_PUBLIC_APP_NAME)
+APP_PREFIX="${NEXT_PUBLIC_APP_NAME:-futurus}"
+CONTAINER_DB="${APP_PREFIX}-db"
+CONTAINER_BACKEND="${APP_PREFIX}-backend"
 
 # Database credentials (use env vars or defaults)
 DB_USER="${DB_USERNAME:-futurusus}"
@@ -668,7 +670,7 @@ echo -e "\n"
 print_header "SERVICE STATUS"
 
 # Check each container
-for container in "$CONTAINER_DB" "$CONTAINER_BACKEND" "futurus-frontend" "futurus-admin"; do
+for container in "$CONTAINER_DB" "$CONTAINER_BACKEND" "${APP_PREFIX}-frontend" "${APP_PREFIX}-admin"; do
     STATUS=$(docker inspect --format='{{.State.Status}}' "$container" 2>/dev/null || echo "not found")
     if [[ "$STATUS" == "running" ]]; then
         print_success "$container is running ✓"

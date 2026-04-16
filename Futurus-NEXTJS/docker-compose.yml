@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15-alpine
-    container_name: futurus-db
+    container_name: ${NEXT_PUBLIC_APP_NAME:-futurus}-db
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME:-galo}
@@ -12,13 +12,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - futurus-network
+      - app-network
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: futurus-backend
+    container_name: ${NEXT_PUBLIC_APP_NAME:-futurus}-backend
     restart: always
     command: npm run start:dev
     ports:
@@ -35,7 +35,7 @@ services:
     depends_on:
       - db
     networks:
-      - futurus-network
+      - app-network
 
   frontend:
     build:
@@ -43,7 +43,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
-    container_name: futurus-frontend
+    container_name: ${NEXT_PUBLIC_APP_NAME:-futurus}-frontend
     restart: always
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
@@ -57,7 +57,7 @@ services:
     depends_on:
       - backend
     networks:
-      - futurus-network
+      - app-network
 
   admin:
     build:
@@ -65,7 +65,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
-    container_name: futurus-admin
+    container_name: ${NEXT_PUBLIC_APP_NAME:-futurus}-admin
     restart: always
     ports:
       - "${ADMIN_PORT:-3002}:3002"
@@ -74,10 +74,10 @@ services:
     depends_on:
       - backend
     networks:
-      - futurus-network
+      - app-network
 
 networks:
-  futurus-network:
+  app-network:
     driver: bridge
 
 volumes:

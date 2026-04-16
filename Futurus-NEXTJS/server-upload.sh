@@ -51,17 +51,21 @@ DB_USER="${DB_USERNAME:-futurusus}"
 DB_PASS="${DB_PASSWORD:-Ra4YKew3ZrET82dR}"
 DB_NAME="${DB_DATABASE:-futurusus}"
 
+# App prefix from .env (dynamic container/image names)
+APP_PREFIX="${NEXT_PUBLIC_APP_NAME:-futurus}"
+APP_PREFIX_LOWER=$(echo "$APP_PREFIX" | tr '[:upper:]' '[:lower:]')
+
 # Container names (production)
-C_DB="futurus-db"
-C_BACKEND="futurus-backend"
-C_FRONTEND="futurus-frontend"
-C_ADMIN="futurus-admin"
-C_PGADMIN="futurus-pgadmin"
+C_DB="${APP_PREFIX}-db"
+C_BACKEND="${APP_PREFIX}-backend"
+C_FRONTEND="${APP_PREFIX}-frontend"
+C_ADMIN="${APP_PREFIX}-admin"
+C_PGADMIN="${APP_PREFIX}-pgadmin"
 
 # Image names for production
-IMG_BACKEND="futurus/backend:production"
-IMG_FRONTEND="futurus/frontend:production"
-IMG_ADMIN="futurus/admin:production"
+IMG_BACKEND="${APP_PREFIX_LOWER}/backend:production"
+IMG_FRONTEND="${APP_PREFIX_LOWER}/frontend:production"
+IMG_ADMIN="${APP_PREFIX_LOWER}/admin:production"
 IMG_POSTGRES="postgres:15-alpine"
 IMG_PGADMIN="dpage/pgadmin4:latest"
 
@@ -118,7 +122,7 @@ export BACKEND_PORT ADMIN_PORT FRONTEND_PORT POSTGRES_PORT PGADMIN_PORT
 print_header "3. LOCAL CLEANUP (optional)"
 if ask_yn "Remove OLD local Futurus docker images?"; then
   print_step "Removing old images..."
-  docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^futurus/' | xargs -r docker rmi -f || true
+  docker images --format '{{.Repository}}:{{.Tag}}' | grep -E "^${APP_PREFIX_LOWER}/" | xargs -r docker rmi -f || true
   print_success "Old images removed"
 fi
 if ask_yn "Remove OLD local volumes (deletes local DB + uploads)?"; then
@@ -297,16 +301,16 @@ rsudo() {
 #==============================================================================
 print_header "10. REMOTE CLEANUP"
 print_step "Listing existing Futurus containers..."
-EXIST=$(rsudo "docker ps -a --format '{{.Names}}' | grep -E '^futurus-' || true")
+EXIST=$(rsudo "docker ps -a --format '{{.Names}}' | grep -E '^${APP_PREFIX}-' || true")
 if [ -n "$EXIST" ]; then
   echo "$EXIST"
   if ask_yn "Stop & remove these containers?" "y"; then
-    rsudo "docker ps -a --format '{{.Names}}' | grep -E '^futurus-' | xargs -r docker rm -f"
+    rsudo "docker ps -a --format '{{.Names}}' | grep -E '^${APP_PREFIX}-' | xargs -r docker rm -f"
     print_success "Containers removed"
   fi
 fi
 if ask_yn "Remove OLD remote Futurus images?"; then
-  rsudo "docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^futurus/' | xargs -r docker rmi -f || true"
+  rsudo "docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^${APP_PREFIX_LOWER}/' | xargs -r docker rmi -f || true"
   print_success "Old images removed"
 fi
 if ask_yn "Remove OLD remote volumes (DB data)?"; then
@@ -315,7 +319,7 @@ if ask_yn "Remove OLD remote volumes (DB data)?"; then
     REMOTE_TS=$(date +%Y%m%d_%H%M%S)
     REMOTE_BK_NAME="db_pre_deploy_${REMOTE_TS}.sql.gz"
     print_step "Dumping remote DB before removal..."
-    REMOTE_DB_CONTAINER=$(rsudo "docker ps --format '{{.Names}}' | grep -E 'futurus.*(db|postgres)' | head -1" 2>/dev/null || true)
+    REMOTE_DB_CONTAINER=$(rsudo "docker ps --format '{{.Names}}' | grep -E '${APP_PREFIX}.*(db|postgres)' | head -1" 2>/dev/null || true)
     if [ -n "$REMOTE_DB_CONTAINER" ]; then
       REMOTE_DB_PASS=$(rsudo "docker exec $REMOTE_DB_CONTAINER printenv POSTGRES_PASSWORD" 2>/dev/null || echo "$DB_PASS")
       rsudo "docker exec -e PGPASSWORD=$REMOTE_DB_PASS $REMOTE_DB_CONTAINER pg_dump -U $DB_USER -d $DB_NAME --clean --if-exists | gzip > /tmp/$REMOTE_BK_NAME"
@@ -327,7 +331,7 @@ if ask_yn "Remove OLD remote volumes (DB data)?"; then
       print_warning "No remote postgres container found — cannot backup"
     fi
   fi
-  rsudo "docker volume ls --format '{{.Name}}' | grep -iE 'futurus|postgres' | xargs -r docker volume rm -f || true"
+  rsudo "docker volume ls --format '{{.Name}}' | grep -iE '${APP_PREFIX_LOWER}|postgres' | xargs -r docker volume rm -f || true"
   print_success "Old volumes removed"
 fi
 
