@@ -1,12 +1,15 @@
 import {defineRouting} from 'next-intl/routing';
 import {createNavigation} from 'next-intl/navigation';
- 
+
+const appName = process.env.NEXT_PUBLIC_APP_NAME;
+const defaultLocale = appName === 'Predigo' ? 'es' : 'pt';
+
 export const routing = defineRouting({
   // A list of all locales that are supported
   locales: ['pt', 'en', 'es'],
- 
+
   // Used when no locale matches
-  defaultLocale: 'pt'
+  defaultLocale
 });
  
 // Lightweight wrappers around Next.js' navigation APIs
