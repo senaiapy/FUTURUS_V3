@@ -1218,10 +1218,16 @@ if [ -n \"\${DEPLOY_APP_VERSION}\" ]; then
     fi
 fi
 
+# Generate key and run migrations before anything else
+echo 'Generating app key...'
+sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan key:generate --force 2>/dev/null || true
+
+echo 'Running database migrations...'
+sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan migrate --force 2>&1 || echo 'Warning: migrations had issues, check logs'
+
 # Clear caches
 echo 'Clearing caches...'
 sudo docker exec ${CONTAINER_APP} rm -f /var/www/html/core/bootstrap/cache/*.php 2>/dev/null || true
-sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan key:generate --force 2>/dev/null || true
 sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan config:clear 2>/dev/null || true
 sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan cache:clear 2>/dev/null || true
 sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan view:clear 2>/dev/null || true
@@ -1269,7 +1275,31 @@ print_success "Admin user configured (username: admin, password: admin123)"
 print_header "15. VERIFICATION AND DEBUG"
 
 print_step "Running remote debug checks..."
-run_ssh "cd ${SERVER_PATH} && ./debug.sh" || true
+run_ssh "
+cd ${SERVER_PATH}
+source .env 2>/dev/null || true
+
+echo '=== Container Status ==='
+sudo docker compose ps
+echo ''
+echo '=== App Container Logs (last 30 lines) ==='
+sudo docker logs ${CONTAINER_APP} --tail 30 2>&1 || echo 'Cannot get app logs'
+echo ''
+echo '=== DB Container Logs (last 10 lines) ==='
+sudo docker logs ${CONTAINER_DB} --tail 10 2>&1 || echo 'Cannot get db logs'
+echo ''
+echo '=== HTTP Health Check ==='
+curl -s -o /dev/null -w 'HTTP Status: %{http_code}\nResponse Time: %{time_total}s\n' http://localhost:${APP_PORT} || echo 'App not responding'
+echo ''
+echo '=== Laravel .env Check ==='
+sudo docker exec ${CONTAINER_APP} cat /var/www/html/core/.env 2>/dev/null | grep -E '^(APP_|DB_)' || echo 'Cannot read Laravel .env'
+echo ''
+echo '=== DB Connection Test ==='
+sudo docker exec ${CONTAINER_APP} php /var/www/html/core/artisan tinker --execute=\"DB::connection()->getPdo(); echo 'DB OK';\" 2>/dev/null || echo 'DB connection failed'
+echo ''
+echo '=== Docker Images ==='
+sudo docker images | grep -E 'futurus|mariadb|phpmyadmin' || echo 'No images found'
+" || true
 
 # Final HTTP check
 print_step "Checking HTTP response..."
