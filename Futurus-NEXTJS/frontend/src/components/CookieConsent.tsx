@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Cookie, Settings } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const COOKIE_CONSENT_KEY = 'cookie_consent_v1';
 
@@ -12,28 +13,25 @@ interface CookiePreferences {
 }
 
 export default function CookieConsent() {
+  const t = useTranslations();
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     analytics: false,
     marketing: false,
-    functional: true, // Always true
+    functional: true,
   });
 
   useEffect(() => {
-    // Check if user has already set preferences
     const savedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!savedConsent) {
-      // Show banner after a small delay for better UX
       setTimeout(() => setShowBanner(true), 1000);
     }
   }, []);
 
   const savePreferences = async (prefs: CookiePreferences) => {
-    // Save to localStorage
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(prefs));
 
-    // Send to backend for analytics/compliance tracking
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings/cookie-consent`, {
         method: 'POST',
@@ -49,19 +47,11 @@ export default function CookieConsent() {
   };
 
   const handleAcceptAll = () => {
-    savePreferences({
-      analytics: true,
-      marketing: true,
-      functional: true,
-    });
+    savePreferences({ analytics: true, marketing: true, functional: true });
   };
 
   const handleRejectAll = () => {
-    savePreferences({
-      analytics: false,
-      marketing: false,
-      functional: true, // Functional always required
-    });
+    savePreferences({ analytics: false, marketing: false, functional: true });
   };
 
   const handleSaveCustom = () => {
@@ -79,18 +69,17 @@ export default function CookieConsent() {
             <Cookie className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
             <div>
               <h3 className="font-semibold text-lg mb-1">
-                We value your privacy
+                {t("cookie.banner.title")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic.
-                By clicking "Accept All", you consent to our use of cookies.{' '}
+                {t("cookie.banner.description")}{' '}
                 <a
                   href="/cookie-policy"
                   className="text-primary hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Read our Cookie Policy
+                  {t("cookie.banner.policy_link")}
                 </a>
               </p>
             </div>
@@ -102,19 +91,19 @@ export default function CookieConsent() {
               className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
               <Settings className="w-4 h-4 inline mr-1" />
-              Customize
+              {t("cookie.banner.customize")}
             </button>
             <button
               onClick={handleRejectAll}
               className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
-              Reject All
+              {t("cookie.banner.reject_all")}
             </button>
             <button
               onClick={handleAcceptAll}
               className="px-6 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
             >
-              Accept All
+              {t("cookie.banner.accept_all")}
             </button>
           </div>
         </div>
@@ -124,9 +113,8 @@ export default function CookieConsent() {
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Header */}
             <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Cookie Preferences</h2>
+              <h2 className="text-2xl font-bold">{t("cookie.settings.title")}</h2>
               <button
                 onClick={() => setShowSettings(false)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
@@ -135,12 +123,9 @@ export default function CookieConsent() {
               </button>
             </div>
 
-            {/* Content */}
             <div className="p-6 space-y-6">
               <p className="text-gray-600 dark:text-gray-400">
-                When you visit our website, we may store or retrieve information on your browser,
-                mostly in the form of cookies. This information might be about you, your preferences,
-                or your device and is mostly used to make the site work as you expect it to.
+                {t("cookie.settings.description")}
               </p>
 
               {/* Functional Cookies (Always On) */}
@@ -148,17 +133,15 @@ export default function CookieConsent() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-1">
-                      Strictly Necessary Cookies
+                      {t("cookie.settings.necessary.title")}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      These cookies are necessary for the website to function and cannot be switched off.
-                      They are usually only set in response to actions made by you which amount to a request
-                      for services, such as setting your privacy preferences, logging in or filling in forms.
+                      {t("cookie.settings.necessary.description")}
                     </p>
                   </div>
                   <div className="ml-4">
                     <div className="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full">
-                      Always Active
+                      {t("cookie.settings.necessary.badge")}
                     </div>
                   </div>
                 </div>
@@ -169,12 +152,10 @@ export default function CookieConsent() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-1">
-                      Analytics Cookies
+                      {t("cookie.settings.analytics.title")}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      These cookies allow us to count visits and traffic sources so we can measure and
-                      improve the performance of our site. They help us know which pages are the most
-                      and least popular and see how visitors move around the site.
+                      {t("cookie.settings.analytics.description")}
                     </p>
                   </div>
                   <div className="ml-4">
@@ -199,12 +180,10 @@ export default function CookieConsent() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-1">
-                      Marketing Cookies
+                      {t("cookie.settings.marketing.title")}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      These cookies may be set through our site by our advertising partners. They may be
-                      used by those companies to build a profile of your interests and show you relevant
-                      ads on other sites.
+                      {t("cookie.settings.marketing.description")}
                     </p>
                   </div>
                   <div className="ml-4">
@@ -225,19 +204,18 @@ export default function CookieConsent() {
               </div>
             </div>
 
-            {/* Footer */}
             <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-6 flex justify-end gap-3">
               <button
                 onClick={() => setShowSettings(false)}
                 className="px-6 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
-                Cancel
+                {t("cookie.settings.cancel")}
               </button>
               <button
                 onClick={handleSaveCustom}
                 className="px-6 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
               >
-                Save Preferences
+                {t("cookie.settings.save")}
               </button>
             </div>
           </div>

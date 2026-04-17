@@ -7,6 +7,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import api from "@/lib/api";
+import { getAppName, getLogoPath } from "@/lib/app-config";
 
 const navItems = [
   { href: "/market", label: "Markets" },
@@ -22,7 +23,7 @@ export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [settings, setSettings] = useState<{ siteName: string; logoUrl?: string }>({
-    siteName: "Futurus",
+    siteName: getAppName(),
   });
 
   useEffect(() => {
@@ -53,20 +54,24 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-base flex items-center justify-center shadow-lg shadow-base/20 group-hover:scale-110 transition-transform overflow-hidden">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-20 h-10 group-hover:scale-110 transition-transform overflow-hidden">
             {settings.logoUrl ? (
               <img
-                src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/api$/, "")}${settings.logoUrl}`}
+                src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3302").replace(/\/api$/, "")}${settings.logoUrl}`}
                 alt={settings.siteName}
                 className="w-full h-full object-contain"
               />
             ) : (
-              <TrendingUp className="text-white w-5 h-5" />
+              <img
+                src={getLogoPath()}
+                alt={getAppName()}
+                className="w-full h-full object-contain"
+              />
             )}
           </div>
           <span className="text-xl font-maven font-bold text-white tracking-tight">
-            {settings.siteName}
+            {getAppName()}
           </span>
         </Link>
 
@@ -87,18 +92,15 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/50 border border-white/5">
-            <Globe className="w-3.5 h-3.5 text-base" />
-            <Link href="/" locale="pt" className="text-xs hover:text-base">
-              PT
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-900/50 border border-white/5">
+            <Link href="/" locale="pt" className="hover:scale-110 transition-transform" title="Português">
+              <span className="text-lg leading-none">🇧🇷</span>
             </Link>
-            <span className="text-slate-700">|</span>
-            <Link href="/" locale="en" className="text-xs hover:text-base">
-              EN
+            <Link href="/" locale="en" className="hover:scale-110 transition-transform" title="English">
+              <span className="text-lg leading-none">🇺🇸</span>
             </Link>
-            <span className="text-slate-700">|</span>
-            <Link href="/" locale="es" className="text-xs hover:text-base">
-              ES
+            <Link href="/" locale="es" className="hover:scale-110 transition-transform" title="Español">
+              <span className="text-lg leading-none">🇵🇾</span>
             </Link>
           </div>
 

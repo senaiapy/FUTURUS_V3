@@ -57,3 +57,9 @@ docker-compose stop backend && docker-compose build --no-cache backend && docker
 rm -rf /www/server/nginx/proxy_cache_dir/* 2>/dev/null; rm -rf /var/cache/nginx/* 2>/dev/null; echo "Cache cleared" 
 
 docker-compose -f docker-compose.production.yml up -d --build frontend
+
+docker compose build frontend && docker compose up -d frontend
+
+## running setup-futurus.sh
+printf 'n\n\n\n\n\ndev\nn\nn\n' | bash setup-futurus.sh 
+

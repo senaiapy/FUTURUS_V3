@@ -116,7 +116,7 @@ export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose }) => {
           <View className="mb-3 items-center">
             <Image
               source={{
-                uri: `${Env.SIMPLE_API_URL}/images/logo-futurus.png`,
+                uri: `${Env.SIMPLE_API_URL}/images/futurus.png`,
               }}
               style={{ width: 240, height: 80 }}
               contentFit="contain"

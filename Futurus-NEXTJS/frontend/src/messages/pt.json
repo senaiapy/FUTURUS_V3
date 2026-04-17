@@ -55,13 +55,11 @@
   "Send Message": "Enviar Mensagem",
   "Copyright": "Copyright",
   "Todos os direitos reservados.": "Todos os direitos reservados.",
-
   "Notifications": "Notificações",
   "Mark all read": "Marcar todas como lidas",
   "No notifications": "Nenhuma notificação",
   "Just now": "Agora",
   "View all notifications": "Ver todas as notificações",
-
   "Criar Grupo": "Criar Grupo",
   "Reúna fundos com outros para apostar juntos": "Reúna fundos com outros para apostar juntos",
   "Nome do Grupo": "Nome do Grupo",
@@ -115,5 +113,294 @@
   "SIM": "SIM",
   "NÃO": "NÃO",
   "Escolha se você acredita que o resultado será SIM ou NÃO": "Escolha se você acredita que o resultado será SIM ou NÃO",
-  "No active markets found.": "Nenhum mercado ativo encontrado."
+  "No active markets found.": "Nenhum mercado ativo encontrado.",
+  "about": {
+    "hero": {
+      "description": "A plataforma de mercado de previsão mais avançada do mundo, onde a sabedoria coletiva encontra tecnologia de nível institucional."
+    },
+    "mission": {
+      "title": "Nossa missão é democratizar dados e liberar a previsão global.",
+      "description": "Acreditamos que mercados de previsão são as ferramentas mais eficientes para descoberta de informação. Ao incentivar a verdade, ajudamos o mundo a ver o que está por vir — de mudanças políticas a avanços tecnológicos."
+    }
+  },
+  "privacy": {
+    "hero": {
+      "description": "Sua privacidade é nossa prioridade absoluta. Entenda como protegemos seus dados e garantimos sua anonimidade."
+    },
+    "protection": {
+      "description": "Utilizamos criptografia de ponta a ponta para garantir que todas as suas transações e dados pessoais estejam protegidos contra acessos não autorizados."
+    },
+    "transparency": {
+      "description": "Acreditamos em uma plataforma aberta. Você tem controle total sobre seus dados e pode solicitar a exclusão deles a qualquer momento."
+    },
+    "collection": {
+      "description": "Coletamos apenas as informações estritamente necessárias para o funcionamento da plataforma, como endereço de e-mail e dados de transação blockchain. Não rastreamos sua navegação fora da plataforma."
+    },
+    "usage": {
+      "description": "Seus dados são utilizados para processar pagamentos, resolver disputas de mercado e enviar notificações importantes sobre suas posições e segurança da conta."
+    },
+    "sharing": {
+      "description": "Nunca venderemos seus dados. O compartilhamento ocorre apenas com provedores de serviços essenciais (como gateways de pagamento) ou quando exigido por lei."
+    },
+    "questions": {
+      "description": "Nossa equipe de segurança está pronta para ajudar. Entre em contato através do nosso canal oficial."
+    }
+  },
+  "terms": {
+    "hero": {
+      "description": "Ao acessar a plataforma, você concorda com os termos abaixo. Por favor, leia com atenção todos os pontos deste acordo."
+    },
+    "legitimate": {
+      "description": "A plataforma deve ser utilizada apenas para fins lícitos de previsão de mercado e interação comunitária. Qualquer uso malicioso resultará em banimento imediato."
+    },
+    "liability": {
+      "description": "A plataforma não se responsabiliza por perdas financeiras decorrentes de previsões de mercado incorretas ou flutuações de ativos."
+    },
+    "eligibility": {
+      "description": "O uso da plataforma é restrito a maiores de 18 anos ou idade legal permitida em seu país. É sua responsabilidade verificar se o uso de mercados de previsão é legal em sua jurisdição."
+    },
+    "accounts": {
+      "description": "Você é o único responsável por manter a segurança de sua conta e senha. Recomendamos o uso de autenticação de dois fatores (2FA) em todos os acessos."
+    },
+    "resolutions": {
+      "description": "As resoluções de cada mercado são baseadas em fontes de dados oficiais ou oracles descentralizados. Uma vez resolvido, o resultado é final e irreversível."
+    },
+    "accept": {
+      "description": "Ao continuar utilizando nossos serviços, você confirma que leu e concorda com todos os termos descritos acima."
+    }
+  },
+  "blog": {
+    "subtitle": "Análises especializadas, atualizações de mercado e estratégias de previsão da nossa equipe global de pesquisa."
+  },
+  "step1": {
+    "title": "Escolha um Mercado",
+    "description": "Navegue por centenas de mercados de previsão em política, esportes, cripto e mais. Cada mercado representa um evento do mundo real com uma data de resolução clara."
+  },
+  "step2": {
+    "title": "Faça Sua Previsão",
+    "description": "Compre ações SIM ou NÃO com base no que você acredita que vai acontecer. Os preços refletem a probabilidade estimada pela multidão de cada resultado."
+  },
+  "step3": {
+    "title": "Acompanhe & Negocie",
+    "description": "Acompanhe suas posições em tempo real. Você pode vender suas ações a qualquer momento antes da resolução do mercado para garantir lucros ou limitar perdas."
+  },
+  "step4": {
+    "title": "Receba os Ganhos",
+    "description": "Quando o mercado é resolvido, as ações vencedoras pagam o valor total. Seus ganhos são creditados automaticamente na sua conta."
+  },
+  "cookies": {
+    "info": {
+      "description": "Cookies são pequenos arquivos de texto armazenados no seu dispositivo quando você visita um site. Eles ajudam a melhorar sua experiência ao lembrar preferências e habilitar funcionalidades essenciais."
+    },
+    "security": {
+      "title": "Sua Privacidade está Protegida",
+      "description": "Usamos medidas de segurança padrão da indústria para proteger todos os dados de cookies. Nenhuma informação pessoal é compartilhada com terceiros sem seu consentimento."
+    },
+    "essential": {
+      "name": "Cookies Essenciais",
+      "description": "Necessários para o funcionamento básico do site, como login, navegação e segurança. Estes não podem ser desativados."
+    },
+    "functional": {
+      "name": "Cookies Funcionais",
+      "description": "Habilitam funcionalidades personalizadas como preferências de idioma, configurações regionais e personalizações salvas da interface."
+    },
+    "analytics": {
+      "name": "Cookies de Análise",
+      "description": "Nos ajudam a entender como os visitantes interagem com nosso site, coletando estatísticas anônimas de uso."
+    },
+    "marketing": {
+      "name": "Cookies de Marketing",
+      "description": "Usados para exibir anúncios relevantes e rastrear a eficácia das campanhas de marketing."
+    },
+    "details": {
+      "local_storage": "Usamos armazenamento local para salvar suas preferências de interface, configurações de tema e dados de sessão para uma experiência mais rápida.",
+      "session_cookies": "Cookies de sessão são temporários e são excluídos quando você fecha o navegador. São usados para manter seu estado de login.",
+      "analytics_cookies": "Cookies de análise coletam dados anônimos sobre visualizações de página, padrões de navegação e uso de funcionalidades para nos ajudar a melhorar a plataforma.",
+      "third_party": "Alguns cookies podem ser definidos por serviços de terceiros que usamos, como processadores de pagamento e provedores de análise."
+    },
+    "rights": {
+      "accept": "Você pode aceitar ou rejeitar cookies não essenciais a qualquer momento.",
+      "reject": "Rejeitar cookies não afetará a funcionalidade essencial do site.",
+      "withdraw": "Você pode retirar seu consentimento a qualquer momento nas configurações de cookies.",
+      "settings": "Você pode gerenciar preferências de cookies nas configurações do seu navegador.",
+      "info": "Você tem o direito de solicitar informações sobre os cookies que usamos."
+    }
+  },
+  "cookie": {
+    "banner": {
+      "title": "Valorizamos sua privacidade",
+      "description": "Usamos cookies para melhorar sua experiência de navegação, exibir conteúdo personalizado e analisar nosso tráfego. Ao clicar em \"Aceitar Todos\", você consente com o uso de cookies.",
+      "policy_link": "Leia nossa Política de Cookies",
+      "customize": "Personalizar",
+      "reject_all": "Rejeitar Todos",
+      "accept_all": "Aceitar Todos"
+    },
+    "settings": {
+      "title": "Preferências de Cookies",
+      "description": "Quando você visita nosso site, podemos armazenar ou recuperar informações no seu navegador, principalmente na forma de cookies. Essas informações podem ser sobre você, suas preferências ou seu dispositivo e são usadas principalmente para fazer o site funcionar como você espera.",
+      "necessary": {
+        "title": "Cookies Estritamente Necessários",
+        "description": "Estes cookies são necessários para o funcionamento do site e não podem ser desativados. Geralmente são definidos apenas em resposta a ações que você realiza, como definir suas preferências de privacidade, fazer login ou preencher formulários.",
+        "badge": "Sempre Ativo"
+      },
+      "analytics": {
+        "title": "Cookies de Análise",
+        "description": "Estes cookies nos permitem contar visitas e fontes de tráfico para que possamos medir e melhorar o desempenho do nosso site. Eles nos ajudam a saber quais páginas são mais e menos populares e ver como os visitantes navegam pelo site."
+      },
+      "marketing": {
+        "title": "Cookies de Marketing",
+        "description": "Estes cookies podem ser definidos em nosso site por nossos parceiros de publicidade. Podem ser usados por essas empresas para construir um perfil de seus interesses e mostrar anúncios relevantes em outros sites."
+      },
+      "cancel": "Cancelar",
+      "save": "Salvar Preferências"
+    }
+  },
+  "landing": {
+    "feature1": {
+      "title": "Preveja o Mercado",
+      "description": "Analise tendências e faça previsões precisas em diversos mercados globais."
+    },
+    "feature2": {
+      "title": "Segurança Total",
+      "description": "Sua conta e seus lucros protegidos com a mais alta tecnologia de segurança."
+    },
+    "feature3": {
+      "title": "Alcance Global",
+      "description": "Acesse mercados de todo o mundo, de esportes a finanças e criptomoedas."
+    },
+    "slide1": {
+      "title": "Preveja. Negocie. Ganhe. Recompensas",
+      "description": "Experimente uma maneira divertida e recompensadora de negociar no mercado de cotas — onde cada previsão conta e cada negociação importa.",
+      "button": "Comece Hoje Mesmo"
+    },
+    "slide2": {
+      "title": "Microcotas, Oportunidades",
+      "description": "Transforme suas previsões de mercado em lucros. Negocie ações fracionárias e concorra com outros usuários na plataforma.",
+      "button": "Participe da Ação"
+    }
+  },
+  "validation": {
+    "username_required": "Nome de usuário ou e-mail é obrigatório",
+    "password_min": "A senha deve ter pelo menos 6 caracteres",
+    "username_min": "O nome de usuário deve ter pelo menos 3 caracteres",
+    "email_invalid": "Endereço de e-mail inválido",
+    "passwords_mismatch": "As senhas não coincidem",
+    "email_required": "Insira um e-mail válido"
+  },
+  "Coins": "Moedas",
+  "Trusted by Industry Leaders": "Confiado por Líderes da Indústria",
+  "A sua plataforma de referência para previsões de mercado, negociação de microações e análises sobre política, esportes, criptomoedas, finanças e eventos globais.": "A sua plataforma de referência para previsões de mercado, negociação de microações e análises sobre política, esportes, criptomoedas, finanças e eventos globais.",
+  "Siga-nos Em:": "Siga-nos Em:",
+  "Link Útil": "Link Útil",
+  "Início": "Início",
+  "Link de Política": "Link de Política",
+  "Política de Privacidade": "Política de Privacidade",
+  "Termos de Serviço": "Termos de Serviço",
+  "Política de Segurança": "Política de Segurança",
+  "Remover Conta": "Remover Conta",
+  "Informação de Contato": "Informação de Contato",
+  "Telefone": "Telefone",
+  "Endereço": "Endereço",
+  "Aceitamos:": "Aceitamos:",
+  "Decentralized Futures": "Futuros Descentralizados",
+  "Predicting the": "Prevendo o",
+  "Next Big Move.": "Próximo Grande Movimento.",
+  "Active Traders": "Traders Ativos",
+  "Volume Traded": "Volume Negociado",
+  "Predict accuracy": "Precisão de Previsão",
+  "Markets Live": "Mercados Ativos",
+  "Verified Data": "Dados Verificados",
+  "Every market resolution is backed by multi-source oracles and community consensus.": "Cada resolução de mercado é respaldada por oráculos multi-fonte e consenso da comunidade.",
+  "Deep Liquidity": "Liquidez Profunda",
+  "Our automated market makers ensure you can enter and exit positions instantly.": "Nossos market makers automatizados garantem que você pode entrar e sair de posições instantaneamente.",
+  "Ready to see the future?": "Pronto para ver o futuro?",
+  "Join 250k+ Traders": "Junte-se a 250k+ Traders",
+  "Segurança em Primeiro Lugar": "Segurança em Primeiro Lugar",
+  "Proteção de Dados": "Proteção de Dados",
+  "Transparência Total": "Transparência Total",
+  "Coleta de Informações": "Coleta de Informações",
+  "Uso de Dados": "Uso de Dados",
+  "Compartilhamento": "Compartilhamento",
+  "Dúvidas sobre sua Privacidade?": "Dúvidas sobre sua Privacidade?",
+  "Contate a Equipe DPO": "Contate a Equipe DPO",
+  "Acordo Legal": "Acordo Legal",
+  "Uso Legítimo": "Uso Legítimo",
+  "Responsabilidade": "Responsabilidade",
+  "Elegibilidade": "Elegibilidade",
+  "Contas de Usuário": "Contas de Usuário",
+  "Mercados e Resoluções": "Mercados e Resoluções",
+  "Aceita os nossos Termos?": "Aceita os nossos Termos?",
+  "Acordo Ativo": "Acordo Ativo",
+  "Mercados": "Mercados",
+  "Navegue e faça previsões em mercados que importam para você": "Navegue e faça previsões em mercados que importam para você",
+  "Search markets...": "Buscar mercados...",
+  "Análises & Novidades": "Análises & Novidades",
+  "O Jornal": "O Jornal",
+  "Ler Artigo": "Ler Artigo",
+  "Nenhum artigo disponível ainda.": "Nenhum artigo disponível ainda.",
+  "Análises especializadas, atualizações de mercado e estratégias de previsão da nossa equipe global de pesquisa.": "Análises especializadas, atualizações de mercado e estratégias de previsão da nossa equipe global de pesquisa.",
+  "Experimente a próxima geração de mercados de previsão com nosso sistema integrado de gamificação. Complete tarefas, indique amigos e ganhe muito.": "Experimente a próxima geração de mercados de previsão com nosso sistema integrado de gamificação. Complete tarefas, indique amigos e ganhe muito.",
+  "Pronto para começar a ganhar?": "Pronto para começar a ganhar?",
+  "Junte-se a milhares de jogadores e comece a ganhar recompensas hoje. Faça previsões em seus mercados favoritos e domine o ranking.": "Junte-se a milhares de jogadores e comece a ganhar recompensas hoje. Faça previsões em seus mercados favoritos e domine o ranking.",
+  "Tem alguma dúvida? Adoraríamos ouvir você.": "Tem alguma dúvida? Adoraríamos ouvir você.",
+  "Sua privacidade é nossa prioridade absoluta. Entenda como protegemos seus dados e garantimos sua anonimidade.": "Sua privacidade é nossa prioridade absoluta. Entenda como protegemos seus dados e garantimos sua anonimidade.",
+  "Ao acessar o Futurus, você concorda com os termos abaixo. Por favor, leia com atenção todos os pontos deste acordo.": "Ao acessar a plataforma, você concorda com os termos abaixo. Por favor, leia com atenção todos os pontos deste acordo.",
+  "How It Works": "Como Funciona",
+  "Learn how to get started with prediction markets in just a few simple steps": "Aprenda a começar nos mercados de previsão em poucos passos simples",
+  "Learn more": "Saiba mais",
+  "Why Choose Futurus?": "Por que nos escolher?",
+  "Instant Execution": "Execução Instantânea",
+  "Trades execute immediately at current market prices": "As negociações são executadas imediatamente nos preços atuais do mercado",
+  "Secure": "Seguro",
+  "Your funds and data are always protected": "Seus fundos e dados estão sempre protegidos",
+  "24/7 Access": "Acesso 24/7",
+  "Trade anytime, anywhere from any device": "Negocie a qualquer hora, em qualquer lugar, de qualquer dispositivo",
+  "Ready to start trading?": "Pronto para começar a negociar?",
+  "Get Started Now": "Comece Agora",
+  "Cookie Policy": "Política de Cookies",
+  "Learn about how we use cookies and your options": "Saiba como usamos cookies e suas opções",
+  "What Are Cookies?": "O que são Cookies?",
+  "Types of Cookies We Use": "Tipos de Cookies que Usamos",
+  "Required": "Obrigatório",
+  "Duration": "Duração",
+  "Show Details": "Mostrar Detalhes",
+  "Hide Details": "Ocultar Detalhes",
+  "Detailed Cookie Information": "Informações Detalhadas dos Cookies",
+  "Local Storage": "Armazenamento Local",
+  "Session Cookies": "Cookies de Sessão",
+  "Analytics Cookies": "Cookies de Análise",
+  "Third-Party Cookies": "Cookies de Terceiros",
+  "Your Cookie Rights": "Seus Direitos sobre Cookies",
+  "Questions about our cookie policy?": "Dúvidas sobre nossa política de cookies?",
+  "Welcome Back": "Bem-vindo de Volta",
+  "Sign in to continue predicting and winning.": "Entre para continuar prevendo e ganhando.",
+  "Username or Email": "Usuário ou E-mail",
+  "Enter your username or email": "Digite seu usuário ou e-mail",
+  "Password": "Senha",
+  "Forgot password?": "Esqueceu a senha?",
+  "Sign In": "Entrar",
+  "Invalid credentials": "Credenciais inválidas",
+  "Two-Factor Authentication": "Autenticação de Dois Fatores",
+  "Enter the 6-digit code from your authenticator app.": "Digite o código de 6 dígitos do seu aplicativo autenticador.",
+  "Verify Code": "Verificar Código",
+  "Back to Login": "Voltar ao Login",
+  "Invalid 2FA code": "Código 2FA inválido",
+  "Or continue with": "Ou continue com",
+  "Don't have an account?": "Não tem uma conta?",
+  "Create account": "Criar conta",
+  "Create Account": "Criar Conta",
+  "Join the future of prediction markets today.": "Junte-se ao futuro dos mercados de previsão hoje.",
+  "Username": "Usuário",
+  "Enter your username": "Digite seu usuário",
+  "Email Address": "Endereço de E-mail",
+  "Confirm Password": "Confirmar Senha",
+  "Something went wrong": "Algo deu errado",
+  "Already have an account?": "Já tem uma conta?",
+  "Sign in": "Entrar",
+  "Reset Password": "Redefinir Senha",
+  "Enter your email to reset your password.": "Digite seu e-mail para redefinir sua senha.",
+  "Code Sent!": "Código Enviado!",
+  "Check your email for the reset code.": "Verifique seu e-mail para o código de redefinição.",
+  "Enter your email": "Digite seu e-mail",
+  "Send Reset Code": "Enviar Código de Redefinição"
 }

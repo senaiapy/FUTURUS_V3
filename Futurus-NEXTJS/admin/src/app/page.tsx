@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import api from "@/lib/api";
+import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
 
-export default function AdminLoginPage() {
+function LoginContent() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -106,7 +108,7 @@ export default function AdminLoginPage() {
 
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid 2FA code");
+      setError(err.response?.data?.message || t("login.invalid2fa"));
     } finally {
       setLoading(false);
     }
@@ -119,27 +121,17 @@ export default function AdminLoginPage() {
 
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-white"
-              >
-                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                <polyline points="16 7 22 7 22 13" />
-              </svg>
+          <div className="inline-block mb-2">
+            <div className="h-20 w-auto">
+              <img
+                src={`/${(process.env.NEXT_PUBLIC_APP_NAME || "Futurus").charAt(0).toUpperCase() + (process.env.NEXT_PUBLIC_APP_NAME || "Futurus").slice(1).toLowerCase()}.png`}
+                alt={process.env.NEXT_PUBLIC_APP_NAME || "Futurus"}
+                className="h-full w-auto object-contain"
+              />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Panel</h1>
-          <p className="text-slate-500">Futurus Administration</p>
+          <h1 className="text-3xl font-bold text-white mb-2">{t("login.title")}</h1>
+          <p className="text-slate-500">{process.env.NEXT_PUBLIC_APP_NAME || "Futurus"} {t("login.subtitle")}</p>
         </div>
 
         <div className="p-8 rounded-3xl border border-white/10 shadow-2xl bg-white/5 backdrop-blur-xl">
@@ -159,14 +151,14 @@ export default function AdminLoginPage() {
                     className="w-full text-xs text-slate-500 hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    Limpar Sessão e Cache
+                    {t("login.clearSession")}
                   </button>
                 </div>
               )}
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-300">
-                  Username
+                  {t("login.username")}
                 </label>
                 <input
                   type="text"
@@ -180,7 +172,7 @@ export default function AdminLoginPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-300">
-                  Password
+                  {t("login.password")}
                 </label>
                 <div className="relative">
                   <input
@@ -209,15 +201,15 @@ export default function AdminLoginPage() {
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
                 ) : (
-                  "Sign In"
+                  t("login.signIn")
                 )}
               </button>
             </form>
           ) : (
             <form onSubmit={handle2faVerify} className="space-y-6">
               <div className="text-center mb-6">
-                <h3 className="text-xl font-bold text-white mb-2">Two-Factor Authentication</h3>
-                <p className="text-slate-500 text-sm">Enter the code from your authenticator app</p>
+                <h3 className="text-xl font-bold text-white mb-2">{t("login.2faTitle")}</h3>
+                <p className="text-slate-500 text-sm">{t("login.2faSubtitle")}</p>
               </div>
 
               {error && (
@@ -234,14 +226,14 @@ export default function AdminLoginPage() {
                     className="w-full text-xs text-slate-500 hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    Limpar Sessão e Cache
+                    {t("login.clearSession")}
                   </button>
                 </div>
               )}
 
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-2">
-                  Verification Code
+                  {t("login.verificationCode")}
                 </label>
                 <input
                   type="text"
@@ -263,7 +255,7 @@ export default function AdminLoginPage() {
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
                 ) : (
-                  "Verify & Login"
+                  t("login.verifyLogin")
                 )}
               </button>
 
@@ -272,16 +264,24 @@ export default function AdminLoginPage() {
                 onClick={() => setRequires2fa(false)}
                 className="w-full text-slate-500 hover:text-white text-sm font-medium transition-colors"
               >
-                Back to Login
+                {t("login.backToLogin")}
               </button>
             </form>
           )}
         </div>
 
         <p className="mt-8 text-center text-slate-600 text-xs">
-          PY Foundation 2026 version={process.env.NEXT_PUBLIC_APP_VERSION} Futurus Administration. Todos os direitos reservados.
+          PY Foundation 2026 version={process.env.NEXT_PUBLIC_APP_VERSION} {process.env.NEXT_PUBLIC_APP_NAME || "Futurus"} {t("login.subtitle")}.
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <TranslationProvider>
+      <LoginContent />
+    </TranslationProvider>
   );
 }

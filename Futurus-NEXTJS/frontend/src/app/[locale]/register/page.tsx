@@ -10,18 +10,16 @@ import { useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/api";
+import { getAppName, getFullLogoPath } from "@/lib/app-config";
 
 const registerSchema = z
   .object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z
-      .string()
-      .min(6, "Password must be at least 6 characters"),
+    username: z.string().min(3),
+    email: z.string().email(),
+    password: z.string().min(6),
+    confirmPassword: z.string().min(6),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
     path: ["confirmPassword"],
   });
 
@@ -77,13 +75,10 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <TrendingUp className="text-white w-6 h-6" />
+          <Link href="/" className="inline-block mb-6 group">
+            <div className="h-16 w-auto group-hover:scale-105 transition-transform">
+              <img src={getFullLogoPath()} alt={getAppName()} className="h-full w-auto object-contain" />
             </div>
-            <span className="text-2xl font-display font-bold text-white tracking-tight">
-              Futurus
-            </span>
           </Link>
           <h1 className="text-3xl font-display font-bold text-white mb-2">
             {t("Create Account")}

@@ -8,6 +8,7 @@ import * as z from "zod";
 import { TrendingUp, Mail, ArrowLeft, Send } from "lucide-react";
 import { useState } from "react";
 import api from "@/lib/api";
+import { getAppName, getFullLogoPath } from "@/lib/app-config";
 
 const resetSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -48,13 +49,10 @@ export default function ForgotPasswordPage() {
 
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20">
-              <TrendingUp className="text-white w-6 h-6" />
+          <Link href="/" className="inline-block mb-6 group">
+            <div className="h-16 w-auto group-hover:scale-105 transition-transform">
+              <img src={getFullLogoPath()} alt={getAppName()} className="h-full w-auto object-contain" />
             </div>
-            <span className="text-2xl font-display font-bold text-white tracking-tight">
-              Futurus
-            </span>
           </Link>
           <h1 className="text-3xl font-display font-bold text-white mb-2">
             {t("Reset Password")}

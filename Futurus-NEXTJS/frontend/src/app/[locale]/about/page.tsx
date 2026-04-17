@@ -27,12 +27,11 @@ export default function AboutPage() {
             {t("Decentralized Futures")}
           </div>
           <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
-            Predicting the <br />
-            <span className="text-base italic">Next Big Move.</span>
+            {t("Predicting the")} <br />
+            <span className="text-base italic">{t("Next Big Move.")}</span>
           </h1>
           <p className="max-w-2xl mx-auto text-slate-400 text-lg md:text-xl leading-relaxed">
-            Futurus is the world's most advanced prediction market platform,
-            where wisdom of the crowd meets institutional-grade technology.
+            {t("about.hero.description")}
           </p>
         </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-base/5 rounded-full blur-[120px] -z-1" />
@@ -66,15 +65,10 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
             <h2 className="text-4xl font-black text-white leading-tight">
-              Our mission is to{" "}
-              <span className="text-base">democratize data</span> and unlock
-              global foresight.
+              {t("about.mission.title")}
             </h2>
             <p className="text-slate-400 text-lg leading-relaxed">
-              We believe that prediction markets are the most efficient tools
-              for information discovery. By incentivizing truth, we help the
-              world see what's coming before it happens—from political shifts to
-              technological breakthroughs.
+              {t("about.mission.description")}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8">
               <div className="space-y-4">
@@ -123,7 +117,7 @@ export default function AboutPage() {
       <section className="py-32 bg-base relative overflow-hidden">
         <div className="container mx-auto px-4 text-center relative z-10 space-y-10">
           <h2 className="text-5xl md:text-6xl font-black text-white tracking-tighter">
-            Ready to see the future?
+            {t("Ready to see the future?")}
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Link

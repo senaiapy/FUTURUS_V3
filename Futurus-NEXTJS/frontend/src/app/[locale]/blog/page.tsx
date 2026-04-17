@@ -54,7 +54,7 @@ export default function BlogsPage() {
             {t("Análises & Novidades")}
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight">
-            O Jornal <span className="text-base italic">Futurus</span>
+            {t("O Jornal")} <span className="text-base italic">{process.env.NEXT_PUBLIC_APP_NAME || "Futurus"}</span>
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
             {t("Análises especializadas, atualizações de mercado e estratégias de previsão da nossa equipe global de pesquisa.")}

@@ -109,11 +109,11 @@ print_info "Platform: $PLATFORM"
 # 2. Port configuration
 #==============================================================================
 print_header "2. PORT CONFIGURATION"
-BACKEND_PORT=$(ask_def  "Backend  port" "${BACKEND_PORT:-3001}")
-ADMIN_PORT=$(ask_def    "Admin    port" "${ADMIN_PORT:-3002}")
-FRONTEND_PORT=$(ask_def "Frontend port" "${FRONTEND_PORT:-3000}")
-POSTGRES_PORT=$(ask_def "Postgres port" "${POSTGRES_PORT:-5432}")
-PGADMIN_PORT=$(ask_def  "pgAdmin  port" "${PGADMIN_PORT:-5050}")
+BACKEND_PORT=$(ask_def  "Backend  port" "${BACKEND_PORT:-3302}")
+ADMIN_PORT=$(ask_def    "Admin    port" "${ADMIN_PORT:-3301}")
+FRONTEND_PORT=$(ask_def "Frontend port" "${FRONTEND_PORT:-3300}")
+POSTGRES_PORT=$(ask_def "Postgres port" "${POSTGRES_PORT:-15432}")
+PGADMIN_PORT=$(ask_def  "pgAdmin  port" "${PGADMIN_PORT:-5051}")
 export BACKEND_PORT ADMIN_PORT FRONTEND_PORT POSTGRES_PORT PGADMIN_PORT
 
 #==============================================================================
@@ -158,6 +158,8 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT}
+        NEXT_PUBLIC_APP_NAME: ${APP_NAME}
+        NEXT_PUBLIC_COIN_NAME: ${COIN_NAME}
     image: ${IMG_FRONTEND}
     container_name: ${C_FRONTEND}
 
@@ -167,6 +169,8 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT}
+        NEXT_PUBLIC_APP_NAME: ${APP_NAME}
+        NEXT_PUBLIC_COIN_NAME: ${COIN_NAME}
     image: ${IMG_ADMIN}
     container_name: ${C_ADMIN}
 BUILD_EOF
@@ -450,7 +454,7 @@ services:
       POSTGRES_DB: \${POSTGRES_DB}
     ports: ["\${POSTGRES_PORT:-5432}:5432"]
     volumes: [postgres_data:/var/lib/postgresql/data]
-    networks: [futurus-network]
+    networks: [app-network]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \${POSTGRES_USER}"]
       interval: 10s
@@ -462,30 +466,30 @@ services:
     container_name: ${C_BACKEND}
     restart: unless-stopped
     env_file: [.env]
-    ports: ["\${BACKEND_PORT:-3001}:3001"]
+    ports: ["\${BACKEND_PORT:-3302}:3001"]
     depends_on:
       db: { condition: service_healthy }
     volumes:
-      - backend_uploads:/app/uploads
-    networks: [futurus-network]
+      - ./backend/uploads:/app/uploads
+    networks: [app-network]
 
   frontend:
     image: ${IMG_FRONTEND}
     container_name: ${C_FRONTEND}
     restart: unless-stopped
     env_file: [.env]
-    ports: ["\${FRONTEND_PORT:-3000}:3000"]
+    ports: ["\${FRONTEND_PORT:-3300}:3000"]
     depends_on: [backend]
-    networks: [futurus-network]
+    networks: [app-network]
 
   admin:
     image: ${IMG_ADMIN}
     container_name: ${C_ADMIN}
     restart: unless-stopped
     env_file: [.env]
-    ports: ["\${ADMIN_PORT:-3002}:3002"]
+    ports: ["\${ADMIN_PORT:-3301}:3002"]
     depends_on: [backend]
-    networks: [futurus-network]
+    networks: [app-network]
 
   pgadmin:
     image: ${IMG_PGADMIN}
@@ -497,15 +501,14 @@ services:
       PGADMIN_DEFAULT_PASSWORD: \${PGADMIN_DEFAULT_PASSWORD}
     ports: ["\${PGADMIN_PORT:-5050}:80"]
     volumes: [pgadmin_data:/var/lib/pgadmin]
-    networks: [futurus-network]
+    networks: [app-network]
 
 networks:
-  futurus-network:
+  app-network:
     driver: bridge
 
 volumes:
   postgres_data:
-  backend_uploads:
   pgadmin_data:
 COMPOSE_EOF
 
@@ -558,7 +561,7 @@ ls -la "$EXPORT_DIR"
 #==============================================================================
 print_header "12. UPLOAD"
 print_step "Ensuring remote dir exists: $SERVER_PATH"
-rsudo "mkdir -p $SERVER_PATH/backups && chown -R ${SERVER_USER}:${SERVER_USER} $SERVER_PATH 2>/dev/null || true"
+rsudo "mkdir -p $SERVER_PATH/backups $SERVER_PATH/backend/uploads/{markets,images,verify,support,documents,blogs} && chown -R ${SERVER_USER}:${SERVER_USER} $SERVER_PATH 2>/dev/null || true"
 
 print_step "Uploading images bundle ($(du -h "$IMG_TAR_GZ" | cut -f1))..."
 rscp "$IMG_TAR_GZ" "$SERVER_PATH/"
@@ -612,10 +615,186 @@ rsudo "docker exec -t ${C_BACKEND} npx prisma db push --accept-data-loss" || pri
 print_step "Generating Prisma Client..."
 rsudo "docker exec -t ${C_BACKEND} npx prisma generate" || print_warning "prisma generate had issues"
 
-print_info "Skipping database seed (markets will be created via admin panel)"
+print_step "Creating upload directories on remote..."
+rsudo "mkdir -p $SERVER_PATH/backend/uploads/markets $SERVER_PATH/backend/uploads/images $SERVER_PATH/backend/uploads/verify $SERVER_PATH/backend/uploads/support $SERVER_PATH/backend/uploads/documents $SERVER_PATH/backend/uploads/blogs"
+print_success "Upload directories ready (bind-mounted into container)"
 
-print_step "Creating upload directories..."
-rsudo "docker exec ${C_BACKEND} mkdir -p /app/uploads/markets /app/uploads/images /app/uploads/verify /app/uploads/support /app/uploads/documents /app/uploads/blogs" || true
+print_step "Seeding database..."
+rsudo "docker exec -t ${C_BACKEND} npx prisma db seed" || print_warning "seed had issues"
+
+#── Database Configuration (same as setup-futurus.sh) ──────────────────────────
+PG_EXEC="docker exec -e PGPASSWORD=${NEW_DB_PASS} ${C_DB} psql -h localhost -U ${DB_USER} -d ${DB_NAME} -c"
+
+print_step "Configuring Brazilian Portuguese language..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"Language\\\" (name, code, \\\"isDefault\\\", \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES ('Portuguese', 'pt_br', 1, NOW(), NOW())
+ON CONFLICT (code) DO UPDATE SET \\\"isDefault\\\" = 1;
+UPDATE \\\"Language\\\" SET \\\"isDefault\\\" = 0 WHERE code != 'pt_br';
+\"" || print_warning "Language config had issues"
+
+print_step "Ensuring referral_code column exists..."
+rsudo "$PG_EXEC \"
+DO \\\$\\\$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'User' AND column_name = 'referralCode') THEN
+        ALTER TABLE \\\"User\\\" ADD COLUMN \\\"referralCode\\\" VARCHAR(40) UNIQUE;
+    END IF;
+END
+\\\$\\\$;
+UPDATE \\\"User\\\" SET \\\"referralCode\\\" = UPPER(SUBSTRING(username, 1, 6)) || LPAD(id::text, 4, '0') WHERE \\\"referralCode\\\" IS NULL;
+\"" || print_warning "referral_code had issues"
+
+print_step "Ensuring CPF column exists..."
+rsudo "$PG_EXEC \"
+DO \\\$\\\$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'User' AND column_name = 'cpf') THEN
+        ALTER TABLE \\\"User\\\" ADD COLUMN cpf VARCHAR(20);
+    END IF;
+END
+\\\$\\\$;
+\"" || print_warning "CPF column had issues"
+
+print_step "Ensuring member_chosen_outcome column exists..."
+rsudo "$PG_EXEC \"
+DO \\\$\\\$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'group_members' AND column_name = 'member_chosen_outcome') THEN
+        ALTER TABLE group_members ADD COLUMN member_chosen_outcome VARCHAR(10);
+    END IF;
+END
+\\\$\\\$;
+\"" || print_warning "member_chosen_outcome had issues"
+
+print_step "Ensuring 2FA columns exist..."
+rsudo "$PG_EXEC \"
+DO \\\$\\\$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'User' AND column_name = 'ts') THEN
+        ALTER TABLE \\\"User\\\" ADD COLUMN ts INTEGER DEFAULT 0;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'User' AND column_name = 'tv') THEN
+        ALTER TABLE \\\"User\\\" ADD COLUMN tv INTEGER DEFAULT 1;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'User' AND column_name = 'tsc') THEN
+        ALTER TABLE \\\"User\\\" ADD COLUMN tsc VARCHAR(255);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'User' AND column_name = 'twoFactorRecoveryCodes') THEN
+        ALTER TABLE \\\"User\\\" ADD COLUMN \\\"twoFactorRecoveryCodes\\\" TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Admin' AND column_name = 'ts') THEN
+        ALTER TABLE \\\"Admin\\\" ADD COLUMN ts INTEGER DEFAULT 0;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Admin' AND column_name = 'tv') THEN
+        ALTER TABLE \\\"Admin\\\" ADD COLUMN tv INTEGER DEFAULT 1;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Admin' AND column_name = 'tsc') THEN
+        ALTER TABLE \\\"Admin\\\" ADD COLUMN tsc VARCHAR(255);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Admin' AND column_name = 'twoFactorRecoveryCodes') THEN
+        ALTER TABLE \\\"Admin\\\" ADD COLUMN \\\"twoFactorRecoveryCodes\\\" TEXT;
+    END IF;
+END
+\\\$\\\$;
+\"" || print_warning "2FA columns had issues"
+
+print_step "Registering Asaas PIX Gateway (code: 127)..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"Gateway\\\" (code, name, alias, status, \\\"gatewayParameters\\\", \\\"supportedCurrencies\\\", crypto, description, \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES (127, 'Asaas PIX', 'AsaasPix', 1,
+  '{\\\"api_key\\\":{\\\"title\\\":\\\"API Key\\\",\\\"global\\\":true,\\\"value\\\":\\\"\\\"},\\\"mode\\\":{\\\"title\\\":\\\"Mode\\\",\\\"global\\\":true,\\\"value\\\":\\\"sandbox\\\"}}',
+  '{\\\"BRL\\\":\\\"BRL\\\"}', 0, 'Asaas PIX Payment Gateway', NOW(), NOW())
+ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name, alias = EXCLUDED.alias, status = EXCLUDED.status, \\\"updatedAt\\\" = NOW();
+\"" || print_warning "PIX gateway had issues"
+
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"GatewayCurrency\\\" (name, currency, symbol, \\\"methodCode\\\", \\\"gatewayAlias\\\", \\\"minAmount\\\", \\\"maxAmount\\\", \\\"percentCharge\\\", \\\"fixedCharge\\\", rate, \\\"gatewayParameter\\\", \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES ('Asaas PIX', 'BRL', 'R\\\$', 127, 'AsaasPix', 1.00, 100000.00, 1.50, 0.00, 1.00,
+  '{\\\"api_key\\\":\\\"\\\", \\\"mode\\\":\\\"sandbox\\\"}', NOW(), NOW())
+ON CONFLICT (\\\"methodCode\\\") DO UPDATE SET name = EXCLUDED.name, \\\"updatedAt\\\" = NOW();
+\"" || true
+
+print_step "Registering Asaas Credit Card Gateway (code: 128)..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"Gateway\\\" (code, name, alias, status, \\\"gatewayParameters\\\", \\\"supportedCurrencies\\\", crypto, description, \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES (128, 'Asaas Credit Card', 'AsaasCard', 1,
+  '{\\\"api_key\\\":{\\\"title\\\":\\\"API Key\\\",\\\"global\\\":true,\\\"value\\\":\\\"\\\"},\\\"mode\\\":{\\\"title\\\":\\\"Mode\\\",\\\"global\\\":true,\\\"value\\\":\\\"sandbox\\\"}}',
+  '{\\\"BRL\\\":\\\"BRL\\\"}', 0, 'Pay with Credit or Debit Card via Asaas', NOW(), NOW())
+ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name, alias = EXCLUDED.alias, status = EXCLUDED.status, \\\"updatedAt\\\" = NOW();
+\"" || print_warning "Card gateway had issues"
+
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"GatewayCurrency\\\" (name, currency, symbol, \\\"methodCode\\\", \\\"gatewayAlias\\\", \\\"minAmount\\\", \\\"maxAmount\\\", \\\"percentCharge\\\", \\\"fixedCharge\\\", rate, \\\"gatewayParameter\\\", \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES ('Asaas Credit Card - BRL', 'BRL', 'R\\\$', 128, 'AsaasCard', 10.00, 50000.00, 3.99, 0.49, 1.00,
+  '{\\\"api_key\\\":\\\"\\\", \\\"mode\\\":\\\"sandbox\\\"}', NOW(), NOW())
+ON CONFLICT (\\\"methodCode\\\") DO UPDATE SET name = EXCLUDED.name, \\\"updatedAt\\\" = NOW();
+\"" || true
+
+print_step "Registering PIX Withdraw Method..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"WithdrawMethod\\\" (id, name, \\\"minLimit\\\", \\\"maxLimit\\\", \\\"fixedCharge\\\", \\\"percentCharge\\\", rate, currency, description, status, \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES (1, 'PIX Withdraw', 10.00, 50000.00, 0.00, 1.00, 1.00, 'BRL',
+  'Withdraw via PIX using Asaas.', 1, NOW(), NOW())
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, status = EXCLUDED.status, \\\"updatedAt\\\" = NOW();
+\"" || print_warning "PIX withdraw had issues"
+
+print_step "Registering Bank Transfer Withdraw Method..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"WithdrawMethod\\\" (id, name, \\\"minLimit\\\", \\\"maxLimit\\\", \\\"fixedCharge\\\", \\\"percentCharge\\\", rate, currency, description, status, \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES (2, 'Bank Transfer', 10.00, 50000.00, 0.00, 1.50, 1.00, 'BRL',
+  'Withdraw via bank transfer using Asaas.', 1, NOW(), NOW())
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, status = EXCLUDED.status, \\\"updatedAt\\\" = NOW();
+\"" || print_warning "Bank transfer withdraw had issues"
+
+print_step "Creating KYC verification form..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"Form\\\" (act, \\\"formData\\\", \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES ('kyc',
+  '{\\\"document_type\\\":{\\\"name\\\":\\\"Tipo de Documento\\\",\\\"label\\\":\\\"document_type\\\",\\\"is_required\\\":\\\"required\\\",\\\"instruction\\\":\\\"Selecione o tipo de documento\\\",\\\"extensions\\\":\\\"\\\",\\\"options\\\":[\\\"Passaporte\\\",\\\"RG\\\",\\\"CNH\\\"],\\\"type\\\":\\\"select\\\",\\\"width\\\":\\\"12\\\"},\\\"document_front\\\":{\\\"name\\\":\\\"Frente do Documento\\\",\\\"label\\\":\\\"document_front\\\",\\\"is_required\\\":\\\"required\\\",\\\"instruction\\\":\\\"Envie uma foto clara da frente do seu documento\\\",\\\"extensions\\\":\\\"jpg,jpeg,png\\\",\\\"options\\\":[],\\\"type\\\":\\\"file\\\",\\\"width\\\":\\\"12\\\"},\\\"document_back\\\":{\\\"name\\\":\\\"Verso do Documento\\\",\\\"label\\\":\\\"document_back\\\",\\\"is_required\\\":\\\"required\\\",\\\"instruction\\\":\\\"Envie uma foto clara do verso do seu documento\\\",\\\"extensions\\\":\\\"jpg,jpeg,png\\\",\\\"options\\\":[],\\\"type\\\":\\\"file\\\",\\\"width\\\":\\\"12\\\"},\\\"selfie\\\":{\\\"name\\\":\\\"Selfie com Documento\\\",\\\"label\\\":\\\"selfie\\\",\\\"is_required\\\":\\\"required\\\",\\\"instruction\\\":\\\"Envie uma selfie segurando seu documento\\\",\\\"extensions\\\":\\\"jpg,jpeg,png\\\",\\\"options\\\":[],\\\"type\\\":\\\"file\\\",\\\"width\\\":\\\"12\\\"},\\\"cpf\\\":{\\\"name\\\":\\\"CPF\\\",\\\"label\\\":\\\"cpf\\\",\\\"is_required\\\":\\\"required\\\",\\\"instruction\\\":\\\"Digite seu CPF (apenas numeros)\\\",\\\"extensions\\\":\\\"\\\",\\\"options\\\":[],\\\"type\\\":\\\"text\\\",\\\"width\\\":\\\"12\\\"}}',
+  NOW(), NOW())
+ON CONFLICT (act) DO UPDATE SET \\\"formData\\\" = EXCLUDED.\\\"formData\\\", \\\"updatedAt\\\" = NOW();
+\"" || print_warning "KYC form had issues"
+
+print_step "Configuring general settings..."
+rsudo "$PG_EXEC \"
+INSERT INTO \\\"GeneralSetting\\\" (id, \\\"siteName\\\", \\\"logoUrl\\\", \\\"contactEmail\\\", \\\"contactPhone\\\", \\\"contactAddress\\\", \\\"curText\\\", \\\"curSym\\\", \\\"kycVerification\\\", \\\"registration\\\", \\\"createdAt\\\", \\\"updatedAt\\\")
+VALUES (1, '${APP_NAME}', NULL, 'contato@futurus.com.br', '+55 11 99500-1234', 'Av. Paulista 3500 CJ.124, Sao Paulo - SP', 'BRL', 'R\\\$', 1, 1, NOW(), NOW())
+ON CONFLICT (id) DO UPDATE SET
+  \\\"siteName\\\" = COALESCE(NULLIF(\\\"GeneralSetting\\\".\\\"siteName\\\", ''), EXCLUDED.\\\"siteName\\\"),
+  \\\"contactEmail\\\" = COALESCE(\\\"GeneralSetting\\\".\\\"contactEmail\\\", EXCLUDED.\\\"contactEmail\\\"),
+  \\\"contactPhone\\\" = COALESCE(\\\"GeneralSetting\\\".\\\"contactPhone\\\", EXCLUDED.\\\"contactPhone\\\"),
+  \\\"contactAddress\\\" = COALESCE(\\\"GeneralSetting\\\".\\\"contactAddress\\\", EXCLUDED.\\\"contactAddress\\\"),
+  \\\"curText\\\" = EXCLUDED.\\\"curText\\\",
+  \\\"curSym\\\" = EXCLUDED.\\\"curSym\\\",
+  \\\"kycVerification\\\" = EXCLUDED.\\\"kycVerification\\\",
+  \\\"updatedAt\\\" = NOW();
+\"" || print_warning "General settings had issues"
+
+print_step "Synchronizing database sequences..."
+rsudo "$PG_EXEC \"
+SELECT setval('\\\"User_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"User\\\"), 1));
+SELECT setval('\\\"Market_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Market\\\"), 1));
+SELECT setval('\\\"MarketOption_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"MarketOption\\\"), 1));
+SELECT setval('\\\"Category_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Category\\\"), 1));
+SELECT setval('\\\"Subcategory_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Subcategory\\\"), 1));
+SELECT setval('\\\"Purchase_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Purchase\\\"), 1));
+SELECT setval('groups_id_seq', COALESCE((SELECT MAX(id) FROM groups), 1));
+SELECT setval('group_members_id_seq', COALESCE((SELECT MAX(id) FROM group_members), 1));
+SELECT setval('group_transactions_id_seq', COALESCE((SELECT MAX(id) FROM group_transactions), 1));
+SELECT setval('group_invitations_id_seq', COALESCE((SELECT MAX(id) FROM group_invitations), 1));
+SELECT setval('group_orders_id_seq', COALESCE((SELECT MAX(id) FROM group_orders), 1));
+SELECT setval('group_votes_id_seq', COALESCE((SELECT MAX(id) FROM group_votes), 1));
+SELECT setval('\\\"NotificationLog_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"NotificationLog\\\"), 1));
+SELECT setval('\\\"AdminNotification_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"AdminNotification\\\"), 1));
+SELECT setval('\\\"Deposit_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Deposit\\\"), 1));
+SELECT setval('\\\"Withdrawal_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Withdrawal\\\"), 1));
+SELECT setval('\\\"Transaction_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Transaction\\\"), 1));
+SELECT setval('\\\"Comment_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"Comment\\\"), 1));
+SELECT setval('\\\"SupportTicket_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"SupportTicket\\\"), 1));
+SELECT setval('\\\"SupportMessage_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\"SupportMessage\\\"), 1));
+\"" 2>/dev/null || print_warning "Sequence sync had issues"
+print_success "Database fully configured"
 
 print_step "Health checks..."
 sleep 5

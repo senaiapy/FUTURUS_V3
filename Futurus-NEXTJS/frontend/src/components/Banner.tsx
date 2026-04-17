@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { landingSlides } from "@/lib/landing-data";
+import { useTranslations } from "next-intl";
 
 export default function Banner() {
+  const t = useTranslations();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -40,17 +42,17 @@ export default function Banner() {
               {/* Content Box */}
               <div className="flex-1 text-center lg:text-left animate-fade-in-up">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">
-                  {slide.title}
+                  {t(slide.titleKey)}
                 </h1>
                 <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed drop-shadow-md">
-                  {slide.description}
+                  {t(slide.descriptionKey)}
                 </p>
                 <div className="flex justify-center lg:justify-start">
                   <Link
                     href={slide.buttonLink}
                     className="group relative px-8 py-4 bg-base text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(var(--base),0.3)] hover:shadow-[0_0_30px_rgba(var(--base),0.5)]"
                   >
-                    <span className="relative z-10">{slide.buttonText}</span>
+                    <span className="relative z-10">{t(slide.buttonTextKey)}</span>
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                   </Link>
                 </div>

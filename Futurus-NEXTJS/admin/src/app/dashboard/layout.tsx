@@ -65,107 +65,99 @@ interface AdminNotification {
 }
 
 const menuItems: MenuItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, routeKey: "dashboard" },
-  { label: "Categories", href: "/dashboard/categories", icon: Layers, routeKey: "categories" },
-  { label: "Subcategories", href: "/dashboard/subcategories", icon: Tag, routeKey: "subcategories" },
+  { label: "Dashboard", labelKey: "menu.dashboard", href: "/dashboard", icon: LayoutDashboard, routeKey: "dashboard" },
+  { label: "Categories", labelKey: "menu.categories", href: "/dashboard/categories", icon: Layers, routeKey: "categories" },
+  { label: "Subcategories", labelKey: "menu.subcategories", href: "/dashboard/subcategories", icon: Tag, routeKey: "subcategories" },
   {
-    label: "Markets",
-    icon: BarChart3,
-    routeKey: "markets",
+    label: "Markets", labelKey: "menu.markets",
+    icon: BarChart3, routeKey: "markets",
     submenu: [
-      { label: "Adicionar Novo", href: "/dashboard/markets/create" },
-      { label: "Draft Markets", href: "/dashboard/markets/draft" },
-      { label: "Upcoming Markets", href: "/dashboard/markets/upcoming" },
-      { label: "Live Markets", href: "/dashboard/markets/live" },
-      { label: "Fechando em Breve", href: "/dashboard/markets/closing-soon" },
-      { label: "Pending Resolution", href: "/dashboard/markets/pending" },
-      { label: "Declared Markets", href: "/dashboard/markets/declared" },
-      { label: "Completed Markets", href: "/dashboard/markets/completed" },
-      { label: "Disabled Markets", href: "/dashboard/markets/disabled" },
-      { label: "Cancelled Markets", href: "/dashboard/markets/cancelled" },
-      { label: "All Markets", href: "/dashboard/markets" },
+      { label: "Add New", labelKey: "menu.markets.create", href: "/dashboard/markets/create" },
+      { label: "Draft Markets", labelKey: "menu.markets.draft", href: "/dashboard/markets/draft" },
+      { label: "Upcoming Markets", labelKey: "menu.markets.upcoming", href: "/dashboard/markets/upcoming" },
+      { label: "Live Markets", labelKey: "menu.markets.live", href: "/dashboard/markets/live" },
+      { label: "Closing Soon", labelKey: "menu.markets.closing", href: "/dashboard/markets/closing-soon" },
+      { label: "Pending Resolution", labelKey: "menu.markets.pending", href: "/dashboard/markets/pending" },
+      { label: "Declared Markets", labelKey: "menu.markets.declared", href: "/dashboard/markets/declared" },
+      { label: "Completed Markets", labelKey: "menu.markets.completed", href: "/dashboard/markets/completed" },
+      { label: "Disabled Markets", labelKey: "menu.markets.disabled", href: "/dashboard/markets/disabled" },
+      { label: "Cancelled Markets", labelKey: "menu.markets.cancelled", href: "/dashboard/markets/cancelled" },
+      { label: "All Markets", labelKey: "menu.markets.all", href: "/dashboard/markets" },
     ],
   },
   {
-    label: "Manage Users",
-    icon: Users,
-    routeKey: "users",
+    label: "Manage Users", labelKey: "menu.users",
+    icon: Users, routeKey: "users",
     submenu: [
-      { label: "Active Users", href: "/dashboard/users/active" },
-      { label: "Banned Users", href: "/dashboard/users/banned" },
-      { label: "Email Unverified", href: "/dashboard/users/email-unverified" },
-      { label: "Mobile Unverified", href: "/dashboard/users/mobile-unverified" },
-      { label: "KYC Unverified", href: "/dashboard/users/kyc-unverified" },
-      { label: "KYC Pending", href: "/dashboard/users/kyc-pending" },
-      { label: "With Balance", href: "/dashboard/users/with-balance" },
-      { label: "All Users", href: "/dashboard/users" },
-      { label: "Enviar Notificacao", href: "/dashboard/users/send-notification" },
+      { label: "Active Users", labelKey: "menu.users.active", href: "/dashboard/users/active" },
+      { label: "Banned Users", labelKey: "menu.users.banned", href: "/dashboard/users/banned" },
+      { label: "Email Unverified", labelKey: "menu.users.emailUnverified", href: "/dashboard/users/email-unverified" },
+      { label: "Mobile Unverified", labelKey: "menu.users.mobileUnverified", href: "/dashboard/users/mobile-unverified" },
+      { label: "KYC Unverified", labelKey: "menu.users.kycUnverified", href: "/dashboard/users/kyc-unverified" },
+      { label: "KYC Pending", labelKey: "menu.users.kycPending", href: "/dashboard/users/kyc-pending" },
+      { label: "With Balance", labelKey: "menu.users.withBalance", href: "/dashboard/users/with-balance" },
+      { label: "All Users", labelKey: "menu.users.all", href: "/dashboard/users" },
+      { label: "Send Notification", labelKey: "menu.users.sendNotification", href: "/dashboard/users/send-notification" },
     ],
   },
   {
-    label: "Depositos",
-    icon: CreditCard,
-    routeKey: "deposits",
+    label: "Deposits", labelKey: "menu.deposits",
+    icon: CreditCard, routeKey: "deposits",
     submenu: [
-      { label: "Depositos Pendentes", href: "/dashboard/deposits/pending" },
-      { label: "Approved Deposits", href: "/dashboard/deposits/approved" },
-      { label: "Depositos com Sucesso", href: "/dashboard/deposits/successful" },
-      { label: "Depositos Rejeitados", href: "/dashboard/deposits/rejected" },
-      { label: "Initiated Deposits", href: "/dashboard/deposits/initiated" },
-      { label: "All Deposits", href: "/dashboard/deposits" },
+      { label: "Pending Deposits", labelKey: "menu.deposits.pending", href: "/dashboard/deposits/pending" },
+      { label: "Approved Deposits", labelKey: "menu.deposits.approved", href: "/dashboard/deposits/approved" },
+      { label: "Successful Deposits", labelKey: "menu.deposits.successful", href: "/dashboard/deposits/successful" },
+      { label: "Rejected Deposits", labelKey: "menu.deposits.rejected", href: "/dashboard/deposits/rejected" },
+      { label: "Initiated Deposits", labelKey: "menu.deposits.initiated", href: "/dashboard/deposits/initiated" },
+      { label: "All Deposits", labelKey: "menu.deposits.all", href: "/dashboard/deposits" },
     ],
   },
   {
-    label: "Retiradas",
-    icon: PiggyBank,
-    routeKey: "withdrawals",
+    label: "Withdrawals", labelKey: "menu.withdrawals",
+    icon: PiggyBank, routeKey: "withdrawals",
     submenu: [
-      { label: "Retiradas Pendentes", href: "/dashboard/withdrawals/pending" },
-      { label: "Approved Withdrawals", href: "/dashboard/withdrawals/approved" },
-      { label: "Retiradas Rejeitadas", href: "/dashboard/withdrawals/rejected" },
-      { label: "All Withdrawals", href: "/dashboard/withdrawals" },
+      { label: "Pending Withdrawals", labelKey: "menu.withdrawals.pending", href: "/dashboard/withdrawals/pending" },
+      { label: "Approved Withdrawals", labelKey: "menu.withdrawals.approved", href: "/dashboard/withdrawals/approved" },
+      { label: "Rejected Withdrawals", labelKey: "menu.withdrawals.rejected", href: "/dashboard/withdrawals/rejected" },
+      { label: "All Withdrawals", labelKey: "menu.withdrawals.all", href: "/dashboard/withdrawals" },
     ],
   },
   {
-    label: "Reports",
-    icon: FileText,
-    routeKey: "reports",
+    label: "Reports", labelKey: "menu.reports",
+    icon: FileText, routeKey: "reports",
     submenu: [
-      { label: "Transactions", href: "/dashboard/reports/transactions" },
-      { label: "Purchases", href: "/dashboard/reports/purchases" },
-      { label: "Login History", href: "/dashboard/reports/logins" },
+      { label: "Transactions", labelKey: "menu.reports.transactions", href: "/dashboard/reports/transactions" },
+      { label: "Purchases", labelKey: "menu.reports.purchases", href: "/dashboard/reports/purchases" },
+      { label: "Login History", labelKey: "menu.reports.logins", href: "/dashboard/reports/logins" },
     ],
   },
   {
-    label: "Support",
-    icon: Ticket,
-    routeKey: "support",
+    label: "Support", labelKey: "menu.support",
+    icon: Ticket, routeKey: "support",
     submenu: [
-      { label: "All Tickets", href: "/dashboard/support" },
-      { label: "Pending", href: "/dashboard/support/pending" },
+      { label: "All Tickets", labelKey: "menu.support.all", href: "/dashboard/support" },
+      { label: "Pending", labelKey: "menu.support.pending", href: "/dashboard/support/pending" },
     ],
   },
   {
-    label: "Game",
-    icon: Trophy,
-    routeKey: "game",
+    label: "Game", labelKey: "menu.game",
+    icon: Trophy, routeKey: "game",
     submenu: [
-      { label: "Statistics", href: "/dashboard/game/statistics" },
-      { label: "Tasks", href: "/dashboard/game/tasks" },
-      { label: "Referrals", href: "/dashboard/game/referrals" },
-      { label: "Coin Transactions", href: "/dashboard/game/coins" },
+      { label: "Statistics", labelKey: "menu.game.statistics", href: "/dashboard/game/statistics" },
+      { label: "Tasks", labelKey: "menu.game.tasks", href: "/dashboard/game/tasks" },
+      { label: "Referrals", labelKey: "menu.game.referrals", href: "/dashboard/game/referrals" },
+      { label: "Coin Transactions", labelKey: "menu.game.coins", href: "/dashboard/game/coins" },
     ],
   },
-  { label: "Blog", href: "/dashboard/blog", icon: BookOpen, routeKey: "blog" },
-  { label: "Gateways", href: "/dashboard/gateways", icon: Wallet, routeKey: "gateways" },
-  { label: "Settings", href: "/dashboard/settings", icon: Settings, routeKey: "settings" },
-  { label: "Notifications", href: "/dashboard/notifications", icon: BellRing, routeKey: "notifications" },
-  { label: "Grupos", href: "/dashboard/grupos", icon: UsersRound, routeKey: "grupos" },
+  { label: "Blog", labelKey: "menu.blog", href: "/dashboard/blog", icon: BookOpen, routeKey: "blog" },
+  { label: "Gateways", labelKey: "menu.gateways", href: "/dashboard/gateways", icon: Wallet, routeKey: "gateways" },
+  { label: "Settings", labelKey: "menu.settings", href: "/dashboard/settings", icon: Settings, routeKey: "settings" },
+  { label: "Notifications", labelKey: "menu.notifications", href: "/dashboard/notifications", icon: BellRing, routeKey: "notifications" },
+  { label: "Groups", labelKey: "menu.groups", href: "/dashboard/grupos", icon: UsersRound, routeKey: "grupos" },
   {
     label: process.env.NEXT_PUBLIC_COIN_NAME || "Blockchain",
     labelKey: "menu.blockchain",
-    icon: Coins,
-    routeKey: "blockchain",
+    icon: Coins, routeKey: "blockchain",
     submenu: [
       { label: "Dashboard", labelKey: "menu.blockchain.dashboard", href: "/dashboard/blockchain" },
       { label: "Wallets", labelKey: "menu.blockchain.wallets", href: "/dashboard/blockchain/wallets" },
@@ -174,9 +166,8 @@ const menuItems: MenuItem[] = [
       { label: "Statistics", labelKey: "menu.blockchain.statistics", href: "/dashboard/blockchain/stats" },
     ],
   },
-  { label: "IA Control", href: "/dashboard/ia-control", icon: Bot, routeKey: "ia-control" },
-  // Admin-only: Permissions management
-  { label: "Permissions", href: "/dashboard/permissions", icon: Shield, routeKey: "permissions", adminOnly: true },
+  { label: "AI Control", labelKey: "menu.iaControl", href: "/dashboard/ia-control", icon: Bot, routeKey: "ia-control" },
+  { label: "Permissions", labelKey: "menu.permissions", href: "/dashboard/permissions", icon: Shield, routeKey: "permissions", adminOnly: true },
 ];
 
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
@@ -307,10 +298,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     const diffMin = Math.floor(diffMs / 60000);
     const diffHrs = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    if (diffMin < 60) return `ha ${diffMin} minutos`;
-    if (diffHrs < 24) return `ha ${diffHrs} horas`;
-    if (diffDays < 7) return `ha ${diffDays} dias`;
-    return `ha ${Math.floor(diffDays / 7)} semana${diffDays >= 14 ? "s" : ""}`;
+    if (diffMin < 60) return t("layout.timeAgo.minutes").replace("{n}", String(diffMin));
+    if (diffHrs < 24) return t("layout.timeAgo.hours").replace("{n}", String(diffHrs));
+    if (diffDays < 7) return t("layout.timeAgo.days").replace("{n}", String(diffDays));
+    return t("layout.timeAgo.weeks").replace("{n}", String(Math.floor(diffDays / 7)));
   };
 
   const toggleMenu = (label: string) => {
@@ -350,29 +341,32 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         )}
       >
         {/* Logo Section */}
-        <div className="h-24 flex items-center px-6 mb-4 relative">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[20px] bg-linear-to-tr from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 overflow-hidden shrink-0 group hover:scale-105 transition-transform">
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              {siteSettings?.logoUrl ? (
+        <div className="h-24 flex items-center px-4 mb-4 relative">
+          <div className="flex items-center gap-3">
+            {(sidebarOpen ||
+              (typeof window !== "undefined" && window.innerWidth < 1024)) ? (
+              <div className="h-12 w-auto animate-in fade-in slide-in-from-left-2">
+                {siteSettings?.logoUrl ? (
+                  <img
+                    src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3302").replace(/\/api$/, "")}${siteSettings.logoUrl}`}
+                    alt={siteSettings.siteName || "Logo"}
+                    className="h-full w-auto object-contain"
+                  />
+                ) : (
+                  <img
+                    src={`/${(process.env.NEXT_PUBLIC_APP_NAME || "Futurus").charAt(0).toUpperCase() + (process.env.NEXT_PUBLIC_APP_NAME || "Futurus").slice(1).toLowerCase()}.png`}
+                    alt={process.env.NEXT_PUBLIC_APP_NAME || "Futurus"}
+                    className="h-full w-auto object-contain"
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-[20px] bg-linear-to-tr from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 overflow-hidden shrink-0">
                 <img
-                  src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/api$/, "")}${siteSettings.logoUrl}`}
-                  alt={siteSettings.siteName || "Logo"}
+                  src={`/logo${(process.env.NEXT_PUBLIC_APP_NAME || "Futurus").charAt(0).toUpperCase() + (process.env.NEXT_PUBLIC_APP_NAME || "Futurus").slice(1).toLowerCase()}.png`}
+                  alt={process.env.NEXT_PUBLIC_APP_NAME || "Futurus"}
                   className="w-full h-full object-contain p-1"
                 />
-              ) : (
-                <Zap className="text-white w-6 h-6 fill-white/10" />
-              )}
-            </div>
-            {(sidebarOpen ||
-              (typeof window !== "undefined" && window.innerWidth < 1024)) && (
-              <div className="animate-in fade-in slide-in-from-left-2">
-                <span className="text-xl font-black text-white block tracking-tighter leading-none">
-                  {siteSettings?.siteName?.toUpperCase() || "FUTURUS"}
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.3em] text-indigo-400 font-black mt-1.5 block">
-                  NETWORK ADMIN
-                </span>
               </div>
             )}
           </div>
@@ -520,10 +514,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             {sidebarOpen && (
               <div className="flex-1 min-w-0 pr-2">
                 <p className="text-[13px] font-black text-white truncate uppercase tracking-tighter">
-                  {admin?.name || "System Master"}
+                  {admin?.name || t("layout.systemMaster")}
                 </p>
                 <p className="text-[10px] text-slate-600 truncate font-black mt-0.5 uppercase tracking-widest">
-                  {isAdmin ? "Super Admin" : "Staff"}
+                  {isAdmin ? t("layout.superAdmin") : t("layout.staff")}
                 </p>
               </div>
             )}
@@ -566,17 +560,17 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                       (i) =>
                         i.href === pathname ||
                         i.submenu?.some((s) => s.href === pathname)
-                    )?.label || "Workspace"}
+                    )?.label || t("layout.workspace")}
                   </h2>
                   {!hasWriteAccess && (
                     <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
                       <Eye className="w-3 h-3 text-amber-500" />
-                      <span className="text-[9px] font-bold text-amber-500 uppercase">Read Only</span>
+                      <span className="text-[9px] font-bold text-amber-500 uppercase">{t("layout.readOnly")}</span>
                     </span>
                   )}
                 </div>
                 <p className="text-[8px] lg:text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] mt-1 lg:mt-1.5 opacity-60">
-                  Admin Central Control
+                  {t("layout.adminControl")}
                 </p>
               </div>
             </div>
@@ -588,7 +582,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               <Search className="w-4 h-4 text-slate-600 group-hover:text-indigo-500" />
               <input
                 type="text"
-                placeholder="Busque aqui..."
+                placeholder={t("layout.search")}
                 className="bg-transparent border-none text-[11px] focus:outline-none text-white w-48 placeholder:text-slate-800 font-black uppercase tracking-widest"
               />
             </div>
@@ -602,7 +596,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                     setShowNotifications(false);
                     setShowProfileMenu(false);
                   }}
-                  title="Idioma"
+                  title={t("layout.language")}
                   className="relative p-2.5 lg:p-3 rounded-2xl bg-white/2 border border-white/2 text-slate-500 hover:text-indigo-400 transition-all hover:scale-110 active:scale-95"
                 >
                   <Languages className="w-5 h-5" />
@@ -664,7 +658,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                 href={process.env.NEXT_PUBLIC_FRONTEND_URL || "/"}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Ir para o Frontend"
+                title={t("layout.goToFrontend")}
                 className="relative p-2.5 lg:p-3 rounded-2xl bg-white/2 border border-white/2 text-slate-500 hover:text-indigo-400 transition-all hover:scale-110 active:scale-95"
               >
                 <Globe className="w-5 h-5" />
@@ -677,7 +671,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                     setShowNotifications(!showNotifications);
                     setShowProfileMenu(false);
                   }}
-                  title="Notificacoes"
+                  title={t("layout.notifications")}
                   className="relative p-2.5 lg:p-3 rounded-2xl bg-white/2 border border-white/2 text-slate-500 hover:text-indigo-400 transition-all hover:scale-110 active:scale-95 group"
                 >
                   <BellRing className="w-5 h-5" />
@@ -695,12 +689,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                   <div className="absolute right-0 top-full mt-3 w-[360px] bg-[#1a1d2e] border border-white/10 rounded-3xl shadow-2xl shadow-black/60 overflow-hidden z-100 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-6 py-4 border-b border-white/5">
                       <h3 className="text-sm font-black text-white">
-                        Notificacao
+                        {t("layout.notification")}
                       </h3>
                       <p className="text-[10px] text-slate-500 font-bold mt-0.5">
-                        Voce tem {unreadCount} notificacao
-                        {unreadCount !== 1 ? "es" : ""} nao lida
-                        {unreadCount !== 1 ? "s" : ""}
+                        {t("layout.youHave")} {unreadCount} {unreadCount !== 1 ? t("layout.unreadNotifications") : t("layout.unreadNotification")}
                       </p>
                     </div>
                     <div className="max-h-[320px] overflow-y-auto">
@@ -714,14 +706,14 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                             )}
                           >
                             <p className="text-[13px] font-bold text-white leading-snug">
-                              {n.title || "New member registered"}
+                              {n.title || t("layout.newMemberRegistered")}
                             </p>
                             <div className="flex items-center gap-1.5 mt-1.5">
                               <Clock className="w-3 h-3 text-indigo-400" />
                               <span className="text-[10px] text-indigo-400 font-bold">
                                 {n.createdAt
                                   ? getTimeAgo(n.createdAt)
-                                  : "ha pouco"}
+                                  : t("layout.justNow")}
                               </span>
                             </div>
                           </div>
@@ -730,7 +722,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         <div className="px-6 py-8 text-center">
                           <BellRing className="w-8 h-8 text-slate-700 mx-auto mb-2" />
                           <p className="text-[11px] text-slate-600 font-bold">
-                            Nenhuma notificacao
+                            {t("layout.noNotifications")}
                           </p>
                         </div>
                       )}
@@ -740,7 +732,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                       onClick={() => setShowNotifications(false)}
                       className="block px-6 py-3.5 text-center text-[11px] font-black text-indigo-400 hover:text-indigo-300 border-t border-white/5 hover:bg-white/2 transition-colors uppercase tracking-wider"
                     >
-                      Ver todas as notificacoes
+                      {t("layout.viewAllNotifications")}
                     </Link>
                   </div>
                 )}
@@ -749,7 +741,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               {/* Settings / Wrench */}
               <Link
                 href="/dashboard/settings"
-                title="Configuracao do Sistema"
+                title={t("layout.systemSettings")}
                 className="hidden sm:flex p-2.5 lg:p-3 rounded-2xl bg-white/2 border border-white/2 text-slate-500 hover:text-indigo-400 transition-all hover:scale-110 active:scale-95"
               >
                 <Wrench className="w-5 h-5" />
@@ -784,7 +776,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                       className="flex items-center gap-3 px-5 py-3.5 text-[12px] font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       <User className="w-4 h-4 text-indigo-400" />
-                      Perfil
+                      {t("layout.profile")}
                     </Link>
                     <Link
                       href="/dashboard/settings/password"
@@ -792,7 +784,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                       className="flex items-center gap-3 px-5 py-3.5 text-[12px] font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-colors border-t border-white/3"
                     >
                       <KeyRound className="w-4 h-4 text-amber-400" />
-                      Senha
+                      {t("layout.password")}
                     </Link>
                     <Link
                       href="/dashboard/settings/2fa"
@@ -800,7 +792,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                       className="flex items-center gap-3 px-5 py-3.5 text-[12px] font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-colors border-t border-white/3"
                     >
                       <Shield className="w-4 h-4 text-indigo-400" />
-                      2FA Segurança
+                      {t("layout.2faSecurity")}
                     </Link>
                     {isAdmin && (
                       <Link
@@ -809,7 +801,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                         className="flex items-center gap-3 px-5 py-3.5 text-[12px] font-bold text-slate-300 hover:text-white hover:bg-white/5 transition-colors border-t border-white/3"
                       >
                         <Shield className="w-4 h-4 text-emerald-400" />
-                        Permissoes
+                        {t("layout.permissions")}
                       </Link>
                     )}
                     <button
@@ -820,7 +812,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                       className="flex items-center gap-3 px-5 py-3.5 text-[12px] font-bold text-slate-300 hover:text-rose-400 hover:bg-rose-500/5 transition-colors border-t border-white/3 w-full text-left"
                     >
                       <LogOut className="w-4 h-4 text-rose-400" />
-                      Sair
+                      {t("layout.logout")}
                     </button>
                   </div>
                 )}

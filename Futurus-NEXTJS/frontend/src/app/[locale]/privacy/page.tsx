@@ -37,9 +37,7 @@ export default function PrivacyPage() {
                 {t("Proteção de Dados")}
               </h3>
               <p className="text-slate-400 leading-relaxed text-sm">
-                Utilizamos criptografia de ponta a ponta para garantir que todas
-                as suas transações e dados pessoais estejam protegidos contra
-                acessos não autorizados.
+                {t("privacy.protection.description")}
               </p>
             </div>
             <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/5 space-y-4 hover:border-emerald-500/30 transition-all group">
@@ -50,9 +48,7 @@ export default function PrivacyPage() {
                 {t("Transparência Total")}
               </h3>
               <p className="text-slate-400 leading-relaxed text-sm">
-                Acreditamos em uma plataforma aberta. Você tem controle total
-                sobre seus dados e pode solicitar a exclusão deles a qualquer
-                momento.
+                {t("privacy.transparency.description")}
               </p>
             </div>
           </div>
@@ -63,10 +59,7 @@ export default function PrivacyPage() {
                 1. {t("Coleta de Informações")}
               </h2>
               <p className="text-slate-400 text-lg leading-relaxed">
-                Coletamos apenas as informações estritamente necessárias para o
-                funcionamento da plataforma, como endereço de e-mail e dados de
-                transação blockchain. Não rastreamos sua navegação fora do
-                Futurus.
+                {t("privacy.collection.description")}
               </p>
             </div>
 
@@ -75,9 +68,7 @@ export default function PrivacyPage() {
                 2. {t("Uso de Dados")}
               </h2>
               <p className="text-slate-400 text-lg leading-relaxed">
-                Seus dados são utilizados para processar pagamentos, resolver
-                disputas de mercado e enviar notificações importantes sobre suas
-                posições e segurança da conta.
+                {t("privacy.usage.description")}
               </p>
             </div>
 
@@ -86,9 +77,7 @@ export default function PrivacyPage() {
                 3. {t("Compartilhamento")}
               </h2>
               <p className="text-slate-400 text-lg leading-relaxed">
-                Nunca venderemos seus dados. O compartilhamento ocorre apenas
-                com provedores de serviços essenciais (como gateways de
-                pagamento) ou quando exigido por lei.
+                {t("privacy.sharing.description")}
               </p>
             </div>
 
@@ -100,8 +89,7 @@ export default function PrivacyPage() {
                 {t("Dúvidas sobre sua Privacidade?")}
               </h3>
               <p className="text-slate-400 max-w-md mx-auto">
-                Nossa equipe de segurança está pronta para ajudar. Entre em
-                contato através do nosso canal oficial.
+                {t("privacy.questions.description")}
               </p>
               <a
                 href="mailto:privacy@futurus.com"

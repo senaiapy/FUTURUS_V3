@@ -55,13 +55,11 @@
   "Send Message": "Send Message",
   "Copyright": "Copyright",
   "Todos os direitos reservados.": "All rights reserved.",
-
   "Notifications": "Notifications",
   "Mark all read": "Mark all read",
   "No notifications": "No notifications",
   "Just now": "Just now",
   "View all notifications": "View all notifications",
-
   "Criar Grupo": "Create Group",
   "Reúna fundos com outros para apostar juntos": "Pool funds with others to bet together",
   "Nome do Grupo": "Group Name",
@@ -114,5 +112,296 @@
   "Sua Previsão": "Your Prediction",
   "SIM": "YES",
   "NÃO": "NO",
-  "Escolha se você acredita que o resultado será SIM ou NÃO": "Choose whether you believe the result will be YES or NO"
+  "Escolha se você acredita que o resultado será SIM ou NÃO": "Choose whether you believe the result will be YES or NO",
+  "about": {
+    "hero": {
+      "description": "The world's most advanced prediction market platform, where wisdom of the crowd meets institutional-grade technology."
+    },
+    "mission": {
+      "title": "Our mission is to democratize data and unlock global foresight.",
+      "description": "We believe that prediction markets are the most efficient tools for information discovery. By incentivizing truth, we help the world see what's coming before it happens — from political shifts to technological breakthroughs."
+    }
+  },
+  "privacy": {
+    "hero": {
+      "description": "Your privacy is our absolute priority. Learn how we protect your data and ensure your anonymity."
+    },
+    "protection": {
+      "description": "We use end-to-end encryption to ensure that all your transactions and personal data are protected against unauthorized access."
+    },
+    "transparency": {
+      "description": "We believe in an open platform. You have full control over your data and can request deletion at any time."
+    },
+    "collection": {
+      "description": "We only collect the information strictly necessary for the platform to function, such as email addresses and blockchain transaction data. We do not track your browsing outside the platform."
+    },
+    "usage": {
+      "description": "Your data is used to process payments, resolve market disputes, and send important notifications about your positions and account security."
+    },
+    "sharing": {
+      "description": "We will never sell your data. Sharing only occurs with essential service providers (such as payment gateways) or when required by law."
+    },
+    "questions": {
+      "description": "Our security team is ready to help. Contact us through our official channel."
+    }
+  },
+  "terms": {
+    "hero": {
+      "description": "By accessing the platform, you agree to the terms below. Please read all points of this agreement carefully."
+    },
+    "legitimate": {
+      "description": "The platform must be used only for lawful prediction market purposes and community interaction. Any malicious use will result in immediate ban."
+    },
+    "liability": {
+      "description": "The platform is not liable for financial losses resulting from incorrect market predictions or asset fluctuations."
+    },
+    "eligibility": {
+      "description": "Use of the platform is restricted to persons 18 years of age or the legal age permitted in your country. It is your responsibility to verify whether the use of prediction markets is legal in your jurisdiction."
+    },
+    "accounts": {
+      "description": "You are solely responsible for maintaining the security of your account and password. We recommend using two-factor authentication (2FA) for all access."
+    },
+    "resolutions": {
+      "description": "Market resolutions are based on official data sources or decentralized oracles. Once resolved, the result is final and irreversible."
+    },
+    "accept": {
+      "description": "By continuing to use our services, you confirm that you have read and agree to all the terms described above."
+    }
+  },
+  "blog": {
+    "subtitle": "Expert analysis, market updates, and prediction strategies from our global research team."
+  },
+  "step1": {
+    "title": "Choose a Market",
+    "description": "Browse hundreds of prediction markets across politics, sports, crypto, and more. Each market represents a real-world event with a clear resolution date."
+  },
+  "step2": {
+    "title": "Make Your Prediction",
+    "description": "Buy YES or NO shares based on what you believe will happen. Prices reflect the crowd's estimated probability of each outcome."
+  },
+  "step3": {
+    "title": "Track & Trade",
+    "description": "Watch your positions in real-time. You can sell your shares at any time before the market resolves to lock in profits or cut losses."
+  },
+  "step4": {
+    "title": "Collect Winnings",
+    "description": "When the market resolves, winning shares pay out at full value. Your earnings are automatically credited to your account."
+  },
+  "cookies": {
+    "info": {
+      "description": "Cookies are small text files stored on your device when you visit a website. They help improve your experience by remembering preferences and enabling essential features."
+    },
+    "security": {
+      "title": "Your Privacy is Protected",
+      "description": "We use industry-standard security measures to protect all cookie data. No personal information is shared with third parties without your consent."
+    },
+    "essential": {
+      "name": "Essential Cookies",
+      "description": "Required for basic site functionality such as login, navigation, and security. These cannot be disabled."
+    },
+    "functional": {
+      "name": "Functional Cookies",
+      "description": "Enable personalized features like language preferences, region settings, and saved interface customizations."
+    },
+    "analytics": {
+      "name": "Analytics Cookies",
+      "description": "Help us understand how visitors interact with our site by collecting anonymous usage statistics."
+    },
+    "marketing": {
+      "name": "Marketing Cookies",
+      "description": "Used to deliver relevant advertisements and track the effectiveness of marketing campaigns."
+    },
+    "details": {
+      "local_storage": "We use local storage to save your interface preferences, theme settings, and session data for a faster experience.",
+      "session_cookies": "Session cookies are temporary and are deleted when you close your browser. They are used to maintain your login state.",
+      "analytics_cookies": "Analytics cookies collect anonymous data about page views, navigation patterns, and feature usage to help us improve the platform.",
+      "third_party": "Some cookies may be set by third-party services we use, such as payment processors and analytics providers."
+    },
+    "rights": {
+      "accept": "You can accept or reject non-essential cookies at any time.",
+      "reject": "Rejecting cookies will not affect essential site functionality.",
+      "withdraw": "You can withdraw your consent at any time through cookie settings.",
+      "settings": "You can manage cookie preferences in your browser settings.",
+      "info": "You have the right to request information about the cookies we use."
+    }
+  },
+  "cookie": {
+    "banner": {
+      "title": "We value your privacy",
+      "description": "We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking \"Accept All\", you consent to our use of cookies.",
+      "policy_link": "Read our Cookie Policy",
+      "customize": "Customize",
+      "reject_all": "Reject All",
+      "accept_all": "Accept All"
+    },
+    "settings": {
+      "title": "Cookie Preferences",
+      "description": "When you visit our website, we may store or retrieve information on your browser, mostly in the form of cookies. This information might be about you, your preferences, or your device and is mostly used to make the site work as you expect it to.",
+      "necessary": {
+        "title": "Strictly Necessary Cookies",
+        "description": "These cookies are necessary for the website to function and cannot be switched off. They are usually only set in response to actions made by you which amount to a request for services, such as setting your privacy preferences, logging in or filling in forms.",
+        "badge": "Always Active"
+      },
+      "analytics": {
+        "title": "Analytics Cookies",
+        "description": "These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site. They help us know which pages are the most and least popular and see how visitors move around the site."
+      },
+      "marketing": {
+        "title": "Marketing Cookies",
+        "description": "These cookies may be set through our site by our advertising partners. They may be used by those companies to build a profile of your interests and show you relevant ads on other sites."
+      },
+      "cancel": "Cancel",
+      "save": "Save Preferences"
+    }
+  },
+  "landing": {
+    "feature1": {
+      "title": "Predict the Market",
+      "description": "Analyze trends and make accurate predictions across various global markets."
+    },
+    "feature2": {
+      "title": "Total Security",
+      "description": "Your account and profits protected with the highest security technology."
+    },
+    "feature3": {
+      "title": "Global Reach",
+      "description": "Access markets worldwide, from sports to finance and crypto."
+    },
+    "slide1": {
+      "title": "Predict. Trade. Win. Rewards",
+      "description": "Experience a fun and rewarding way to trade in the share market — where every prediction counts and every trade matters.",
+      "button": "Get Started Today"
+    },
+    "slide2": {
+      "title": "Micro-shares, Opportunities",
+      "description": "Turn your market predictions into profits. Trade fractional shares and compete with other users on the platform.",
+      "button": "Join the Action"
+    }
+  },
+  "validation": {
+    "username_required": "Username or email is required",
+    "password_min": "Password must be at least 6 characters",
+    "username_min": "Username must be at least 3 characters",
+    "email_invalid": "Invalid email address",
+    "passwords_mismatch": "Passwords don't match",
+    "email_required": "Enter a valid email"
+  },
+  "Coins": "Coins",
+  "No active markets found.": "No active markets found.",
+  "Contact": "Contact",
+  "Trusted by Industry Leaders": "Trusted by Industry Leaders",
+  "A sua plataforma de referência para previsões de mercado, negociação de microações e análises sobre política, esportes, criptomoedas, finanças e eventos globais.": "Your go-to platform for market predictions, micro-share trading, and analysis on politics, sports, crypto, finance, and global events.",
+  "Siga-nos Em:": "Follow Us:",
+  "Link Útil": "Quick Links",
+  "Início": "Home",
+  "Link de Política": "Policy Links",
+  "Política de Privacidade": "Privacy Policy",
+  "Termos de Serviço": "Terms of Service",
+  "Política de Segurança": "Security Policy",
+  "Remover Conta": "Delete Account",
+  "Informação de Contato": "Contact Information",
+  "Telefone": "Phone",
+  "Endereço": "Address",
+  "Aceitamos:": "We Accept:",
+  "Decentralized Futures": "Decentralized Futures",
+  "Predicting the": "Predicting the",
+  "Next Big Move.": "Next Big Move.",
+  "Active Traders": "Active Traders",
+  "Volume Traded": "Volume Traded",
+  "Predict accuracy": "Predict Accuracy",
+  "Markets Live": "Markets Live",
+  "Verified Data": "Verified Data",
+  "Every market resolution is backed by multi-source oracles and community consensus.": "Every market resolution is backed by multi-source oracles and community consensus.",
+  "Deep Liquidity": "Deep Liquidity",
+  "Our automated market makers ensure you can enter and exit positions instantly.": "Our automated market makers ensure you can enter and exit positions instantly.",
+  "Ready to see the future?": "Ready to see the future?",
+  "Join 250k+ Traders": "Join 250k+ Traders",
+  "Segurança em Primeiro Lugar": "Security First",
+  "Proteção de Dados": "Data Protection",
+  "Transparência Total": "Full Transparency",
+  "Coleta de Informações": "Information Collection",
+  "Uso de Dados": "Data Usage",
+  "Compartilhamento": "Sharing",
+  "Dúvidas sobre sua Privacidade?": "Questions About Your Privacy?",
+  "Contate a Equipe DPO": "Contact DPO Team",
+  "Acordo Legal": "Legal Agreement",
+  "Uso Legítimo": "Legitimate Use",
+  "Responsabilidade": "Liability",
+  "Elegibilidade": "Eligibility",
+  "Contas de Usuário": "User Accounts",
+  "Mercados e Resoluções": "Markets and Resolutions",
+  "Aceita os nossos Termos?": "Accept Our Terms?",
+  "Acordo Ativo": "Active Agreement",
+  "Mercados": "Markets",
+  "Navegue e faça previsões em mercados que importam para você": "Browse and make predictions on markets that matter to you",
+  "Search markets...": "Search markets...",
+  "Análises & Novidades": "Analysis & News",
+  "O Jornal": "The Journal",
+  "Ler Artigo": "Read Article",
+  "Nenhum artigo disponível ainda.": "No articles available yet.",
+  "Análises especializadas, atualizações de mercado e estratégias de previsão da nossa equipe global de pesquisa.": "Expert analysis, market updates, and prediction strategies from our global research team.",
+  "Experimente a próxima geração de mercados de previsão com nosso sistema integrado de gamificação. Complete tarefas, indique amigos e ganhe muito.": "Experience the next generation of prediction markets with our integrated gamification system. Complete tasks, refer friends, and win big.",
+  "Pronto para começar a ganhar?": "Ready to start winning?",
+  "Junte-se a milhares de jogadores e comece a ganhar recompensas hoje. Faça previsões em seus mercados favoritos e domine o ranking.": "Join thousands of players and start earning rewards today. Predict on your favorite markets and dominate the leaderboard.",
+  "Tem alguma dúvida? Adoraríamos ouvir você.": "Have a question? We'd love to hear from you.",
+  "Sua privacidade é nossa prioridade absoluta. Entenda como protegemos seus dados e garantimos sua anonimidade.": "Your privacy is our absolute priority. Learn how we protect your data and ensure your anonymity.",
+  "Ao acessar o Futurus, você concorda com os termos abaixo. Por favor, leia com atenção todos os pontos deste acordo.": "By accessing the platform, you agree to the terms below. Please read all points of this agreement carefully.",
+  "How It Works": "How It Works",
+  "Learn how to get started with prediction markets in just a few simple steps": "Learn how to get started with prediction markets in just a few simple steps",
+  "Learn more": "Learn more",
+  "Why Choose Futurus?": "Why Choose Us?",
+  "Instant Execution": "Instant Execution",
+  "Trades execute immediately at current market prices": "Trades execute immediately at current market prices",
+  "Secure": "Secure",
+  "Your funds and data are always protected": "Your funds and data are always protected",
+  "24/7 Access": "24/7 Access",
+  "Trade anytime, anywhere from any device": "Trade anytime, anywhere from any device",
+  "Ready to start trading?": "Ready to start trading?",
+  "Get Started Now": "Get Started Now",
+  "Cookie Policy": "Cookie Policy",
+  "Learn about how we use cookies and your options": "Learn about how we use cookies and your options",
+  "What Are Cookies?": "What Are Cookies?",
+  "Types of Cookies We Use": "Types of Cookies We Use",
+  "Required": "Required",
+  "Duration": "Duration",
+  "Show Details": "Show Details",
+  "Hide Details": "Hide Details",
+  "Detailed Cookie Information": "Detailed Cookie Information",
+  "Local Storage": "Local Storage",
+  "Session Cookies": "Session Cookies",
+  "Analytics Cookies": "Analytics Cookies",
+  "Third-Party Cookies": "Third-Party Cookies",
+  "Your Cookie Rights": "Your Cookie Rights",
+  "Questions about our cookie policy?": "Questions about our cookie policy?",
+  "Welcome Back": "Welcome Back",
+  "Sign in to continue predicting and winning.": "Sign in to continue predicting and winning.",
+  "Username or Email": "Username or Email",
+  "Enter your username or email": "Enter your username or email",
+  "Password": "Password",
+  "Forgot password?": "Forgot password?",
+  "Sign In": "Sign In",
+  "Invalid credentials": "Invalid credentials",
+  "Two-Factor Authentication": "Two-Factor Authentication",
+  "Enter the 6-digit code from your authenticator app.": "Enter the 6-digit code from your authenticator app.",
+  "Verify Code": "Verify Code",
+  "Back to Login": "Back to Login",
+  "Invalid 2FA code": "Invalid 2FA code",
+  "Or continue with": "Or continue with",
+  "Don't have an account?": "Don't have an account?",
+  "Create account": "Create account",
+  "Create Account": "Create Account",
+  "Join the future of prediction markets today.": "Join the future of prediction markets today.",
+  "Username": "Username",
+  "Enter your username": "Enter your username",
+  "Email Address": "Email Address",
+  "Confirm Password": "Confirm Password",
+  "Something went wrong": "Something went wrong",
+  "Already have an account?": "Already have an account?",
+  "Sign in": "Sign in",
+  "Reset Password": "Reset Password",
+  "Enter your email to reset your password.": "Enter your email to reset your password.",
+  "Code Sent!": "Code Sent!",
+  "Check your email for the reset code.": "Check your email for the reset code.",
+  "Enter your email": "Enter your email",
+  "Send Reset Code": "Send Reset Code"
 }

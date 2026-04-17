@@ -37,9 +37,7 @@ export default function TermsPage() {
                 {t("Uso Legítimo")}
               </h3>
               <p className="text-slate-400 leading-relaxed text-sm">
-                A plataforma deve ser utilizada apenas para fins lícitos de
-                previsão de mercado e interação comunitária. Qualquer uso
-                malicioso resultará em banimento imediato.
+                {t("terms.legitimate.description")}
               </p>
             </div>
             <div className="space-y-4 p-8 bg-white/5 border border-white/5 rounded-[2.5rem]">
@@ -50,9 +48,7 @@ export default function TermsPage() {
                 {t("Responsabilidade")}
               </h3>
               <p className="text-slate-400 leading-relaxed text-sm">
-                A Futurus não se responsabiliza por perdas financeiras
-                decorrentes de previsões de mercado incorretas ou flutuações de
-                ativos.
+                {t("terms.liability.description")}
               </p>
             </div>
           </div>
@@ -63,9 +59,7 @@ export default function TermsPage() {
                 1. {t("Elegibilidade")}
               </h2>
               <p className="text-slate-400 text-lg leading-relaxed font-medium">
-                O uso da plataforma é restrito a maiores de 18 anos ou idade
-                legal permitida em seu país. É sua responsabilidade verificar se
-                o uso de mercados de previsão é legal em sua jurisdição.
+                {t("terms.eligibility.description")}
               </p>
             </div>
 
@@ -74,9 +68,7 @@ export default function TermsPage() {
                 2. {t("Contas de Usuário")}
               </h2>
               <p className="text-slate-400 text-lg leading-relaxed">
-                Você é o único responsável por manter a segurança de sua conta e
-                senha. Recomendamos o uso de autenticação de dois fatores (2FA)
-                em todos os acessos.
+                {t("terms.accounts.description")}
               </p>
             </div>
 
@@ -85,9 +77,7 @@ export default function TermsPage() {
                 3. {t("Mercados e Resoluções")}
               </h2>
               <p className="text-slate-400 text-lg leading-relaxed">
-                As resoluções de cada mercado são baseadas em fontes de dados
-                oficiais ou oracles descentralizados. Uma vez resolvido, o
-                resultado é final e irreversível.
+                {t("terms.resolutions.description")}
               </p>
             </div>
 
@@ -99,8 +89,7 @@ export default function TermsPage() {
                 {t("Aceita os nossos Termos?")}
               </h3>
               <p className="text-slate-400 max-w-md mx-auto">
-                Ao continuar utilizando nossos serviços, você confirma que leu e
-                concorda com todos os termos descritos acima.
+                {t("terms.accept.description")}
               </p>
               <div className="pt-4">
                 <span className="inline-block px-10 py-4 bg-emerald-600 text-white rounded-full font-black text-xs uppercase tracking-widest cursor-default">

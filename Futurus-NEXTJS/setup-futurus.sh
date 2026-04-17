@@ -92,17 +92,17 @@ fi
 # 2. Ask for ports
 echo -e "\n"
 print_header "PORT CONFIGURATION"
-read -p "Port for frontend [3000]: " FRONTEND_PORT
-FRONTEND_PORT=${FRONTEND_PORT:-3000}
+read -p "Port for frontend [3300]: " FRONTEND_PORT
+FRONTEND_PORT=${FRONTEND_PORT:-3300}
 
-read -p "Port for backend [3001]: " BACKEND_PORT
-BACKEND_PORT=${BACKEND_PORT:-3001}
+read -p "Port for backend [3302]: " BACKEND_PORT
+BACKEND_PORT=${BACKEND_PORT:-3302}
 
-read -p "Port for admin [3002]: " ADMIN_PORT
-ADMIN_PORT=${ADMIN_PORT:-3002}
+read -p "Port for admin [3301]: " ADMIN_PORT
+ADMIN_PORT=${ADMIN_PORT:-3301}
 
-read -p "Port for database [5432]: " DB_PORT
-DB_PORT=${DB_PORT:-5432}
+read -p "Port for database [15432]: " DB_PORT
+DB_PORT=${DB_PORT:-15432}
 
 # Export for sub-processes
 export FRONTEND_PORT
@@ -235,9 +235,25 @@ print_header "SECURITY & 2FA CONFIGURATION"
 
 # Set default 2FA issuer if not present in backend/.env
 if ! grep -q "OTP_ISSUER" backend/.env; then
-    echo "OTP_ISSUER=\"Futurus Brasil\"" >> backend/.env
+    echo "OTP_ISSUER=\"${NEXT_PUBLIC_APP_NAME:-Futurus}\"" >> backend/.env
     print_success "Added OTP_ISSUER to backend/.env"
 fi
+
+# Ensure NEXT_PUBLIC_APP_NAME is set in frontend and admin .env files
+for dir in frontend admin; do
+    if [ -f "$dir/.env" ] || [ -f "$dir/.env.local" ]; then
+        ENV_TARGET="$dir/.env.local"
+        [ ! -f "$ENV_TARGET" ] && ENV_TARGET="$dir/.env"
+        if ! grep -q "NEXT_PUBLIC_APP_NAME" "$ENV_TARGET" 2>/dev/null; then
+            echo "NEXT_PUBLIC_APP_NAME=\"${NEXT_PUBLIC_APP_NAME:-Futurus}\"" >> "$ENV_TARGET"
+            print_success "Added NEXT_PUBLIC_APP_NAME to $ENV_TARGET"
+        fi
+        if ! grep -q "NEXT_PUBLIC_COIN_NAME" "$ENV_TARGET" 2>/dev/null; then
+            echo "NEXT_PUBLIC_COIN_NAME=\"${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}\"" >> "$ENV_TARGET"
+            print_success "Added NEXT_PUBLIC_COIN_NAME to $ENV_TARGET"
+        fi
+    fi
+done
 
 # 8. Database Configuration and Localization
 echo -e "\n"
@@ -562,7 +578,7 @@ VALUES (
     1,
     'Futurus Brasil',
     NULL,
-    'contato@futurus-brasil.com',
+    'contato@futurus.com.br',
     '+55 11 99500-1234',
     'Av. Paulista 3500 CJ.124, São Paulo - SP',
     'BRL',

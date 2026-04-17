@@ -25,6 +25,7 @@ import Banner from "@/components/Banner";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { features } from "@/lib/landing-data";
+import { getAppName, getFullLogoPath } from "@/lib/app-config";
 import { useSearchParams } from "next/navigation";
 
 interface SiteSettings {
@@ -42,7 +43,7 @@ export default function HomePage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState<SiteSettings>({ siteName: "Futurus" });
+  const [settings, setSettings] = useState<SiteSettings>({ siteName: getAppName() });
 
   const fetchData = async (sortBy?: string) => {
     setLoading(true);
@@ -173,10 +174,10 @@ export default function HomePage() {
                     />
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-4">
-                    {feature.title}
+                    {t(feature.titleKey)}
                   </h3>
                   <p className="text-slate-400 text-base leading-relaxed">
-                    {feature.description}
+                    {t(feature.descriptionKey)}
                   </p>
                 </div>
               ))}
@@ -233,16 +234,14 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 pb-20 border-b border-white/5">
             {/* Logo and About */}
             <div className="space-y-8">
-              <Link href="/" className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-600/20">
-                  <Image
-                    src="/images/logo/logo.png"
-                    alt="Futurus"
-                    width={100}
-                    height={30}
-                    className="h-7 w-auto"
-                  />
-                </div>
+              <Link href="/" className="inline-block">
+                <Image
+                  src={getFullLogoPath()}
+                  alt={getAppName()}
+                  width={160}
+                  height={50}
+                  className="h-10 w-auto object-contain"
+                />
               </Link>
               <p className="text-slate-400 text-base leading-relaxed">
                 {t(
