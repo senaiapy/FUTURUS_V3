@@ -392,6 +392,17 @@ SERVER_PATH=${SERVER_PATH:-/var/www/futurus}
 read -p "SSH Port [22]: " SSH_PORT
 SSH_PORT=${SSH_PORT:-22}
 
+# SSH Connection Multiplexing - reuse one connection to avoid server throttling
+SSH_CONTROL_PATH="/tmp/.deploy_ssh_mux_%r@%h:%p"
+
+# Cleanup multiplexed connection on script exit
+cleanup_ssh_mux() {
+    ssh -o ControlPath="$SSH_CONTROL_PATH" -O exit "${SERVER_USER}@${SERVER_IP}" 2>/dev/null || true
+}
+trap cleanup_ssh_mux EXIT
+
+SSH_COMMON_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ControlMaster=auto -o ControlPath=${SSH_CONTROL_PATH} -o ControlPersist=300"
+
 if [[ "$AUTH_METHOD" == "2" ]]; then
     IS_AMAZON=true
 
@@ -425,11 +436,11 @@ if [[ "$AUTH_METHOD" == "2" ]]; then
     print_info "Using SSH key authentication"
 
     run_ssh() {
-        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
+        ssh ${SSH_COMMON_OPTS} -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
     }
 
     run_scp() {
-        scp -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
+        scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -i "$SSH_KEY_PATH" -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
     }
 else
     IS_AMAZON=false
@@ -454,12 +465,78 @@ else
     print_info "Using password authentication"
 
     run_ssh() {
-        sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
+        sshpass -p "$SERVER_PASS" ssh ${SSH_COMMON_OPTS} -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
     }
 
     run_scp() {
-        sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
+        sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
     }
+fi
+
+#-----------------------------------------------
+# Sudo Password Configuration
+#-----------------------------------------------
+if [[ "$SERVER_USER" != "root" ]]; then
+    print_header "SUDO CONFIGURATION"
+    print_info "You are connecting as '${SERVER_USER}' (non-root)."
+    print_info "Sudo password is needed for Docker and file operations on the server."
+    echo ""
+    if [[ "$IS_AMAZON" == "false" ]] && [ -n "${SERVER_PASS:-}" ]; then
+        if ask_yes_no "Use the same SSH password for sudo?"; then
+            SUDO_PASS="$SERVER_PASS"
+        else
+            read -sp "Enter sudo password for '${SERVER_USER}': " SUDO_PASS
+            echo ""
+        fi
+    else
+        read -sp "Enter sudo password for '${SERVER_USER}': " SUDO_PASS
+        echo ""
+    fi
+    print_success "Sudo password configured."
+
+    # Override run_ssh: replace 'sudo' with password-piped version via alias
+    # This ensures every sudo call in the session gets the password, regardless of cache timeout
+    if [[ "$IS_AMAZON" == "true" ]]; then
+        run_ssh() {
+            local cmd="$1"
+            local sudo_setup
+            printf -v sudo_setup 'export SUDO_ASKPASS=/bin/false; _SUDO_PASS=%q; sudo() { echo "$_SUDO_PASS" | command sudo -S "$@"; }; ' "$SUDO_PASS"
+            ssh ${SSH_COMMON_OPTS} -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "${sudo_setup}${cmd}"
+        }
+    else
+        run_ssh() {
+            local cmd="$1"
+            local sudo_setup
+            printf -v sudo_setup 'export SUDO_ASKPASS=/bin/false; _SUDO_PASS=%q; sudo() { echo "$_SUDO_PASS" | command sudo -S "$@"; }; ' "$SUDO_PASS"
+            sshpass -p "$SERVER_PASS" ssh ${SSH_COMMON_OPTS} -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "${sudo_setup}${cmd}"
+        }
+    fi
+
+    # Override run_scp: upload to /tmp first, then move with sudo
+    if [[ "$IS_AMAZON" == "true" ]]; then
+        run_scp() {
+            local src="$1"
+            local dest="$2"
+            local filename
+            filename=$(basename "$src")
+            local tmp_dest="/tmp/_deploy_${filename}"
+            scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -i "$SSH_KEY_PATH" -P "$SSH_PORT" -r "$src" "${SERVER_USER}@${SERVER_IP}:${tmp_dest}"
+            run_ssh "if [ -d '${tmp_dest}' ]; then sudo cp -rf '${tmp_dest}/.' '${dest}' 2>/dev/null || sudo cp -rf '${tmp_dest}' '${dest}'; rm -rf '${tmp_dest}'; else sudo mv -f '${tmp_dest}' '${dest}'; fi"
+        }
+    else
+        run_scp() {
+            local src="$1"
+            local dest="$2"
+            local filename
+            filename=$(basename "$src")
+            local tmp_dest="/tmp/_deploy_${filename}"
+            sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -P "$SSH_PORT" -r "$src" "${SERVER_USER}@${SERVER_IP}:${tmp_dest}"
+            run_ssh "if [ -d '${tmp_dest}' ]; then sudo cp -rf '${tmp_dest}/.' '${dest}' 2>/dev/null || sudo cp -rf '${tmp_dest}' '${dest}'; rm -rf '${tmp_dest}'; else sudo mv -f '${tmp_dest}' '${dest}'; fi"
+        }
+    fi
+    print_info "SCP uploads will go through /tmp to handle permissions."
+else
+    SUDO_PASS=""
 fi
 
 echo ""
@@ -501,6 +578,9 @@ while true; do
             read -p "Choose method [1]: " AUTH_METHOD
             AUTH_METHOD=${AUTH_METHOD:-1}
 
+            # Close old multiplexed connection
+            cleanup_ssh_mux
+
             if [[ "$AUTH_METHOD" == "2" ]]; then
                 IS_AMAZON=true
                 while true; do
@@ -517,20 +597,20 @@ while true; do
                 done
                 chmod 400 "$SSH_KEY_PATH"
                 run_ssh() {
-                    ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
+                    ssh ${SSH_COMMON_OPTS} -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
                 }
                 run_scp() {
-                    scp -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
+                    scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -i "$SSH_KEY_PATH" -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
                 }
             else
                 IS_AMAZON=false
                 read -sp "SSH Password: " SERVER_PASS
                 echo ""
                 run_ssh() {
-                    sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
+                    sshpass -p "$SERVER_PASS" ssh ${SSH_COMMON_OPTS} -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "$1"
                 }
                 run_scp() {
-                    sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
+                    sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -P "$SSH_PORT" -r "$1" "${SERVER_USER}@${SERVER_IP}:$2"
                 }
             fi
         else
@@ -926,43 +1006,41 @@ if ask_yes_no "Ready to upload files to $SERVER_IP. Continue?" "y"; then
     echo 'Old image files cleaned.'
     " || true
 
-    # Upload images
-    print_step "Uploading Docker images (this may take several minutes)..."
-    run_scp "$EXPORT_DIR/images/futurus-app.tar.gz" "${SERVER_PATH}/images/"
-    print_success "App image uploaded."
+    # Bundle everything (images + config + SQL + backups) into one tar for upload
+    print_step "Creating deployment bundle..."
+    DEPLOY_BUNDLE="/tmp/_deploy_bundle.tar.gz"
+    (cd "$EXPORT_DIR" && tar czf "$DEPLOY_BUNDLE" \
+        images/futurus-app.tar.gz images/mariadb.tar.gz images/phpmyadmin.tar.gz \
+        docker-compose.yml .env \
+        start.sh stop.sh restart.sh logs.sh status.sh backup.sh restore.sh debug.sh \
+        $([ -d "SQL" ] && [ "$(ls -A SQL 2>/dev/null)" ] && echo "SQL/") \
+        $([ -d "backups" ] && [ "$(ls -A backups 2>/dev/null)" ] && echo "backups/") \
+        2>/dev/null)
+    print_success "Bundle created: $(du -h "$DEPLOY_BUNDLE" | cut -f1)"
 
-    run_scp "$EXPORT_DIR/images/mariadb.tar.gz" "${SERVER_PATH}/images/"
-    print_success "MariaDB image uploaded."
-
-    run_scp "$EXPORT_DIR/images/phpmyadmin.tar.gz" "${SERVER_PATH}/images/"
-    print_success "phpMyAdmin image uploaded."
-
-    # Upload configuration files
-    print_step "Uploading configuration files..."
-    run_scp "$EXPORT_DIR/docker-compose.yml" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/.env" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/start.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/stop.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/restart.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/logs.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/status.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/backup.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/restore.sh" "${SERVER_PATH}/"
-    run_scp "$EXPORT_DIR/debug.sh" "${SERVER_PATH}/"
-
-    # Upload SQL files
-    if [ -d "$EXPORT_DIR/SQL" ] && [ "$(ls -A "$EXPORT_DIR/SQL" 2>/dev/null)" ]; then
-        print_step "Uploading SQL files..."
-        run_scp "$EXPORT_DIR/SQL/" "${SERVER_PATH}/"
+    # Upload the single bundle to /tmp on the server (always writable)
+    print_step "Uploading deployment bundle (this may take several minutes)..."
+    if [[ "$IS_AMAZON" == "true" ]]; then
+        scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -i "$SSH_KEY_PATH" -P "$SSH_PORT" "$DEPLOY_BUNDLE" "${SERVER_USER}@${SERVER_IP}:/tmp/_deploy_bundle.tar.gz"
+    else
+        sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -P "$SSH_PORT" "$DEPLOY_BUNDLE" "${SERVER_USER}@${SERVER_IP}:/tmp/_deploy_bundle.tar.gz"
     fi
+    rm -f "$DEPLOY_BUNDLE"
+    print_success "Bundle uploaded to server."
 
-    # Upload backups if selected
-    if [ -d "$EXPORT_DIR/backups" ] && [ "$(ls -A "$EXPORT_DIR/backups" 2>/dev/null)" ]; then
-        print_step "Uploading database backup..."
-        run_scp "$EXPORT_DIR/backups/" "${SERVER_PATH}/"
-    fi
-
-    print_success "All files uploaded."
+    # Extract bundle on server with sudo
+    print_step "Extracting deployment files on server..."
+    run_ssh "
+        set -e
+        cd ${SERVER_PATH}
+        sudo tar xzf /tmp/_deploy_bundle.tar.gz
+        rm -f /tmp/_deploy_bundle.tar.gz
+        echo 'Verifying files...'
+        ls -la images/futurus-app.tar.gz images/mariadb.tar.gz images/phpmyadmin.tar.gz
+        ls -la docker-compose.yml .env
+        echo 'All files extracted successfully.'
+    "
+    print_success "All files uploaded and verified."
 else
     print_info "Upload cancelled."
     exit 0
@@ -1067,8 +1145,9 @@ sudo docker images | grep -E 'futurus|mariadb|phpmyadmin'
 print_step "Setting file permissions..."
 run_ssh "
 cd ${SERVER_PATH}
-chmod 600 .env
-chmod +x *.sh
+sudo chown \$(whoami):\$(whoami) .env docker-compose.yml *.sh 2>/dev/null || true
+sudo chmod 600 .env
+sudo chmod +x *.sh
 "
 
 print_step "Final port check before starting..."
