@@ -116,6 +116,11 @@ POSTGRES_PORT=$(ask_def "Postgres port" "${POSTGRES_PORT:-15432}")
 PGADMIN_PORT=$(ask_def  "pgAdmin  port" "${PGADMIN_PORT:-5051}")
 export BACKEND_PORT ADMIN_PORT FRONTEND_PORT POSTGRES_PORT PGADMIN_PORT
 
+# App name, coin name and version (from .env, needed for build args)
+APP_NAME="${NEXT_PUBLIC_APP_NAME:-Futurus}"
+COIN_NAME="${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}"
+APP_VERSION="${NEXT_PUBLIC_APP_VERSION:-3.0.0}"
+
 #==============================================================================
 # 3. Local cleanup
 #==============================================================================
@@ -352,11 +357,7 @@ AUTH_SECRET_NEW=$(openssl rand -base64 32 2>/dev/null || dd if=/dev/urandom bs=3
 NEW_DB_PASS=$(openssl rand -hex 16 2>/dev/null || dd if=/dev/urandom bs=16 count=1 2>/dev/null | xxd -p)
 DOMAIN_DEFAULT="$(basename "$SERVER_PATH")"
 
-# Read APP_NAME from root .env or ask
-APP_NAME="${NEXT_PUBLIC_APP_NAME:-Futurus}"
-APP_NAME=$(ask_def "App name (Futurus/Prevejo/Predigo)" "$APP_NAME")
-COIN_NAME="${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}"
-APP_VERSION="${NEXT_PUBLIC_APP_VERSION:-3.0.0}"
+# APP_NAME, COIN_NAME, APP_VERSION already defined in step 2
 
 # Ask for domain-based HTTPS URLs or fall back to IP:port HTTP
 echo
