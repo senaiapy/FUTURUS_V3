@@ -1185,6 +1185,102 @@ done
 echo ""
 
 #-----------------------------------------------
+# Step 13.1: Upload Assets/Images to Container
+#-----------------------------------------------
+ASSETS_IMAGES_DIR="$SCRIPT_DIR/assets/images"
+if [ -d "$ASSETS_IMAGES_DIR" ] && [ "$(ls -A "$ASSETS_IMAGES_DIR" 2>/dev/null)" ]; then
+    ASSETS_COUNT=$(find "$ASSETS_IMAGES_DIR" -type f | wc -l | tr -d ' ')
+    print_header "13.1 UPLOAD ASSETS/IMAGES"
+    print_info "Found ${ASSETS_COUNT} image files in assets/images/"
+
+    if ask_yes_no "Upload assets/images to the app container?" "y"; then
+        print_step "Bundling assets/images..."
+        ASSETS_TAR="/tmp/_deploy_assets_images.tar.gz"
+        (cd "$SCRIPT_DIR" && tar czf "$ASSETS_TAR" assets/images/ 2>/dev/null)
+        print_info "Bundle size: $(du -h "$ASSETS_TAR" | cut -f1)"
+
+        print_step "Uploading to server..."
+        if [[ "$IS_AMAZON" == "true" ]]; then
+            scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -i "$SSH_KEY_PATH" -P "$SSH_PORT" "$ASSETS_TAR" "${SERVER_USER}@${SERVER_IP}:/tmp/_deploy_assets_images.tar.gz"
+        else
+            sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -P "$SSH_PORT" "$ASSETS_TAR" "${SERVER_USER}@${SERVER_IP}:/tmp/_deploy_assets_images.tar.gz"
+        fi
+        rm -f "$ASSETS_TAR"
+
+        print_step "Extracting images into app container..."
+        run_ssh "
+            sudo docker cp /tmp/_deploy_assets_images.tar.gz ${CONTAINER_APP}:/tmp/
+            sudo docker exec ${CONTAINER_APP} bash -c 'cd /var/www/html && tar xzf /tmp/_deploy_assets_images.tar.gz 2>/dev/null && rm /tmp/_deploy_assets_images.tar.gz && chown -R www-data:www-data assets/images/'
+            rm -f /tmp/_deploy_assets_images.tar.gz
+            IMGS=\$(sudo docker exec ${CONTAINER_APP} find /var/www/html/assets/images/ -type f | wc -l)
+            echo \"Extracted \$IMGS image files into container.\"
+        "
+        print_success "Assets/images uploaded to container."
+    else
+        print_info "Skipping assets/images upload."
+    fi
+else
+    print_warning "No assets/images directory found. Upload images via admin panel after deployment."
+fi
+
+#-----------------------------------------------
+# Step 13.5: Restore Database Backup (if included)
+#-----------------------------------------------
+BACKUP_FILES=($(ls -t "$EXPORT_DIR/backups/"*.sql.gz "$EXPORT_DIR/backups/"*.sql 2>/dev/null || true))
+if [ ${#BACKUP_FILES[@]} -gt 0 ]; then
+    print_header "13.5 RESTORE DATABASE BACKUP"
+    print_info "Found backup: $(basename "${BACKUP_FILES[0]}")"
+
+    if ask_yes_no "Do you want to restore the database backup on the server?" "y"; then
+        BACKUP_TO_RESTORE="${BACKUP_FILES[0]}"
+        BACKUP_BASENAME=$(basename "$BACKUP_TO_RESTORE")
+
+        print_step "Uploading backup to server..."
+        if [[ "$IS_AMAZON" == "true" ]]; then
+            scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -i "$SSH_KEY_PATH" -P "$SSH_PORT" "$BACKUP_TO_RESTORE" "${SERVER_USER}@${SERVER_IP}:/tmp/_deploy_db_restore"
+        else
+            sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no -o ControlMaster=auto -o "ControlPath=${SSH_CONTROL_PATH}" -o ControlPersist=300 -P "$SSH_PORT" "$BACKUP_TO_RESTORE" "${SERVER_USER}@${SERVER_IP}:/tmp/_deploy_db_restore"
+        fi
+
+        print_step "Waiting for database to be ready..."
+        for i in {1..20}; do
+            DB_READY=$(run_ssh "sudo docker exec ${CONTAINER_DB} healthcheck.sh --connect --innodb_initialized 2>/dev/null && echo 'READY'" || echo "")
+            if [[ "$DB_READY" == *"READY"* ]]; then
+                break
+            fi
+            echo -n "."
+            sleep 3
+        done
+        echo ""
+
+        print_step "Restoring database backup..."
+        run_ssh "
+            cd ${SERVER_PATH}
+            export \$(grep -v '^#' .env | xargs)
+            echo 'Restoring \${DB_DATABASE} from backup...'
+            if [[ '${BACKUP_BASENAME}' == *.gz ]]; then
+                gunzip -c /tmp/_deploy_db_restore | sudo docker exec -i ${CONTAINER_DB} mysql -uroot -p\"\${DB_ROOT_PASSWORD}\" \"\${DB_DATABASE}\" 2>&1
+            else
+                sudo docker exec -i ${CONTAINER_DB} mysql -uroot -p\"\${DB_ROOT_PASSWORD}\" \"\${DB_DATABASE}\" < /tmp/_deploy_db_restore 2>&1
+            fi
+            RESTORE_RC=\$?
+            rm -f /tmp/_deploy_db_restore
+            if [ \$RESTORE_RC -eq 0 ]; then
+                echo 'Database restored successfully!'
+                echo 'Tables:'
+                sudo docker exec ${CONTAINER_DB} mysql -uroot -p\"\${DB_ROOT_PASSWORD}\" \"\${DB_DATABASE}\" -e 'SHOW TABLES;' 2>/dev/null | wc -l
+                echo 'tables loaded.'
+            else
+                echo 'WARNING: Database restore failed with exit code '\$RESTORE_RC
+            fi
+        "
+        print_success "Database backup restored."
+    else
+        print_info "Skipping database restore."
+    fi
+fi
+
+#-----------------------------------------------
 # Step 14: Configure Laravel
 #-----------------------------------------------
 print_header "14. CONFIGURING LARAVEL"
@@ -1268,6 +1364,74 @@ if(\\\$admin) {
 \" 2>/dev/null || echo 'Note: Admin setup skipped (may already exist or migrations pending)'
 "
 print_success "Admin user configured (username: admin, password: admin123)"
+
+#-----------------------------------------------
+# Step 14.5: Apache Reverse Proxy Fix (aaPanel)
+#-----------------------------------------------
+print_header "14.5 APACHE REVERSE PROXY (aaPanel)"
+
+# Detect if aaPanel Apache is installed
+AAPANEL_APACHE=$(run_ssh "test -d /www/server/panel/vhost/apache/proxy && echo 'yes' || echo 'no'" 2>/dev/null || echo "no")
+
+if [[ "$AAPANEL_APACHE" == *"yes"* ]]; then
+    print_info "aaPanel Apache detected."
+    if [ -n "$DOMAIN" ] && [ "$DOMAIN" != "" ]; then
+        PROXY_DOMAIN="$DOMAIN"
+    else
+        read -p "Enter domain name for reverse proxy (e.g. futurus.net.br, or leave empty to skip): " PROXY_DOMAIN
+    fi
+
+    if [ -n "$PROXY_DOMAIN" ]; then
+        if ask_yes_no "Configure Apache reverse proxy for ${PROXY_DOMAIN} -> port ${APP_PORT}?" "y"; then
+            print_step "Configuring Apache reverse proxy..."
+            run_ssh "
+                PROXY_DIR='/www/server/panel/vhost/apache/proxy/${PROXY_DOMAIN}'
+                sudo mkdir -p \"\$PROXY_DIR\"
+
+                # Find existing proxy config or create new one
+                PROXY_FILE=\$(ls \"\$PROXY_DIR\"/*.conf 2>/dev/null | head -1)
+                if [ -z \"\$PROXY_FILE\" ]; then
+                    PROXY_FILE=\"\$PROXY_DIR/reverse_proxy_${PROXY_DOMAIN}.conf\"
+                fi
+
+                echo \"Updating proxy config: \$PROXY_FILE\"
+                sudo bash -c \"cat > \\\"\$PROXY_FILE\\\" << 'PROXYCONF'
+#PROXY-START/
+<IfModule mod_proxy.c>
+    ProxyRequests Off
+    SSLProxyEngine on
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto \\\"https\\\"
+    RequestHeader set X-Real-IP \\\"%{REMOTE_ADDR}s\\\"
+    RequestHeader set X-Forwarded-For \\\"%{REMOTE_ADDR}s\\\"
+    ProxyPass / http://127.0.0.1:${APP_PORT}/
+    ProxyPassReverse / http://127.0.0.1:${APP_PORT}/
+</IfModule>
+#PROXY-END/
+PROXYCONF\"
+
+                echo 'Proxy config written:'
+                cat \"\$PROXY_FILE\"
+
+                echo ''
+                echo 'Testing Apache config...'
+                sudo /www/server/apache/bin/apachectl -t 2>&1 || sudo apachectl -t 2>&1
+
+                echo 'Restarting Apache...'
+                sudo /www/server/apache/bin/apachectl restart 2>&1 || sudo systemctl restart httpd 2>&1 || sudo apachectl restart 2>&1
+                echo 'Apache restarted.'
+            "
+            print_success "Apache reverse proxy configured: ${PROXY_DOMAIN} -> port ${APP_PORT}"
+            print_info "Headers: X-Forwarded-Proto, X-Real-IP, X-Forwarded-For"
+        else
+            print_info "Skipping Apache proxy configuration."
+        fi
+    else
+        print_info "No domain provided, skipping proxy configuration."
+    fi
+else
+    print_info "aaPanel Apache not detected, skipping proxy configuration."
+fi
 
 #-----------------------------------------------
 # Step 15: Verification and Debug

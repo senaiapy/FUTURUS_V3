@@ -31,7 +31,6 @@ secrets.json
 # DOCKER EXPORTS
 # ===========================================
 .deploy_temp/
-images/
 *.tar
 *.tar.gz
 
