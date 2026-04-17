@@ -607,32 +607,58 @@ if [ -n "$STORAGE_BUNDLE" ] && [ -f "$STORAGE_BUNDLE" ]; then
   rsudo "mkdir -p $SERVER_PATH/backend/uploads && cd $SERVER_PATH && tar -xzf $(basename "$STORAGE_BUNDLE") -C backend/"
 fi
 
-print_step "Starting docker compose..."
-rsudo "cd $SERVER_PATH && docker compose up -d"
+print_step "Starting database first..."
+rsudo "cd $SERVER_PATH && docker compose up -d db"
 
 print_step "Waiting for postgres health..."
-for i in $(seq 1 30); do
+for i in $(seq 1 60); do
   if rsudo "docker exec ${C_DB} pg_isready -U ${DB_USER}" >/dev/null 2>&1; then
     print_success "Postgres ready"; break
   fi
-  if [ "$i" -eq 30 ]; then
-    print_error "Postgres did not become healthy in 60s"
+  if [ "$i" -eq 60 ]; then
+    print_error "Postgres did not become healthy in 120s"
+    exit 1
   fi
   sleep 2
 done
 
-print_step "Running prisma migrate deploy..."
-rsudo "docker exec -t ${C_BACKEND} npx prisma migrate deploy" || print_warning "migrate had issues"
+print_step "Starting backend..."
+rsudo "cd $SERVER_PATH && docker compose up -d backend"
 
-print_step "Ensuring all tables exist (prisma db push)..."
-rsudo "docker exec -t ${C_BACKEND} npx prisma db push --accept-data-loss" || print_warning "db push had issues"
+print_step "Waiting for backend to be ready..."
+for i in $(seq 1 30); do
+  if rsudo "docker exec ${C_BACKEND} pgrep -f node" >/dev/null 2>&1; then
+    print_success "Backend process ready"; break
+  fi
+  [ "$i" -eq 30 ] && print_error "Backend failed to start"
+  sleep 2
+done
+sleep 3
+
+print_step "Creating database schema (prisma db push)..."
+rsudo "docker exec -t ${C_BACKEND} npx prisma db push --accept-data-loss"
+if [ $? -ne 0 ]; then
+  print_warning "db push failed, retrying..."
+  sleep 5
+  rsudo "docker exec -t ${C_BACKEND} npx prisma db push --accept-data-loss" || print_error "db push failed"
+fi
 
 print_step "Generating Prisma Client..."
 rsudo "docker exec -t ${C_BACKEND} npx prisma generate" || print_warning "prisma generate had issues"
 
-print_step "Restarting backend after schema sync..."
+print_step "Restarting backend to load new schema..."
 rsudo "docker restart ${C_BACKEND}"
-sleep 5
+sleep 8
+
+print_step "Verifying backend is responding..."
+for i in $(seq 1 15); do
+  HELLO=$(rsudo "curl -s http://localhost:${BACKEND_PORT}/api" 2>/dev/null || true)
+  if echo "$HELLO" | grep -q "success"; then
+    print_success "Backend API responding"; break
+  fi
+  [ "$i" -eq 15 ] && print_warning "Backend not responding yet"
+  sleep 2
+done
 
 print_step "Creating upload directories on remote..."
 rsudo "mkdir -p $SERVER_PATH/backend/uploads/markets $SERVER_PATH/backend/uploads/images $SERVER_PATH/backend/uploads/verify $SERVER_PATH/backend/uploads/support $SERVER_PATH/backend/uploads/documents $SERVER_PATH/backend/uploads/blogs"
@@ -640,6 +666,9 @@ print_success "Upload directories ready (bind-mounted into container)"
 
 print_step "Seeding database..."
 rsudo "docker exec -t ${C_BACKEND} npx prisma db seed" || print_warning "seed had issues"
+
+print_step "Starting frontend and admin..."
+rsudo "cd $SERVER_PATH && docker compose up -d frontend admin pgadmin"
 
 #── Database Configuration (same as setup-futurus.sh) ──────────────────────────
 PG_EXEC="docker exec -e PGPASSWORD=${NEW_DB_PASS} ${C_DB} psql -h localhost -U ${DB_USER} -d ${DB_NAME} -c"
@@ -815,8 +844,31 @@ SELECT setval('\\\"SupportMessage_id_seq\\\"', COALESCE((SELECT MAX(id) FROM \\\
 \"" 2>/dev/null || print_warning "Sequence sync had issues"
 print_success "Database fully configured"
 
-print_step "Health checks..."
+print_step "Final restart of all services..."
+rsudo "cd $SERVER_PATH && docker compose restart backend"
 sleep 5
+
+print_step "Verifying markets are accessible..."
+for i in $(seq 1 10); do
+  MCOUNT=$(rsudo "curl -s http://localhost:${BACKEND_PORT}/api/markets 2>/dev/null | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d.get(\"data\",{}).get(\"markets\",[])))' 2>/dev/null" || echo "0")
+  if [ "$MCOUNT" -gt 0 ] 2>/dev/null; then
+    print_success "Markets API OK: $MCOUNT markets"
+    break
+  fi
+  [ "$i" -eq 10 ] && print_warning "Markets API not returning data yet"
+  sleep 2
+done
+
+print_step "Verifying admin login..."
+ADMIN_LOGIN=$(rsudo "curl -s -X POST http://localhost:${BACKEND_PORT}/api/admin/login -H 'Content-Type: application/json' -d '{\"username\":\"admin\",\"password\":\"admin123\"}' 2>/dev/null | python3 -c 'import sys,json;d=json.load(sys.stdin);print(\"OK\" if d.get(\"data\",{}).get(\"access_token\") or d.get(\"access_token\") else \"FAIL\")' 2>/dev/null" || echo "FAIL")
+if [ "$ADMIN_LOGIN" = "OK" ]; then
+  print_success "Admin login working (admin/admin123)"
+else
+  print_warning "Admin login check failed (may need manual verification)"
+fi
+
+print_step "Health checks..."
+sleep 3
 for p in $BACKEND_PORT $FRONTEND_PORT $ADMIN_PORT; do
   CODE=$(rsudo "curl -s -o /dev/null -w '%{http_code}' http://localhost:$p" 2>/dev/null || echo "000")
   if [[ "$CODE" =~ ^[23] ]]; then print_success "port $p: $CODE"
