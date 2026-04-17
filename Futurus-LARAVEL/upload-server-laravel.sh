@@ -494,21 +494,20 @@ if [[ "$SERVER_USER" != "root" ]]; then
     fi
     print_success "Sudo password configured."
 
-    # Override run_ssh: replace 'sudo' with password-piped version via alias
-    # This ensures every sudo call in the session gets the password, regardless of cache timeout
+    # Override run_ssh: use SUDO_ASKPASS to provide password without consuming stdin
+    # This keeps stdin free for piped commands like: gunzip | sudo docker load
+    SUDO_SETUP_CMD=""
+    printf -v SUDO_SETUP_CMD '_SUDO_ASK=$(mktemp /tmp/.sudo_askpass.XXXXXX); chmod 700 "$_SUDO_ASK"; echo "#!/bin/sh" > "$_SUDO_ASK"; echo "echo %q" >> "$_SUDO_ASK"; export SUDO_ASKPASS="$_SUDO_ASK"; sudo() { command sudo -A "$@"; }; trap "rm -f \\$_SUDO_ASK" EXIT; ' "$SUDO_PASS"
+
     if [[ "$IS_AMAZON" == "true" ]]; then
         run_ssh() {
             local cmd="$1"
-            local sudo_setup
-            printf -v sudo_setup 'export SUDO_ASKPASS=/bin/false; _SUDO_PASS=%q; sudo() { echo "$_SUDO_PASS" | command sudo -S "$@"; }; ' "$SUDO_PASS"
-            ssh ${SSH_COMMON_OPTS} -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "${sudo_setup}${cmd}"
+            ssh ${SSH_COMMON_OPTS} -i "$SSH_KEY_PATH" -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "${SUDO_SETUP_CMD}${cmd}"
         }
     else
         run_ssh() {
             local cmd="$1"
-            local sudo_setup
-            printf -v sudo_setup 'export SUDO_ASKPASS=/bin/false; _SUDO_PASS=%q; sudo() { echo "$_SUDO_PASS" | command sudo -S "$@"; }; ' "$SUDO_PASS"
-            sshpass -p "$SERVER_PASS" ssh ${SSH_COMMON_OPTS} -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "${sudo_setup}${cmd}"
+            sshpass -p "$SERVER_PASS" ssh ${SSH_COMMON_OPTS} -p "$SSH_PORT" "${SERVER_USER}@${SERVER_IP}" "${SUDO_SETUP_CMD}${cmd}"
         }
     fi
 
