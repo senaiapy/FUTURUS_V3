@@ -121,6 +121,21 @@ APP_NAME="${NEXT_PUBLIC_APP_NAME:-Futurus}"
 COIN_NAME="${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}"
 APP_VERSION="${NEXT_PUBLIC_APP_VERSION:-3.0.0}"
 
+# API URL for build args (asked early because images are built with this baked in)
+echo
+print_info "Configure API URL for the build"
+echo "  1) HTTPS with custom domain  (e.g. api.yourdomain.com)"
+echo "  2) HTTP with IP:port         (e.g. http://SERVER_IP:${BACKEND_PORT})"
+URL_MODE_EARLY=$(ask_def "URL mode" "1")
+if [ "$URL_MODE_EARLY" = "1" ]; then
+  API_DOMAIN_EARLY=$(ask_def "API domain (no https://)" "api.${APP_NAME,,}.com.br")
+  PUB_API_URL="https://${API_DOMAIN_EARLY}/api"
+else
+  SERVER_IP_EARLY=$(ask_def "Server IP" "${SERVER_IP:-}")
+  PUB_API_URL="http://${SERVER_IP_EARLY}:${BACKEND_PORT}/api"
+fi
+print_success "Build API URL: $PUB_API_URL"
+
 #==============================================================================
 # 3. Local cleanup
 #==============================================================================
@@ -162,7 +177,7 @@ services:
       context: ${SCRIPT_DIR}/frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT}
+        NEXT_PUBLIC_API_URL: ${PUB_API_URL}
         NEXT_PUBLIC_APP_NAME: ${APP_NAME}
         NEXT_PUBLIC_COIN_NAME: ${COIN_NAME}
         NEXT_PUBLIC_APP_VERSION: ${APP_VERSION}
@@ -174,7 +189,7 @@ services:
       context: ${SCRIPT_DIR}/admin
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT}
+        NEXT_PUBLIC_API_URL: ${PUB_API_URL}
         NEXT_PUBLIC_APP_NAME: ${APP_NAME}
         NEXT_PUBLIC_COIN_NAME: ${COIN_NAME}
         NEXT_PUBLIC_APP_VERSION: ${APP_VERSION}
@@ -369,12 +384,12 @@ if [ "$URL_MODE" = "1" ]; then
   API_DOMAIN=$(ask_def "API domain (no https://)" "api.${DOMAIN_DEFAULT}")
   FRONT_DOMAIN=$(ask_def "Frontend domain" "${DOMAIN_DEFAULT}")
   ADMIN_DOMAIN=$(ask_def "Admin domain" "admin.${DOMAIN_DEFAULT}")
-  PUB_API_URL="https://${API_DOMAIN}"
+  PUB_API_URL="https://${API_DOMAIN}/api"
   PUB_FRONTEND="https://${FRONT_DOMAIN}"
   PUB_ADMIN="https://${ADMIN_DOMAIN}"
   CORS_VAL="https://${FRONT_DOMAIN},https://${ADMIN_DOMAIN},https://${API_DOMAIN},http://${FRONT_DOMAIN},http://${ADMIN_DOMAIN},http://${SERVER_IP}:${FRONTEND_PORT},http://${SERVER_IP}:${ADMIN_PORT},http://${SERVER_IP}:${BACKEND_PORT},http://localhost:${FRONTEND_PORT},http://localhost:${ADMIN_PORT},http://localhost:${BACKEND_PORT}"
 else
-  PUB_API_URL="http://${SERVER_IP}:${BACKEND_PORT}"
+  PUB_API_URL="http://${SERVER_IP}:${BACKEND_PORT}/api"
   PUB_FRONTEND="http://${SERVER_IP}:${FRONTEND_PORT}"
   PUB_ADMIN="http://${SERVER_IP}:${ADMIN_PORT}"
   CORS_VAL="http://${SERVER_IP}:${FRONTEND_PORT},http://${SERVER_IP}:${ADMIN_PORT},http://${SERVER_IP}:${BACKEND_PORT},http://localhost:${FRONTEND_PORT},http://localhost:${ADMIN_PORT},http://localhost:${BACKEND_PORT}"

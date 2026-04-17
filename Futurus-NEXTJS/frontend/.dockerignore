@@ -4,6 +4,9 @@ npm-debug.log
 out
 build
 .env
+.env.local
+.env.development
+.env.production
 .git
 .dockerignore
 .vercel

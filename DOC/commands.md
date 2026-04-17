@@ -63,6 +63,13 @@ docker compose build frontend && docker compose up -d frontend
 ## running setup-futurus.sh
 printf 'n\n\n\n\n\ndev\nn\nn\n' | bash setup-futurus.sh 
 
-sshpass -p '@450Ab6606server' ssh -o StrictHostKeyChecking=no gamba@51.83.103.50 "echo '@' | sudo -S docker exec Prevejo-backend sh -c 'echo \$CORS_ORIGINS' 2>&1"
+sshpass -p '@' ssh -o StrictHostKeyChecking=no gamba@51.83.103.50 "echo '@' | sudo -S docker exec Prevejo-backend sh -c 'echo \$CORS_ORIGINS' 2>&1"
 
-sshpass -p '@450Ab6606server' ssh -o StrictHostKeyChecking=no gamba@51.83.103.50 "echo '@' | sudo -S docker exec Prevejo-backend sh -c 'curl -s http://localhost:3001/api/markets | head -100' 2>&1"
+sshpass -p '@' ssh -o StrictHostKeyChecking=no gamba@51.83.103.50 "echo '@' | sudo -S docker exec Prevejo-backend sh -c 'curl -s http://localhost:3001/api/markets | head -100' 2>&1"
+
+DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build -t prevejo/frontend:production \
+  --build-arg NEXT_PUBLIC_API_URL=https://api.prevejo.com.br/api \
+  --build-arg NEXT_PUBLIC_APP_NAME=Prevejo \
+  --build-arg "NEXT_PUBLIC_COIN_NAME=Futurus Coin" \
+  --build-arg "NEXT_PUBLIC_APP_VERSION=3.0.0-16042026-23:00" \
+  frontend/
