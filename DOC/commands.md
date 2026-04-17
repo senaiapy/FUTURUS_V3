@@ -73,3 +73,5 @@ DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build -t prevejo/frontend:production 
   --build-arg "NEXT_PUBLIC_COIN_NAME=Futurus Coin" \
   --build-arg "NEXT_PUBLIC_APP_VERSION=3.0.0-16042026-23:00" \
   frontend/
+
+  sshpass -p '@' scp -o StrictHostKeyChecking=no /tmp/admin-fix.tar.gz gamba@51.83.103.50:/tmp/admin-fix.tar.gz

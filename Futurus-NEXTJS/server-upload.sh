@@ -123,18 +123,29 @@ APP_VERSION="${NEXT_PUBLIC_APP_VERSION:-3.0.0}"
 
 # API URL for build args (asked early because images are built with this baked in)
 echo
-print_info "Configure API URL for the build"
+print_info "Configure URLs (needed for build & deploy)"
 echo "  1) HTTPS with custom domain  (e.g. api.yourdomain.com)"
 echo "  2) HTTP with IP:port         (e.g. http://SERVER_IP:${BACKEND_PORT})"
-URL_MODE_EARLY=$(ask_def "URL mode" "1")
-if [ "$URL_MODE_EARLY" = "1" ]; then
-  API_DOMAIN_EARLY=$(ask_def "API domain (no https://)" "api.${APP_NAME,,}.com.br")
-  PUB_API_URL="https://${API_DOMAIN_EARLY}/api"
+URL_MODE=$(ask_def "URL mode" "1")
+if [ "$URL_MODE" = "1" ]; then
+  DOMAIN_DEFAULT_EARLY=$(ask_def "Main domain" "${APP_NAME,,}.com.br")
+  API_DOMAIN=$(ask_def "API domain (no https://)" "api.${DOMAIN_DEFAULT_EARLY}")
+  FRONT_DOMAIN=$(ask_def "Frontend domain" "${DOMAIN_DEFAULT_EARLY}")
+  ADMIN_DOMAIN=$(ask_def "Admin domain" "admin.${DOMAIN_DEFAULT_EARLY}")
+  PUB_API_URL="https://${API_DOMAIN}/api"
+  PUB_FRONTEND="https://${FRONT_DOMAIN}"
+  PUB_ADMIN="https://${ADMIN_DOMAIN}"
+  CORS_VAL="https://${FRONT_DOMAIN},https://${ADMIN_DOMAIN},https://${API_DOMAIN},http://${FRONT_DOMAIN},http://${ADMIN_DOMAIN},http://localhost:${FRONTEND_PORT},http://localhost:${ADMIN_PORT},http://localhost:${BACKEND_PORT}"
 else
   SERVER_IP_EARLY=$(ask_def "Server IP" "${SERVER_IP:-}")
   PUB_API_URL="http://${SERVER_IP_EARLY}:${BACKEND_PORT}/api"
+  PUB_FRONTEND="http://${SERVER_IP_EARLY}:${FRONTEND_PORT}"
+  PUB_ADMIN="http://${SERVER_IP_EARLY}:${ADMIN_PORT}"
+  CORS_VAL="http://${SERVER_IP_EARLY}:${FRONTEND_PORT},http://${SERVER_IP_EARLY}:${ADMIN_PORT},http://${SERVER_IP_EARLY}:${BACKEND_PORT},http://localhost:${FRONTEND_PORT},http://localhost:${ADMIN_PORT},http://localhost:${BACKEND_PORT}"
 fi
-print_success "Build API URL: $PUB_API_URL"
+print_success "API: $PUB_API_URL"
+print_success "Frontend: $PUB_FRONTEND"
+print_success "Admin: $PUB_ADMIN"
 
 #==============================================================================
 # 3. Local cleanup
@@ -372,27 +383,10 @@ AUTH_SECRET_NEW=$(openssl rand -base64 32 2>/dev/null || dd if=/dev/urandom bs=3
 NEW_DB_PASS=$(openssl rand -hex 16 2>/dev/null || dd if=/dev/urandom bs=16 count=1 2>/dev/null | xxd -p)
 DOMAIN_DEFAULT="$(basename "$SERVER_PATH")"
 
-# APP_NAME, COIN_NAME, APP_VERSION already defined in step 2
-
-# Ask for domain-based HTTPS URLs or fall back to IP:port HTTP
-echo
-print_info "Configure API URLs for the remote .env"
-echo "  1) HTTPS with custom domain  (e.g. api.${DOMAIN_DEFAULT})"
-echo "  2) HTTP with IP:port         (e.g. http://${SERVER_IP}:${BACKEND_PORT})"
-URL_MODE=$(ask_def "URL mode" "1")
-if [ "$URL_MODE" = "1" ]; then
-  API_DOMAIN=$(ask_def "API domain (no https://)" "api.${DOMAIN_DEFAULT}")
-  FRONT_DOMAIN=$(ask_def "Frontend domain" "${DOMAIN_DEFAULT}")
-  ADMIN_DOMAIN=$(ask_def "Admin domain" "admin.${DOMAIN_DEFAULT}")
-  PUB_API_URL="https://${API_DOMAIN}/api"
-  PUB_FRONTEND="https://${FRONT_DOMAIN}"
-  PUB_ADMIN="https://${ADMIN_DOMAIN}"
-  CORS_VAL="https://${FRONT_DOMAIN},https://${ADMIN_DOMAIN},https://${API_DOMAIN},http://${FRONT_DOMAIN},http://${ADMIN_DOMAIN},http://${SERVER_IP}:${FRONTEND_PORT},http://${SERVER_IP}:${ADMIN_PORT},http://${SERVER_IP}:${BACKEND_PORT},http://localhost:${FRONTEND_PORT},http://localhost:${ADMIN_PORT},http://localhost:${BACKEND_PORT}"
-else
-  PUB_API_URL="http://${SERVER_IP}:${BACKEND_PORT}/api"
-  PUB_FRONTEND="http://${SERVER_IP}:${FRONTEND_PORT}"
-  PUB_ADMIN="http://${SERVER_IP}:${ADMIN_PORT}"
-  CORS_VAL="http://${SERVER_IP}:${FRONTEND_PORT},http://${SERVER_IP}:${ADMIN_PORT},http://${SERVER_IP}:${BACKEND_PORT},http://localhost:${FRONTEND_PORT},http://localhost:${ADMIN_PORT},http://localhost:${BACKEND_PORT}"
+# APP_NAME, COIN_NAME, APP_VERSION, PUB_API_URL, PUB_FRONTEND, PUB_ADMIN, CORS_VAL already defined in step 2
+# Add SERVER_IP to CORS if not already present
+if [ -n "${SERVER_IP:-}" ]; then
+  CORS_VAL="${CORS_VAL},http://${SERVER_IP}:${FRONTEND_PORT},http://${SERVER_IP}:${ADMIN_PORT},http://${SERVER_IP}:${BACKEND_PORT}"
 fi
 
 # Read Solana config from root .env
@@ -439,7 +433,7 @@ NEXTAUTH_URL=${PUB_FRONTEND}
 
 # ─── URLs ────────────────────────────────────────────────────────────────────
 NEXT_PUBLIC_API_URL=${PUB_API_URL}
-INTERNAL_API_URL=http://backend:3001
+INTERNAL_API_URL=http://backend:3001/api
 FRONTEND_URL=${PUB_FRONTEND}
 ADMIN_URL=${PUB_ADMIN}
 CORS_ORIGINS=${CORS_VAL}
