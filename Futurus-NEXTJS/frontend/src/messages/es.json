@@ -403,5 +403,8 @@
   "Code Sent!": "¡Código Enviado!",
   "Check your email for the reset code.": "Revisa tu correo electrónico para el código de restablecimiento.",
   "Enter your email": "Ingresa tu correo electrónico",
-  "Send Reset Code": "Enviar Código de Restablecimiento"
+  "Send Reset Code": "Enviar Código de Restablecimiento",
+  "joinFuture": "Únete al futuro de los mercados de predicción hoy.",
+  "signInSubtitle": "Inicia sesión para seguir prediciendo y ganando.",
+  "resetPasswordSubtitle": "Ingresa tu correo electrónico para restablecer tu contraseña."
 }

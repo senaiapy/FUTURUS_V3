@@ -2,12 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { TrendingUp, Globe, LogOut, LayoutDashboard } from "lucide-react";
+import { TrendingUp, Globe, LogOut, LayoutDashboard, Sun, Moon } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import api from "@/lib/api";
 import { getAppName, getLogoPath } from "@/lib/app-config";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const navItems = [
   { href: "/market", label: "Markets" },
@@ -22,6 +23,7 @@ export default function Header() {
   const t = useTranslations();
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { theme, toggleTheme } = useTheme();
   const [settings, setSettings] = useState<{ siteName: string; logoUrl?: string }>({
     siteName: getAppName(),
   });
@@ -52,7 +54,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md transition-colors duration-300">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-20 h-10 group-hover:scale-110 transition-transform overflow-hidden">
@@ -70,12 +72,12 @@ export default function Header() {
               />
             )}
           </div>
-          <span className="text-xl font-maven font-bold text-white tracking-tight">
+          <span className="text-xl font-maven font-bold text-slate-900 dark:text-white tracking-tight">
             {getAppName()}
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400 font-maven tracking-tight uppercase">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500 dark:text-slate-400 font-maven tracking-tight uppercase">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -83,7 +85,7 @@ export default function Header() {
               className={
                 isActive(item)
                   ? "bg-blue-600 text-white px-5 py-2 rounded-xl transition-all hover:scale-105 shadow-lg shadow-blue-600/20"
-                  : "hover:text-white transition-all hover:scale-105"
+                  : "hover:text-slate-900 dark:hover:text-white transition-all hover:scale-105"
               }
             >
               {t(item.label)}
@@ -92,7 +94,15 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-900/50 border border-white/5">
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all hover:scale-105"
+            title={theme === "dark" ? "Light mode" : "Dark mode"}
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5">
             <Link href="/" locale="pt" className="hover:scale-110 transition-transform" title="Português">
               <span className="text-lg leading-none">🇧🇷</span>
             </Link>
@@ -108,14 +118,14 @@ export default function Header() {
             <div className="flex items-center gap-3">
               <Link
                 href="/dashboard"
-                className="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 title={t("Dashboard")}
               >
                 <LayoutDashboard className="w-5 h-5" />
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center text-slate-400 hover:text-rose-400 transition-colors"
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-400 transition-colors"
                 title={t("Log Out")}
               >
                 <LogOut className="w-5 h-5" />

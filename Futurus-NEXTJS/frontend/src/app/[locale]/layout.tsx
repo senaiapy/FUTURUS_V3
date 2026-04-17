@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import AuthProvider from "@/components/AuthProvider";
 import CookieConsent from "@/components/CookieConsent";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import api from "@/lib/api";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -58,6 +59,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       className="dark"
+      suppressHydrationWarning
       style={{
         // @ts-expect-error - Dynamic CSS variables
         "--base": settings.baseColor,
@@ -65,13 +67,15 @@ export default async function RootLayout({
       }}
     >
       <body
-        className={`${inter.variable} ${outfit.variable} ${mavenPro.variable} ${lora.variable} font-sans bg-slate-950 text-slate-50 antialiased`}
+        className={`${inter.variable} ${outfit.variable} ${mavenPro.variable} ${lora.variable} font-sans bg-background text-foreground antialiased`}
       >
         <AuthProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
-            <CookieConsent />
-            <WhatsAppButton />
+            <ThemeProvider>
+              {children}
+              <CookieConsent />
+              <WhatsAppButton />
+            </ThemeProvider>
           </NextIntlClientProvider>
         </AuthProvider>
       </body>

@@ -32,6 +32,7 @@ services:
       DATABASE_URL: postgresql://${DB_USERNAME:-galo}:${DB_PASSWORD:-galo}@db:5432/${DB_DATABASE:-futurus_fullstack}?schema=public
       JWT_SECRET: ${JWT_SECRET:-super-secret-key}
       PORT: 3001
+      PUBLIC_APP_VERSION: ${NEXT_PUBLIC_APP_VERSION:-0.0.0}
       CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-3300},http://localhost:${ADMIN_PORT:-3301},http://localhost:${BACKEND_PORT:-3302}
     depends_on:
       - db
@@ -47,6 +48,7 @@ services:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3302}/api
         NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-Futurus}
         NEXT_PUBLIC_COIN_NAME: ${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}
+        NEXT_PUBLIC_APP_VERSION: ${NEXT_PUBLIC_APP_VERSION:-0.0.0}
     container_name: ${NEXT_PUBLIC_APP_NAME:-futurus}-frontend
     restart: always
     ports:
@@ -71,6 +73,7 @@ services:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3302}/api
         NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-Futurus}
         NEXT_PUBLIC_COIN_NAME: ${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}
+        NEXT_PUBLIC_APP_VERSION: ${NEXT_PUBLIC_APP_VERSION:-0.0.0}
     container_name: ${NEXT_PUBLIC_APP_NAME:-futurus}-admin
     restart: always
     ports:

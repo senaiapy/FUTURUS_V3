@@ -160,6 +160,7 @@ services:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT}
         NEXT_PUBLIC_APP_NAME: ${APP_NAME}
         NEXT_PUBLIC_COIN_NAME: ${COIN_NAME}
+        NEXT_PUBLIC_APP_VERSION: ${APP_VERSION}
     image: ${IMG_FRONTEND}
     container_name: ${C_FRONTEND}
 
@@ -171,6 +172,7 @@ services:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT}
         NEXT_PUBLIC_APP_NAME: ${APP_NAME}
         NEXT_PUBLIC_COIN_NAME: ${COIN_NAME}
+        NEXT_PUBLIC_APP_VERSION: ${APP_VERSION}
     image: ${IMG_ADMIN}
     container_name: ${C_ADMIN}
 BUILD_EOF
@@ -354,6 +356,7 @@ DOMAIN_DEFAULT="$(basename "$SERVER_PATH")"
 APP_NAME="${NEXT_PUBLIC_APP_NAME:-Futurus}"
 APP_NAME=$(ask_def "App name (Futurus/Prevejo/Predigo)" "$APP_NAME")
 COIN_NAME="${NEXT_PUBLIC_COIN_NAME:-Futurus Coin}"
+APP_VERSION="${NEXT_PUBLIC_APP_VERSION:-3.0.0}"
 
 # Ask for domain-based HTTPS URLs or fall back to IP:port HTTP
 echo
@@ -390,6 +393,8 @@ cat > "$EXPORT_DIR/.env" <<ENV_EOF
 NODE_ENV=production
 NEXT_PUBLIC_APP_NAME="${APP_NAME}"
 NEXT_PUBLIC_COIN_NAME="${COIN_NAME}"
+NEXT_PUBLIC_APP_VERSION="${APP_VERSION}"
+PUBLIC_APP_VERSION="${APP_VERSION}"
 NEXT_PUBLIC_APP_VERSION="1.1.2-$(date +%d%m%Y-%H:%M)"
 
 # ─── Server ──────────────────────────────────────────────────────────────────

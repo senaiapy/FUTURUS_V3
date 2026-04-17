@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] -z-10 animate-pulse" />
 
       <div className="w-full max-w-md">
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
             {t("Reset Password")}
           </h1>
           <p className="text-slate-400">
-            {t("Enter your email to reset your password.")}
+            {t("resetPasswordSubtitle")}
           </p>
         </div>
 

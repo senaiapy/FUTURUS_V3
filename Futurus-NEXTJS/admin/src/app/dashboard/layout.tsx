@@ -36,6 +36,8 @@ import {
   Wallet,
   Coins,
   Languages,
+  Sun,
+  Moon,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -46,6 +48,7 @@ import {
   getRouteKeyFromPath,
 } from "@/contexts/PermissionsContext";
 import { TranslationProvider, useTranslation } from "@/contexts/TranslationContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MenuItem {
   label: string;
@@ -175,6 +178,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { canAccess, canWrite, isAdmin, role, clearPermissions, isLoading: permissionsLoading } = usePermissions();
   const { t, locale, setLocale } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
 
@@ -543,7 +547,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Global Header */}
-        <header className="h-20 lg:h-24 bg-[#0a0b14]/60 backdrop-blur-3xl border-b border-white/2 flex items-center justify-between px-4 lg:px-10 sticky top-0 z-40">
+        <header className="h-20 lg:h-24 bg-white/60 dark:bg-[#0a0b14]/60 backdrop-blur-3xl border-b border-black/5 dark:border-white/2 flex items-center justify-between px-4 lg:px-10 sticky top-0 z-40 transition-colors duration-300">
           <div className="flex items-center gap-4 lg:gap-8">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -588,6 +592,15 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="flex items-center gap-2 lg:gap-3">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                title={theme === "dark" ? "Light mode" : "Dark mode"}
+                className="relative p-2.5 lg:p-3 rounded-2xl bg-white/2 border border-white/2 text-slate-500 hover:text-amber-400 transition-all hover:scale-110 active:scale-95"
+              >
+                {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+
               {/* Language Switcher */}
               <div ref={langRef} className="relative">
                 <button

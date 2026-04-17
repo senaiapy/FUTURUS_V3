@@ -403,5 +403,8 @@
   "Code Sent!": "Code Sent!",
   "Check your email for the reset code.": "Check your email for the reset code.",
   "Enter your email": "Enter your email",
-  "Send Reset Code": "Send Reset Code"
+  "Send Reset Code": "Send Reset Code",
+  "joinFuture": "Join the future of prediction markets today.",
+  "signInSubtitle": "Sign in to continue predicting and winning.",
+  "resetPasswordSubtitle": "Enter your email to reset your password."
 }

@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root,
+.light {
+  --background: #f1f5f9;
+  --foreground: #0f172a;
+}
+
+.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
 }
 
 @theme inline {
@@ -12,15 +20,57 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── Admin Light Mode Overrides ─────────────────────────────────── */
+.light .text-white {
+  color: #0f172a;
+}
+.light .text-slate-300 {
+  color: #475569;
+}
+.light .text-slate-400 {
+  color: #64748b;
+}
+.light .text-slate-500 {
+  color: #94a3b8;
+}
+.light .bg-slate-950 {
+  background-color: #f1f5f9;
+}
+.light .bg-slate-900 {
+  background-color: #e2e8f0;
+}
+.light .bg-slate-900\/50 {
+  background-color: rgba(226, 232, 240, 0.5);
+}
+.light .bg-slate-800 {
+  background-color: #e2e8f0;
+}
+.light .bg-slate-800\/50 {
+  background-color: rgba(226, 232, 240, 0.5);
+}
+.light .border-white\/5,
+.light .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.light .hover\:text-white:hover {
+  color: #0f172a;
+}
+.light .hover\:bg-slate-800:hover {
+  background-color: #cbd5e1;
+}
+.light .text-indigo-400 {
+  color: #4f46e5;
+}
+.light .shadow-2xl {
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
 }

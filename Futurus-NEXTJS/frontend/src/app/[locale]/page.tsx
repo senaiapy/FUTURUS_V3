@@ -77,7 +77,7 @@ export default function HomePage() {
   }, [selectedCategory, searchParams]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-950">
+    <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
       <Header />
 
       <main className="flex-1 font-maven">

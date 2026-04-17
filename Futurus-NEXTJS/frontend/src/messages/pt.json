@@ -402,5 +402,8 @@
   "Code Sent!": "Código Enviado!",
   "Check your email for the reset code.": "Verifique seu e-mail para o código de redefinição.",
   "Enter your email": "Digite seu e-mail",
-  "Send Reset Code": "Enviar Código de Redefinição"
+  "Send Reset Code": "Enviar Código de Redefinição",
+  "joinFuture": "Junte-se ao futuro dos mercados de previsão hoje.",
+  "signInSubtitle": "Entre para continuar prevendo e ganhando.",
+  "resetPasswordSubtitle": "Digite seu e-mail para redefinir sua senha."
 }
