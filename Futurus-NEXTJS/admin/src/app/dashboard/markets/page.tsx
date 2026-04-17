@@ -244,8 +244,18 @@ export default function AdminMarketsPage() {
                     >
                       <td className="px-10 py-7">
                         <div className="flex items-center gap-5">
-                          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-indigo-500/10 to-purple-500/10 border border-white/5 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0 relative">
-                            <BarChart3 className="w-6 h-6 text-indigo-400/60" />
+                          <div className="w-14 h-14 rounded-2xl border border-white/5 overflow-hidden group-hover:scale-105 transition-transform shrink-0 relative bg-linear-to-br from-indigo-500/10 to-purple-500/10">
+                            {m.image ? (
+                              <img
+                                src={m.image.startsWith("http") ? m.image : `${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3302").replace(/\/api$/, "")}${m.image}`}
+                                alt={m.question}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <BarChart3 className="w-6 h-6 text-indigo-400/60" />
+                              </div>
+                            )}
                             {m.isTrending && (
                               <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full border-2 border-[#0a0b14] flex items-center justify-center">
                                 <TrendingUp className="w-2 h-2 text-white" />

@@ -244,6 +244,11 @@ export class AdminController {
     return this.adminService.getMarkets(filter);
   }
 
+  @Get('markets/:id')
+  async getMarket(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.getMarket(id);
+  }
+
   @Post('markets')
   async createMarket(@Body() body: any) {
     return this.adminService.createMarket(body);

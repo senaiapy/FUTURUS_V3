@@ -655,6 +655,19 @@ export class AdminService {
     });
   }
 
+  async getMarket(id: number) {
+    const market = await this.prisma.market.findUnique({
+      where: { id },
+      include: {
+        category: true,
+        options: true,
+        _count: { select: { purchases: true } },
+      },
+    });
+    if (!market) throw new NotFoundException('Market not found');
+    return market;
+  }
+
   async createMarket(data: any) {
     return this.prisma.market.create({
       data: {
