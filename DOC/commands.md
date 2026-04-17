@@ -63,3 +63,6 @@ docker compose build frontend && docker compose up -d frontend
 ## running setup-futurus.sh
 printf 'n\n\n\n\n\ndev\nn\nn\n' | bash setup-futurus.sh 
 
+sshpass -p '@450Ab6606server' ssh -o StrictHostKeyChecking=no gamba@51.83.103.50 "echo '@' | sudo -S docker exec Prevejo-backend sh -c 'echo \$CORS_ORIGINS' 2>&1"
+
+sshpass -p '@450Ab6606server' ssh -o StrictHostKeyChecking=no gamba@51.83.103.50 "echo '@' | sudo -S docker exec Prevejo-backend sh -c 'curl -s http://localhost:3001/api/markets | head -100' 2>&1"

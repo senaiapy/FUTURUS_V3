@@ -621,6 +621,10 @@ rsudo "docker exec -t ${C_BACKEND} npx prisma db push --accept-data-loss" || pri
 print_step "Generating Prisma Client..."
 rsudo "docker exec -t ${C_BACKEND} npx prisma generate" || print_warning "prisma generate had issues"
 
+print_step "Restarting backend after schema sync..."
+rsudo "docker restart ${C_BACKEND}"
+sleep 5
+
 print_step "Creating upload directories on remote..."
 rsudo "mkdir -p $SERVER_PATH/backend/uploads/markets $SERVER_PATH/backend/uploads/images $SERVER_PATH/backend/uploads/verify $SERVER_PATH/backend/uploads/support $SERVER_PATH/backend/uploads/documents $SERVER_PATH/backend/uploads/blogs"
 print_success "Upload directories ready (bind-mounted into container)"
